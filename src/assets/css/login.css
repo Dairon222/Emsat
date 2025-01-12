@@ -1,0 +1,102 @@
+/* Login.css */
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(white, rgb(22, 139, 11));
+  }
+  
+  .login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+  }
+  
+  .login-box {
+    width: 600px;
+    text-align: center;
+  }
+  
+  .sena-logo {
+    width: 80px;
+    height: auto;
+    margin-bottom: 20px;
+  }
+  
+  h2 {
+    color: black;
+    margin-bottom: 20px;
+    font-size: 2em;
+    font-weight: bold;
+  }
+  
+  .form-group {
+    margin-bottom: 30px;
+    text-align: left;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+    font-weight: bold;
+  }
+  
+  select,
+  input {
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+  
+  select:focus,
+  input:focus {
+    border-color: #3ca214;
+    outline: none;
+    box-shadow: 0 0 4px rgba(20, 159, 34, 0.5);
+  }
+  
+  .login-button {
+    background-color: #03b12fcc;
+    color: white;
+    border: none;
+    font-size: 1em;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 75%;
+    padding: 15px;
+  }
+  
+  .login-button:hover {
+    background-color: #333;
+  }
+  
+  .forgot-password {
+    margin-top: 15px;
+  }
+  
+  .forgot-password a {
+    text-decoration: none;
+    color: #333;
+    font-size: 0.9em;
+  }
+  
+  .forgot-password a:hover {
+    color: rgba(197, 36, 36, 0.811);
+  }
+  
