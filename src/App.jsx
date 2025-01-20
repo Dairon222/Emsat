@@ -7,15 +7,14 @@ import Loans from './pages/Loans';
 import NotFound from './pages/Notfound';
 
 const theme = createTheme({
-  palette: {
-    mode: 'light',
-    primary: {
-      main: '#1976d2',
+    palette: {
+      primary: {
+        main: '#388e3c',
+      },
+      secondary: {
+        main: '#ef6c00',
+      },
     },
-    secondary: {
-      main: '#dc004e',
-    },
-  },
 });
 
 const App = () => (

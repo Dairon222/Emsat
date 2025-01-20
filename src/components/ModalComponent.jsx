@@ -7,7 +7,7 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  width: 400, 
   bgcolor: 'background.paper',
   boxShadow: 24,
   p: 4,
@@ -29,7 +29,7 @@ const ModalComponent = ({ open, onClose, title, children }) => {
         <Typography id="modal-description" variant="body2" gutterBottom>
           {children}
         </Typography>
-        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'end' }}>
           <Button variant="contained" color="primary" onClick={onClose}>
             Cerrar
           </Button>
