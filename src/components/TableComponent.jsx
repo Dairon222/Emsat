@@ -1,7 +1,6 @@
-// TableComponent.jsx
+/* eslint-disable react/prop-types */
 // eslint-disable-next-line no-unused-vars
 import React, { useState } from "react";
-import PropTypes from "prop-types";
 import {
   Table,
   TableBody,
@@ -16,12 +15,19 @@ import {
   Select,
   Box,
   TablePagination,
+  Button,
+  Modal,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const TableComponent = ({ columns, data, title, noDataMessage }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value.toLowerCase());
@@ -34,6 +40,22 @@ const TableComponent = ({ columns, data, title, noDataMessage }) => {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const handleOpenEditModal = (row) => {
+    setSelectedRow(row);
+    setOpenEditModal(true);
+  };
+
+  const handleOpenDeleteModal = (row) => {
+    setSelectedRow(row);
+    setOpenDeleteModal(true);
+  };
+
+  const handleCloseModals = () => {
+    setOpenEditModal(false);
+    setOpenDeleteModal(false);
+    setSelectedRow(null);
   };
 
   const filteredData = data.filter((row) =>
@@ -49,17 +71,15 @@ const TableComponent = ({ columns, data, title, noDataMessage }) => {
 
   return (
     <Box sx={{ mt: 4 }}>
-      {title && (
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          {title}
-        </Typography>
-      )}
+      <Typography variant="h6" sx={{ mb: 2 }}>
+        {title}
+      </Typography>
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          mb: 2,
+          mb: 3,
         }}
       >
         <TextField
@@ -67,7 +87,7 @@ const TableComponent = ({ columns, data, title, noDataMessage }) => {
           variant="outlined"
           size="small"
           onChange={handleSearch}
-          sx={{ width: "40%" }}
+          sx={{ width: "30%" }}
         />
         <Select
           value={rowsPerPage}
@@ -75,7 +95,7 @@ const TableComponent = ({ columns, data, title, noDataMessage }) => {
           size="small"
           sx={{ width: "15%" }}
         >
-          {[5, 10, 15, 20].map((option) => (
+          {[5, 10, 15].map((option) => (
             <MenuItem key={option} value={option}>
               {option} registros
             </MenuItem>
@@ -94,12 +114,18 @@ const TableComponent = ({ columns, data, title, noDataMessage }) => {
                 {columns.map((column) => (
                   <TableCell
                     key={column.field}
-                    align={column.align || "left"}
+                    align={column.align}
                     sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
                   >
                     {column.headerName}
                   </TableCell>
                 ))}
+                <TableCell
+                  align="center"
+                  sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
+                >
+                  Funciones
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -108,7 +134,7 @@ const TableComponent = ({ columns, data, title, noDataMessage }) => {
                   {columns.map((column) => (
                     <TableCell
                       key={column.field}
-                      align={column.align || "left"}
+                      align={column.align}
                       sx={{
                         color:
                           column.field === "estado"
@@ -123,6 +149,21 @@ const TableComponent = ({ columns, data, title, noDataMessage }) => {
                       {row[column.field]}
                     </TableCell>
                   ))}
+                  <TableCell align="center">
+                    <Button
+                      size="small"
+                      onClick={() => handleOpenEditModal(row)}
+                    >
+                      <EditIcon />
+                    </Button>
+                    <Button
+                      size="small"
+                      color="error"
+                      onClick={() => handleOpenDeleteModal(row)}
+                    >
+                      <DeleteIcon />
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -130,7 +171,7 @@ const TableComponent = ({ columns, data, title, noDataMessage }) => {
         )}
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 15, 20]}
+        rowsPerPageOptions={[5, 10, 15]}
         component="div"
         count={filteredData.length}
         rowsPerPage={rowsPerPage}
@@ -138,26 +179,93 @@ const TableComponent = ({ columns, data, title, noDataMessage }) => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
+
+      {/* Edit Modal */}
+      <Modal open={openEditModal} onClose={handleCloseModals}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "background.paper",
+            p: 4,
+            boxShadow: 24,
+            borderRadius: 2,
+            width: 400,
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            Editar Usuario
+          </Typography>
+          {selectedRow && (
+            <Box>
+              <TextField
+                label="Nombre"
+                size="small"
+                defaultValue={selectedRow.name}
+                fullWidth
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                label="Rol"
+                size="small"
+                defaultValue={selectedRow.role}
+                fullWidth
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                label="Estado"
+                size="small"
+                defaultValue={selectedRow.status}
+                fullWidth
+              />
+            </Box>
+          )}
+          <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+            <Button variant="contained" onClick={handleCloseModals}>
+              Guardar
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+
+      {/* Delete Modal */}
+      <Modal open={openDeleteModal} onClose={handleCloseModals}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "background.paper",
+            p: 4,
+            boxShadow: 24,
+            borderRadius: 2,
+            width: 400,
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            Confirmar Eliminación
+          </Typography>
+          {selectedRow && (
+            <Typography>
+              ¿Realmente desea eliminar al usuario <b>{selectedRow.name}</b>?
+            </Typography>
+          )}
+          <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={handleCloseModals}
+            >
+              Aceptar
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
     </Box>
   );
-};
-
-TableComponent.propTypes = {
-  columns: PropTypes.arrayOf(
-    PropTypes.shape({
-      field: PropTypes.string.isRequired,
-      headerName: PropTypes.string.isRequired,
-      align: PropTypes.oneOf(["left", "right", "center"]),
-    })
-  ).isRequired,
-  data: PropTypes.arrayOf(PropTypes.object).isRequired,
-  title: PropTypes.string,
-  noDataMessage: PropTypes.string,
-};
-
-TableComponent.defaultProps = {
-  title: "",
-  noDataMessage: "No se encontraron resultados.",
 };
 
 export default TableComponent;

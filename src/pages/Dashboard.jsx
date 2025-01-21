@@ -50,16 +50,25 @@ const Dashboard = () => {
       ficha: "2225270",
       estado: "Activo",
     },
+    {
+      nombre: "Juliana",
+      apellido: "Calderón",
+      identificacion: "233",
+      celular: "12345009",
+      rol: "Aprendiz",
+      ficha: "2222120",
+      estado: "Activo",
+    },
   ];
 
   return (
     <>
       <HeaderComponent title="Emsat" />
-      
+
       <Container>
         <Box sx={{ mt: 4 }}>
           <Typography variant="body1" gutterBottom>
-            Bienvenido al sistema de gestión de préstamos y herramientas.
+            Bienvenido a la plataforma de Emsat
           </Typography>
           <TableComponent
             columns={columns}
