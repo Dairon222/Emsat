@@ -1,21 +1,38 @@
 
-import { Typography, Container, Box, Button } from '@mui/material';
+import { Container, Box, Typography } from '@mui/material';
+import HeaderComponent from '../components/HeaderComponent';
+import TableComponent from '../components/TableComponent';
 
 const Users = () => {
+  const columns = [
+    { field: 'name', headerName: 'Nombre', align: 'left' },
+    { field: 'role', headerName: 'Rol', align: 'center' },
+    { field: 'status', headerName: 'Estado', align: 'right' },
+  ];
+
+  const data = [
+    { name: 'Carlos Pérez', role: 'Aprendiz', status: 'Activo' },
+    { name: 'Lucía Gómez', role: 'Instructor', status: 'Inactivo' },
+    { name: 'Miguel Torres', role: 'Aprendiz', status: 'Activo' },
+  ];
+
   return (
-    <Container>
-      <Box sx={{ mt: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Gestión de Usuarios
-        </Typography>
-        <Typography variant="body1" gutterBottom>
-          Administra los datos de usuarios, como aprendices e instructores.
-        </Typography>
-        <Button variant="contained" color="primary">
-          Agregar Usuario
-        </Button>
-      </Box>
-    </Container>
+    <>
+      <HeaderComponent title="Gestión de Usuarios" />
+      <Container>
+        <Box sx={{ mt: 4 }}>
+          <Typography variant="body1" gutterBottom>
+            Administra los datos de los usuarios del sistema, incluyendo aprendices e instructores.
+          </Typography>
+          <TableComponent
+            columns={columns}
+            data={data}
+            title="Lista de Usuarios"
+            noDataMessage="No se encontraron usuarios."
+          />
+        </Box>
+      </Container>
+    </>
   );
 };
 

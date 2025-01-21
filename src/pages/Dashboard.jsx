@@ -1,17 +1,6 @@
-import {
-  Typography,
-  Container,
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from "@mui/material";
+import { Container, Box, Typography } from "@mui/material";
 import HeaderComponent from "../components/HeaderComponent";
-import ModalComponent from "../components/modalComponent";
+import TableComponent from "../components/TableComponent";
 
 const Dashboard = () => {
   const columns = [
@@ -21,7 +10,7 @@ const Dashboard = () => {
     { field: "celular", headerName: "Celular", align: "center" },
     { field: "rol", headerName: "Rol", align: "center" },
     { field: "ficha", headerName: "Ficha", align: "center" },
-    { field: "estado", headerName: "Estado", align: "left" },
+    { field: "estado", headerName: "Estado", align: "center" },
   ];
 
   const data = [
@@ -52,64 +41,32 @@ const Dashboard = () => {
       ficha: "2895270",
       estado: "Inactivo",
     },
+    {
+      nombre: "Michael",
+      apellido: "Aviel",
+      identificacion: "1112",
+      celular: "000121",
+      rol: "Instructor",
+      ficha: "2225270",
+      estado: "Activo",
+    },
   ];
 
   return (
     <>
       <HeaderComponent title="Emsat" />
-
-      <ModalComponent open={true} onClose={() => {true}} title="Hola :)">
-        <Typography variant="body1" gutterBottom>
-          Aún estoy entendiendo como relacionar los modals
-        </Typography>
-      </ModalComponent>
-
+      
       <Container>
         <Box sx={{ mt: 4 }}>
           <Typography variant="body1" gutterBottom>
             Bienvenido al sistema de gestión de préstamos y herramientas.
           </Typography>
-          <TableContainer component={Paper} sx={{ mt: 4 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableCell
-                      key={column.field}
-                      align={column.align || "left"}
-                      sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
-                    >
-                      {column.headerName}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {data.map((row, rowIndex) => (
-                  <TableRow key={rowIndex}>
-                    {columns.map((column) => (
-                      <TableCell
-                        key={column.field}
-                        align={column.align || "left"}
-                        sx={{
-                          color:
-                            column.field === "estado"
-                              ? row[column.field] === "Activo"
-                                ? "green"
-                                : "red"
-                              : "inherit",
-                          fontWeight:
-                            column.field === "estado" ? "bold" : "normal",
-                        }}
-                      >
-                        {row[column.field]}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <TableComponent
+            columns={columns}
+            data={data}
+            title="Usuarios"
+            noDataMessage="No se encontró información del usuario"
+          />
         </Box>
       </Container>
     </>
