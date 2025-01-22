@@ -6,6 +6,7 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import PeopleIcon from "@mui/icons-material/People";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import LogoutIcon from "@mui/icons-material/Logout";
+import senaLogo from "../assets/logo_sena.png";
 
 const HeaderComponent = ({ title }) => {
   const navLinks = [
@@ -17,16 +18,35 @@ const HeaderComponent = ({ title }) => {
   ];
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: "primary" }}>
-      <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Link
-          to="/dashboard"
-          style={{ textDecoration: "none", color: "inherit" }}
-        >
-          <Typography variant="h6" component="div" sx={{ fontWeight: "bold" }}>
-            {title}
-          </Typography>
-        </Link>
+    <AppBar position="static" sx={{ backgroundColor: "primary", height: 80 }}>
+      <Toolbar
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          height: "100%",
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Link
+            to="/dashboard"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              textDecoration: "none",
+              color: "inherit",
+            }}
+          >
+            <img src={senaLogo} alt="Logo" style={{ width: 50, height: "auto" }} />
+            <Typography
+              variant="h5"
+              component="div"
+              sx={{ fontWeight: "bold", ml: 1 }}
+            >
+              {title}
+            </Typography>
+          </Link>
+        </Box>
+
         <Box sx={{ display: "flex", gap: 2 }}>
           {navLinks.map((link) => (
             <Button
