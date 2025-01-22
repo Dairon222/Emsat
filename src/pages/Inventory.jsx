@@ -5,15 +5,15 @@ import TableComponent from '../components/TableComponent';
 
 const Inventory = () => {
   const columns = [
-    { field: 'tool', headerName: 'Herramienta', align: 'center' },
-    { field: 'category', headerName: 'Categoría', align: 'center' },
-    { field: 'availability', headerName: 'Disponibilidad', align: 'center' },
+    { field: 'nombre', headerName: 'Herramienta', align: 'center' },
+    { field: 'categoria', headerName: 'Categoría', align: 'center' },
+    { field: 'estado', headerName: 'Disponibilidad', align: 'center' },
   ];
 
   const data = [
-    { tool: 'Taladro', category: 'Eléctrica', availability: 'Disponible' },
-    { tool: 'Llave Inglesa', category: 'Manual', availability: 'No Disponible' },
-    { tool: 'Sierra', category: 'Eléctrica', availability: 'Disponible' },
+    { nombre: 'Taladro', categoria: 'Eléctrica', estado: 'Disponible' },
+    { nombre: 'Llave Inglesa', categoria: 'Manual', estado: 'No disponible' },
+    { nombre: 'Sierra', categoria: 'Eléctrica', estado: 'Disponible' },
   ];
 
   return (

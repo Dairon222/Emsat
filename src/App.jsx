@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 
 const theme = createTheme({
   palette: {
+    mode: 'light',
     primary: {
       main: "#388e3c",
     },

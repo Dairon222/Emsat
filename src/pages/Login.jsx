@@ -34,10 +34,10 @@ const Login = () => {
     "Rionegro",
     "Sonsón",
     "La Ceja",
-    "El Carmen de Viboral",
-    "El Retiro",
-    "Guarne",
-    "Guatapé",
+    // "El Carmen de Viboral",
+    // "El Retiro",
+    // "Guarne",
+    // "Guatapé",
   ];
 
   return (

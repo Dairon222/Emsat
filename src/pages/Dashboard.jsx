@@ -59,47 +59,6 @@ const Dashboard = () => {
       ficha: "2222120",
       estado: "Activo",
     },
-    {
-      nombre: "Cristian",
-      apellido: "Suarez",
-      identificacion: "5678981",
-      celular: "039383",
-      rol: "Aprendiz",
-      ficha: "2895270",
-      estado: "Inactivo",
-    },    {
-      nombre: "Cristian",
-      apellido: "Suarez",
-      identificacion: "5678981",
-      celular: "039383",
-      rol: "Aprendiz",
-      ficha: "2895270",
-      estado: "Inactivo",
-    },    {
-      nombre: "Cristian",
-      apellido: "Suarez",
-      identificacion: "5678981",
-      celular: "039383",
-      rol: "Aprendiz",
-      ficha: "2895270",
-      estado: "Inactivo",
-    },    {
-      nombre: "Cristian",
-      apellido: "Suarez",
-      identificacion: "5678981",
-      celular: "039383",
-      rol: "Aprendiz",
-      ficha: "2895270",
-      estado: "Inactivo",
-    },    {
-      nombre: "Cristian",
-      apellido: "Suarez",
-      identificacion: "5678981",
-      celular: "039383",
-      rol: "Aprendiz",
-      ficha: "2895270",
-      estado: "Inactivo",
-    },
   ];
 
   return (

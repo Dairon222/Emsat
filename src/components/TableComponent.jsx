@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
-// eslint-disable-next-line no-unused-vars
-import React, { useState } from "react";
+/* eslint-disable no-unused-vars */
+// TableComponent.jsx
+import React, { useState } from 'react';
 import {
   Table,
   TableBody,
@@ -16,18 +17,25 @@ import {
   Box,
   TablePagination,
   Button,
-  Modal,
-} from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+  Snackbar,
+  Alert,
+} from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ModalEditComponent from './ModalEditComponent';
+import ModalDeleteComponent from './ModalDeleteComponent';
 
 const TableComponent = ({ columns, data, title, noDataMessage }) => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: '' });
+
+  const dynamicStatusGreen = ['Activo', 'Disponible', 'Presente'];
+  const dynamicStatusRed = ['Inactivo', 'No disponible', 'No presente'];
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value.toLowerCase());
@@ -41,6 +49,17 @@ const TableComponent = ({ columns, data, title, noDataMessage }) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+  const filteredData = data.filter((row) =>
+    columns.some((column) =>
+      String(row[column.field]).toLowerCase().includes(searchTerm)
+    )
+  );
+
+  const paginatedData = filteredData.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
   const handleOpenEditModal = (row) => {
     setSelectedRow(row);
@@ -58,44 +77,42 @@ const TableComponent = ({ columns, data, title, noDataMessage }) => {
     setSelectedRow(null);
   };
 
-  const filteredData = data.filter((row) =>
-    columns.some((column) =>
-      String(row[column.field]).toLowerCase().includes(searchTerm)
-    )
-  );
+  const handleSaveEdit = (updatedData) => {
+    setSnackbar({ open: true, message: 'Datos actualizados exitosamente.', severity: 'success' });
+    handleCloseModals();
+  };
 
-  const paginatedData = filteredData.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
+  const handleDelete = (row) => {
+    setSnackbar({ open: true, message: `Elemento eliminado: ${row.nombre}`, severity: 'error' });
+    handleCloseModals();
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   return (
     <Box sx={{ mt: 4 }}>
-      <Typography variant="h6" sx={{ mb: 2 }}>
-        {title}
-      </Typography>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 3,
-        }}
-      >
+      {title && (
+        <Typography variant="h6" sx={{ mb: 2 }}>
+          {title}
+        </Typography>
+      )}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <TextField
           label="Buscar"
           variant="outlined"
           size="small"
           onChange={handleSearch}
-          sx={{ width: "30%" }}
+          sx={{ width: '40%' }}
         />
         <Select
           value={rowsPerPage}
           onChange={handleChangeRowsPerPage}
           size="small"
-          sx={{ width: "15%" }}
+          sx={{ width: '15%' }}
         >
-          {[5, 10, 15].map((option) => (
+          {[5, 10, 25, 50].map((option) => (
             <MenuItem key={option} value={option}>
               {option} registros
             </MenuItem>
@@ -115,14 +132,14 @@ const TableComponent = ({ columns, data, title, noDataMessage }) => {
                   <TableCell
                     key={column.field}
                     align={column.align}
-                    sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
+                    sx={{ backgroundColor: '#f5f5f5', fontWeight: 'bold' }}
                   >
                     {column.headerName}
                   </TableCell>
                 ))}
                 <TableCell
                   align="center"
-                  sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
+                  sx={{ backgroundColor: '#f5f5f5', fontWeight: 'bold' }}
                 >
                   Funciones
                 </TableCell>
@@ -137,13 +154,14 @@ const TableComponent = ({ columns, data, title, noDataMessage }) => {
                       align={column.align}
                       sx={{
                         color:
-                          column.field === "estado"
-                            ? row[column.field] === "Activo"
-                              ? "green"
-                              : "red"
-                            : "inherit",
-                        fontWeight:
-                          column.field === "estado" ? "bold" : "normal",
+                          column.field === 'estado'
+                            ? dynamicStatusGreen.includes(row[column.field])
+                              ? 'green'
+                              : dynamicStatusRed.includes(row[column.field])
+                              ? 'red'
+                              : 'inherit'
+                            : 'inherit',
+                        fontWeight: column.field === 'estado' ? 'bold' : 'normal',
                       }}
                     >
                       {row[column.field]}
@@ -171,7 +189,7 @@ const TableComponent = ({ columns, data, title, noDataMessage }) => {
         )}
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 15]}
+        rowsPerPageOptions={[5, 10, 25, 50]}
         component="div"
         count={filteredData.length}
         rowsPerPage={rowsPerPage}
@@ -180,90 +198,32 @@ const TableComponent = ({ columns, data, title, noDataMessage }) => {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
 
-      {/* Edit Modal */}
-      <Modal open={openEditModal} onClose={handleCloseModals}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            bgcolor: "background.paper",
-            p: 4,
-            boxShadow: 24,
-            borderRadius: 2,
-            width: 400,
-          }}
-        >
-          <Typography variant="h6" gutterBottom>
-            Editar Usuario
-          </Typography>
-          {selectedRow && (
-            <Box>
-              <TextField
-                label="Nombre"
-                size="small"
-                defaultValue={selectedRow.name}
-                fullWidth
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                label="Rol"
-                size="small"
-                defaultValue={selectedRow.role}
-                fullWidth
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                label="Estado"
-                size="small"
-                defaultValue={selectedRow.status}
-                fullWidth
-              />
-            </Box>
-          )}
-          <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
-            <Button variant="contained" onClick={handleCloseModals}>
-              Guardar
-            </Button>
-          </Box>
-        </Box>
-      </Modal>
+      {/* Modals */}
+      <ModalEditComponent
+        open={openEditModal}
+        onClose={handleCloseModals}
+        data={selectedRow}
+        onSave={handleSaveEdit}
+        title={title}
+      />
+      <ModalDeleteComponent
+        open={openDeleteModal}
+        onClose={handleCloseModals}
+        item={selectedRow}
+        onDelete={handleDelete}
+      />
 
-      {/* Delete Modal */}
-      <Modal open={openDeleteModal} onClose={handleCloseModals}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            bgcolor: "background.paper",
-            p: 4,
-            boxShadow: 24,
-            borderRadius: 2,
-            width: 400,
-          }}
-        >
-          <Typography variant="h6" gutterBottom>
-            Confirmar Eliminación
-          </Typography>
-          {selectedRow && (
-            <Typography>
-              ¿Realmente desea eliminar al usuario <b>{selectedRow.name}</b>?
-            </Typography>
-          )}
-          <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
-            <Button
-              variant="contained"
-              color="error"
-              onClick={handleCloseModals}
-            >
-              Aceptar
-            </Button>
-          </Box>
-        </Box>
-      </Modal>
+      {/* Snackbar */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
