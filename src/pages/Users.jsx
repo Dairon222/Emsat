@@ -5,15 +5,15 @@ import TableComponent from '../components/TableComponent';
 
 const Users = () => {
   const columns = [
-    { field: 'name', headerName: 'Nombre', align: 'left' },
+    { field: 'name', headerName: 'Nombre', align: 'center' },
     { field: 'role', headerName: 'Rol', align: 'center' },
-    { field: 'status', headerName: 'Estado', align: 'right' },
+    { field: 'estado', headerName: 'Estado', align: 'center' },
   ];
 
   const data = [
-    { name: 'Carlos Pérez', role: 'Aprendiz', status: 'Activo' },
-    { name: 'Lucía Gómez', role: 'Instructor', status: 'Inactivo' },
-    { name: 'Miguel Torres', role: 'Aprendiz', status: 'Activo' },
+    { name: 'Carlos Pérez', role: 'Aprendiz', estado: 'Activo' },
+    { name: 'Lucía Gómez', role: 'Instructor', estado: 'Inactivo' },
+    { name: 'Miguel Torres', role: 'Aprendiz', estado: 'Activo' },
   ];
 
   return (

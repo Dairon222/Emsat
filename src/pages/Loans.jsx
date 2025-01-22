@@ -5,9 +5,9 @@ import TableComponent from '../components/TableComponent';
 
 const Loans = () => {
   const columns = [
-    { field: 'tool', headerName: 'Herramienta', align: 'left' },
+    { field: 'tool', headerName: 'Herramienta', align: 'center' },
     { field: 'user', headerName: 'Usuario', align: 'center' },
-    { field: 'returnDate', headerName: 'Fecha de Devolución', align: 'right' },
+    { field: 'returnDate', headerName: 'Fecha de Devolución', align: 'center' },
   ];
 
   const data = [

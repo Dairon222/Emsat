@@ -5,9 +5,9 @@ import TableComponent from '../components/TableComponent';
 
 const Inventory = () => {
   const columns = [
-    { field: 'tool', headerName: 'Herramienta', align: 'left' },
+    { field: 'tool', headerName: 'Herramienta', align: 'center' },
     { field: 'category', headerName: 'Categoría', align: 'center' },
-    { field: 'availability', headerName: 'Disponibilidad', align: 'right' },
+    { field: 'availability', headerName: 'Disponibilidad', align: 'center' },
   ];
 
   const data = [
