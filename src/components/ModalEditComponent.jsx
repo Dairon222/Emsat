@@ -19,7 +19,7 @@ const ModalEditComponent = ({ open, onClose, data, onSave, title }) => {
           p: 4,
           boxShadow: 24,
           borderRadius: 2,
-          width: 400,
+          width: 450,
         }}
       >
         <Typography variant="h5" gutterBottom sx={{ mb: 3, fontWeight: 'bold' }}>

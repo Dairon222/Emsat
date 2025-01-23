@@ -1,4 +1,3 @@
-// Login.jsx
 // eslint-disable-next-line no-unused-vars
 import React, { useState } from "react";
 import {
@@ -32,12 +31,9 @@ const Login = () => {
 
   const sedeOptions = [
     "Rionegro",
-    "Sonsón",
     "La Ceja",
-    // "El Carmen de Viboral",
-    // "El Retiro",
-    // "Guarne",
-    // "Guatapé",
+    "El Carmen de Viboral",
+    "El Retiro",
   ];
 
   return (

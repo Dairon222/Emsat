@@ -1,82 +1,57 @@
-import { Container, Box, Typography } from "@mui/material";
-import HeaderComponent from "../components/HeaderComponent";
-import TableComponent from "../components/TableComponent";
+import { Container, Typography, Grid } from '@mui/material';
+import HeaderComponent from '../components/HeaderComponent';
+import CardComponent from '../components/CardComponent';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import Inventory2Icon from '@mui/icons-material/Inventory2';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import ReportIcon from '@mui/icons-material/Report';
 
 const Dashboard = () => {
-  const columns = [
-    { field: "nombre", headerName: "Nombre", align: "center" },
-    { field: "apellido", headerName: "Apellido", align: "center" },
-    { field: "identificacion", headerName: "ID", align: "center" },
-    { field: "celular", headerName: "Celular", align: "center" },
-    { field: "rol", headerName: "Rol", align: "center" },
-    { field: "ficha", headerName: "Ficha", align: "center" },
-    { field: "estado", headerName: "Estado", align: "center" },
-  ];
-
-  const data = [
+  const cards = [
     {
-      nombre: "Dairon",
-      apellido: "Betancur",
-      identificacion: "123456789",
-      celular: "3053397412",
-      rol: "Aprendiz",
-      ficha: "2895270",
-      estado: "Activo",
+      title: 'Nuevo usuario',
+      description: 'Añade un nuevo usuario al sistema.',
+      icon: <PersonAddIcon />,
     },
     {
-      nombre: "Cristian",
-      apellido: "Cardona",
-      identificacion: "89231",
-      celular: "929481010",
-      rol: "Aprendiz",
-      ficha: "2895270",
-      estado: "Activo",
+      title: 'Nueva herramienta',
+      description: 'Agrega nuevos elementos al inventario.',
+      icon: <Inventory2Icon />,
     },
     {
-      nombre: "Cristian",
-      apellido: "Suarez",
-      identificacion: "5678981",
-      celular: "039383",
-      rol: "Aprendiz",
-      ficha: "2895270",
-      estado: "Inactivo",
+      title: 'Nuevo préstamo',
+      description: 'Registra un nuevo préstamo.',
+      icon: <AssignmentIcon />,
     },
     {
-      nombre: "Michael",
-      apellido: "Aviel",
-      identificacion: "1112",
-      celular: "000121",
-      rol: "Instructor",
-      ficha: "2225270",
-      estado: "Activo",
-    },
-    {
-      nombre: "Juliana",
-      apellido: "Calderón",
-      identificacion: "233",
-      celular: "12345009",
-      rol: "Aprendiz",
-      ficha: "2222120",
-      estado: "Activo",
+      title: 'Nuevo reporte',
+      description: 'Genera un reporte del sistema.',
+      icon: <ReportIcon />,
     },
   ];
 
   return (
     <>
-      <HeaderComponent title="Emsat" />
-
-      <Container>
-        <Box sx={{ mt: 4 }}>
-          <Typography variant="body1" gutterBottom>
-            Bienvenido a la plataforma de Emsat
-          </Typography>
-          <TableComponent
-            columns={columns}
-            data={data}
-            title="Usuarios"
-            noDataMessage="No se encontró información del usuario"
-          />
-        </Box>
+      <HeaderComponent title="Dashboard" />
+      <Container maxWidth="lg" sx={{ mt: 4 }}>
+        <Typography variant="h4" gutterBottom>
+          Bienvenido al sistema de gestión
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Selecciona una opción para comenzar:
+        </Typography>
+        <Grid container spacing={4} sx={{ mt: 1 }}>
+          {cards.map((card, index) => (
+            <Grid item xs={12} sm={6} md={4} key={index}>
+              <CardComponent
+                title={card.title}
+                description={card.description}
+                icon={card.icon}
+                onClick={() => console.log(`${card.title} modal abierto`)}
+              />
+            </Grid>
+          ))}
+        </Grid>
       </Container>
     </>
   );
