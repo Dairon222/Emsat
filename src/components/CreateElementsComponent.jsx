@@ -27,9 +27,9 @@ const CreateElementsComponent = ({
   };
 
   const handleSubmit = () => {
-    onSubmit(formData); // Envía los datos al componente padre
-    setFormData({}); // Resetea el formulario
-    onClose(); // Cierra el modal
+    onSubmit(formData);
+    setFormData({});
+    onClose();
   };
 
   return (

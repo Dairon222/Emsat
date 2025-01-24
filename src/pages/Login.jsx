@@ -12,8 +12,10 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import senaLogo from "../assets/logo_sena.png";
+import { useSede } from "../context/SedeContext";
 
 const Login = () => {
+  const { updateSede } = useSede();
   const [selectedUser, setSelectedUser] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -21,8 +23,7 @@ const Login = () => {
   const handleLogin = (e) => {
     e.preventDefault();
     if (selectedUser && password) {
-      console.log("Usuario:", selectedUser);
-      console.log("Contraseña:", password);
+      updateSede(selectedUser); // Actualiza la sede en el contexto
       navigate("/dashboard");
     } else {
       alert("Por favor completa todos los campos.");
@@ -35,7 +36,6 @@ const Login = () => {
     "El Carmen de Viboral",
     "El Retiro",
   ];
-
   return (
     <Box
       sx={{

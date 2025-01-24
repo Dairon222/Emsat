@@ -66,7 +66,6 @@ const Dashboard = () => {
     setOpenModal(false);
   };
 
-  // Maneja la creación de nuevos elementos (solo imprime por ahora)
   const handleCreateElement = (newData) => {
     console.log("Elemento creado:", newData);
     handleCloseModal();
@@ -74,7 +73,7 @@ const Dashboard = () => {
 
   return (
     <>
-      <HeaderComponent title="Emsat" />
+      <HeaderComponent title="Inicio" />
       <Container maxWidth="lg" sx={{ mt: 4 }}>
         <Typography variant="h4" gutterBottom>
           Bienvenido al sistema de gestión

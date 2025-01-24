@@ -3,7 +3,7 @@ import { Container, Box, Typography } from '@mui/material';
 import HeaderComponent from '../components/HeaderComponent';
 import TableComponent from '../components/TableComponent';
 
-const Inventory = () => {
+const Morosos = () => {
   const columns = [
     { field: 'nombre', headerName: 'Herramienta', align: 'center' },
     { field: 'categoria', headerName: 'Categoría', align: 'center' },
@@ -18,17 +18,17 @@ const Inventory = () => {
 
   return (
     <>
-      <HeaderComponent title="Inventario" />
+      <HeaderComponent title="Morosos" />
       <Container>
         <Box sx={{ mt: 4 }}>
           <Typography variant="body1" gutterBottom>
-            Administra las herramientas y recursos disponibles en el sistema.
+            Administra las personas que se encuentran en estado de mora.
           </Typography>
           <TableComponent
             columns={columns}
             data={data}
-            title="Lista de Herramientas"
-            noDataMessage="No se encontraron herramientas."
+            title="Lista de morosos"
+            noDataMessage="No hay personas en estado de mora."
           />
         </Box>
       </Container>
@@ -36,4 +36,4 @@ const Inventory = () => {
   );
 };
 
-export default Inventory;
+export default Morosos;

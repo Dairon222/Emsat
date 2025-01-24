@@ -1,32 +1,23 @@
 /* eslint-disable react/prop-types */
 import { AppBar, Toolbar, Typography, Box, Button } from "@mui/material";
 import { Link } from "react-router-dom";
-import HomeIcon from "@mui/icons-material/Home";
-import InventoryIcon from "@mui/icons-material/Inventory";
-import PeopleIcon from "@mui/icons-material/People";
-import AssignmentIcon from "@mui/icons-material/Assignment";
 import LogoutIcon from "@mui/icons-material/Logout";
-import senaLogo from "../assets/logo_sena.png";
+import { useSede } from "../context/SedeContext";
 
 const HeaderComponent = ({ title }) => {
-  const navLinks = [
-    { text: "Inicio", path: "/dashboard", icon: <HomeIcon /> },
-    { text: "Inventario", path: "/inventory", icon: <InventoryIcon /> },
-    { text: "Usuarios", path: "/users", icon: <PeopleIcon /> },
-    { text: "Préstamos", path: "/loans", icon: <AssignmentIcon /> },
-    { text: "Salir", path: "/", icon: <LogoutIcon /> },
-  ];
+  const { sede } = useSede();
+
+  const navLinks = [{ text: "Salir", path: "/", icon: <LogoutIcon /> }];
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: "primary", height: 80 }}>
+    <AppBar position="fixed">
       <Toolbar
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          height: "100%",
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Box sx={{ display: "flex", alignItems: "center", p: 1 }}>
           <Link
             to="/dashboard"
             style={{
@@ -36,18 +27,18 @@ const HeaderComponent = ({ title }) => {
               color: "inherit",
             }}
           >
-            <img src={senaLogo} alt="Logo" style={{ width: 50, height: "auto" }} />
             <Typography
               variant="h5"
               component="div"
-              sx={{ fontWeight: "bold", ml: 1 }}
+              sx={{ fontWeight: "bold", ml: "230px" }}
             >
               {title}
             </Typography>
           </Link>
         </Box>
 
-        <Box sx={{ display: "flex", gap: 2 }}>
+        {/* Navegación */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2, mr: 5 }}>
           {navLinks.map((link) => (
             <Button
               key={link.text}
@@ -57,6 +48,7 @@ const HeaderComponent = ({ title }) => {
               startIcon={link.icon}
               sx={{
                 textTransform: "none",
+                p:1.5,
                 "&:hover": {
                   backgroundColor: "#ffffff20",
                   borderRadius: 1,
@@ -66,6 +58,11 @@ const HeaderComponent = ({ title }) => {
               {link.text}
             </Button>
           ))}
+
+          {/* Sede Seleccionada */}
+          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            {sede || "Sede no seleccionada"}
+          </Typography>
         </Box>
       </Toolbar>
     </AppBar>

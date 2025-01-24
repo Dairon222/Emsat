@@ -18,7 +18,7 @@ const Loans = () => {
 
   return (
     <>
-      <HeaderComponent title="Gestión de Préstamos" />
+      <HeaderComponent title="Préstamos" />
       <Container>
         <Box sx={{ mt: 4 }}>
           <Typography variant="body1" gutterBottom>
