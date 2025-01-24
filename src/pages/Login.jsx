@@ -92,6 +92,7 @@ const Login = () => {
               }}
               sx={{
                 borderRadius: "5px",
+                boxShadow: "0 0 4px rgba(20, 159, 34, 0.5)",
                 ".MuiSelect-select": {
                   textAlign: "left",
                 },

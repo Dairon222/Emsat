@@ -1,28 +1,29 @@
-
-import { Container, Box, Typography } from '@mui/material';
-import HeaderComponent from '../components/HeaderComponent';
-import TableComponent from '../components/TableComponent';
+import { Container, Box, Typography } from "@mui/material";
+import HeaderComponent from "../components/HeaderComponent";
+import TableComponent from "../components/TableComponent";
 
 const Loans = () => {
   const columns = [
-    { field: 'tool', headerName: 'Herramienta', align: 'center' },
-    { field: 'user', headerName: 'Usuario', align: 'center' },
-    { field: 'returnDate', headerName: 'Fecha de Devolución', align: 'center' },
+    { field: "codigo_herramienta", headerName: "Código herramienta", align: "center" },
+    { field: "cantidad", headerName: "Cantidad", align: "center" },
+    { field: "estado", headerName: "Estado", align: "center" },
+    { field: "observaciones", headerName: "Observaciones", align: "center" },
   ];
 
   const data = [
-    { tool: 'Taladro', user: 'Carlos Pérez', returnDate: '2025-01-25' },
-    { tool: 'Sierra', user: 'Lucía Gómez', returnDate: '2025-01-28' },
-    { tool: 'Llave Inglesa', user: 'Miguel Torres', returnDate: '2025-01-30' },
+    { codigo_herramienta: "Taladro", cantidad: "Carlos Pérez", estado: "Activo", observaciones: "Ninguna" },
+    { codigo_herramienta: "Sierra", cantidad: "Lucía Gómez", estado: "Activo", observaciones: "Ninguna" },
+    { codigo_herramienta: "Llave Inglesa", cantidad: "Miguel Torres", estado: "Activo", observaciones: "Ninguna" }  ,
   ];
 
   return (
     <>
       <HeaderComponent title="Préstamos" />
-      <Container>
+      <Container maxWidth="xl" sx={{ mt: 3 }}>
         <Box sx={{ mt: 4 }}>
           <Typography variant="body1" gutterBottom>
-            Administra los préstamos realizados, incluyendo herramientas, usuarios y fechas de devolución.
+            Administra los préstamos realizados, incluyendo herramientas,
+            usuarios y fechas de devolución.
           </Typography>
           <TableComponent
             columns={columns}

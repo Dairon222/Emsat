@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState } from "react";
 // eslint-disable-next-line no-unused-vars
-import { Container, Typography, Grid, Button } from "@mui/material";
+import { Container, Typography, Grid, Button, Box } from "@mui/material";
 import HeaderComponent from "../components/HeaderComponent";
 import TableComponent from "../components/TableComponent";
 import CreateElementsComponent from "../components/CreateElementsComponent";
@@ -64,7 +64,7 @@ const data = [
   },
 ];
 
-const Dashboard = () => {
+const Users = () => {
   const [openModal, setOpenModal] = useState(false);
   const [tableData, setTableData] = useState(data);
 
@@ -79,15 +79,19 @@ const Dashboard = () => {
   return (
     <>
       <HeaderComponent title="Usuarios" />
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          sx={{ mb: 2 }}
-          onClick={handleOpenModal}
-        >
-          Crear usuario
-        </Button>
+      <Container maxWidth="xl" sx={{ mt: 3 }}>
+        <Box sx={{ display: "flex", justifyContent: "flex-end", mr: 1 }}>
+          <Typography variant="body1" gutterBottom sx={{ flexGrow: 1 }}>
+            Administra los usuarios del sistema.
+          </Typography>
+          <Button
+            variant="contained"
+            sx={{ p: 1, transition: "all 0.5s ease", ":hover": { backgroundColor: "#2e7d32"} }}
+            onClick={handleOpenModal}
+          >
+            Crear usuario
+          </Button>
+        </Box>
         <TableComponent
           columns={columns}
           data={tableData}
@@ -106,4 +110,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Users;

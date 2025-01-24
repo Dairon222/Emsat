@@ -30,10 +30,15 @@ const cardData = [
     description: "Gestiona los elementos del inventario.",
     icon: <Inventory2Icon />,
     columns: [
-      { field: "id", headerName: "ID", align: "center" },
-      { field: "nombre", headerName: "Nombre del Producto", align: "center" },
-      { field: "cantidad", headerName: "Cantidad", align: "center" },
+      {
+        field: "nombre_herramienta",
+        headerName: "Herramienta",
+        align: "center",
+      },
+      { field: "codigo", headerName: "Código", align: "center" },
+      { field: "stock", headerName: "Total", align: "center" },
       { field: "ubicacion", headerName: "Ubicación", align: "center" },
+      { field: "estado", headerName: "Estado", align: "center" },
     ],
   },
   {
@@ -74,7 +79,7 @@ const Dashboard = () => {
   return (
     <>
       <HeaderComponent title="Inicio" />
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
+      <Container maxWidth="xl" sx={{ mt: 3 }}>
         <Typography variant="h4" gutterBottom>
           Bienvenido al sistema de gestión
         </Typography>

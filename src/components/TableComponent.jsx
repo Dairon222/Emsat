@@ -35,7 +35,7 @@ const TableComponent = ({ columns, data, title, noDataMessage }) => {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: '' });
 
   const dynamicStatusGreen = ['Activo', 'Disponible', 'Presente'];
-  const dynamicStatusRed = ['Inactivo', 'No disponible', 'No presente'];
+  const dynamicStatusRed = ['Inactivo', 'No disponible', 'En mora'];
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value.toLowerCase());
@@ -92,9 +92,9 @@ const TableComponent = ({ columns, data, title, noDataMessage }) => {
   };
 
   return (
-    <Box sx={{ mt: 4 }}>
+    <Box sx={{ mt: 1 }}>
       {title && (
-        <Typography variant="h6" sx={{ mb: 2 }}>
+        <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
           {title}
         </Typography>
       )}
