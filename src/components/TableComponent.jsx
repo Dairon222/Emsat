@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 // TableComponent.jsx
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -19,23 +19,28 @@ import {
   Button,
   Snackbar,
   Alert,
-} from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import ModalEditComponent from './ModalEditComponent';
-import ModalDeleteComponent from './ModalDeleteComponent';
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ModalEditComponent from "./ModalEditComponent";
+import ModalDeleteComponent from "./ModalDeleteComponent";
+import ButtonsExportComponent from "./ButtonsExportComponent";
 
 const TableComponent = ({ columns, data, title, noDataMessage }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: '' });
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "",
+  });
 
-  const dynamicStatusGreen = ['Activo', 'Disponible', 'Presente'];
-  const dynamicStatusRed = ['Inactivo', 'No disponible', 'En mora'];
+  const dynamicStatusGreen = ["Activo", "Disponible", "Presente"];
+  const dynamicStatusRed = ["Inactivo", "No disponible", "En mora"];
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value.toLowerCase());
@@ -78,12 +83,20 @@ const TableComponent = ({ columns, data, title, noDataMessage }) => {
   };
 
   const handleSaveEdit = (updatedData) => {
-    setSnackbar({ open: true, message: 'Datos actualizados exitosamente.', severity: 'success' });
+    setSnackbar({
+      open: true,
+      message: "Datos actualizados exitosamente.",
+      severity: "success",
+    });
     handleCloseModals();
   };
 
   const handleDelete = (row) => {
-    setSnackbar({ open: true, message: `Elemento eliminado: ${row.nombre}`, severity: 'error' });
+    setSnackbar({
+      open: true,
+      message: `Elemento eliminado: ${row.nombre}`,
+      severity: "error",
+    });
     handleCloseModals();
   };
 
@@ -94,23 +107,31 @@ const TableComponent = ({ columns, data, title, noDataMessage }) => {
   return (
     <Box sx={{ mt: 1 }}>
       {title && (
-        <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
+        <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold" }}>
           {title}
         </Typography>
       )}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+      <ButtonsExportComponent data={data} columns={columns} title={title} />
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 2,
+        }}
+      >
         <TextField
           label="Buscar"
           variant="outlined"
           size="small"
           onChange={handleSearch}
-          sx={{ width: '40%' }}
+          sx={{ width: "40%" }}
         />
         <Select
           value={rowsPerPage}
           onChange={handleChangeRowsPerPage}
           size="small"
-          sx={{ width: '15%' }}
+          sx={{ width: "15%" }}
         >
           {[5, 10, 25, 50].map((option) => (
             <MenuItem key={option} value={option}>
@@ -132,14 +153,14 @@ const TableComponent = ({ columns, data, title, noDataMessage }) => {
                   <TableCell
                     key={column.field}
                     align={column.align}
-                    sx={{ backgroundColor: '#f5f5f5', fontWeight: 'bold' }}
+                    sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
                   >
                     {column.headerName}
                   </TableCell>
                 ))}
                 <TableCell
                   align="center"
-                  sx={{ backgroundColor: '#f5f5f5', fontWeight: 'bold' }}
+                  sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
                 >
                   Funciones
                 </TableCell>
@@ -154,14 +175,15 @@ const TableComponent = ({ columns, data, title, noDataMessage }) => {
                       align={column.align}
                       sx={{
                         color:
-                          column.field === 'estado'
+                          column.field === "estado"
                             ? dynamicStatusGreen.includes(row[column.field])
-                              ? 'green'
+                              ? "green"
                               : dynamicStatusRed.includes(row[column.field])
-                              ? 'red'
-                              : 'inherit'
-                            : 'inherit',
-                        fontWeight: column.field === 'estado' ? 'bold' : 'normal',
+                              ? "red"
+                              : "inherit"
+                            : "inherit",
+                        fontWeight:
+                          column.field === "estado" ? "bold" : "normal",
                       }}
                     >
                       {row[column.field]}
@@ -218,9 +240,13 @@ const TableComponent = ({ columns, data, title, noDataMessage }) => {
         open={snackbar.open}
         autoHideDuration={4000}
         onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
           {snackbar.message}
         </Alert>
       </Snackbar>

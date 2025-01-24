@@ -56,7 +56,7 @@ const Inventory = () => {
 
   return (
     <>
-      <HeaderComponent title="Herramientas" />
+      <HeaderComponent title="Inventario" />
       <Container maxWidth="xl" sx={{ mt: 3 }}>
         <Box sx={{ display: "flex", justifyContent: "flex-end", mr: 1 }}>
           <Typography variant="body1" gutterBottom sx={{ flexGrow: 1 }}>
