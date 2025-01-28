@@ -1,7 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-// TableComponent.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -19,14 +19,25 @@ import {
   Button,
   Snackbar,
   Alert,
+  CircularProgress,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import axios from "axios";
 import ModalEditComponent from "./ModalEditComponent";
 import ModalDeleteComponent from "./ModalDeleteComponent";
 import ButtonsExportComponent from "./ButtonsExportComponent";
 
-const TableComponent = ({ columns, data, title, noDataMessage }) => {
+const TableComponent = ({
+  columns,
+  fetchData, // URL o función para obtener datos
+  title,
+  noDataMessage = "No hay datos disponibles.",
+  onReload, // Función del componente padre para forzar recarga
+}) => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
@@ -42,22 +53,32 @@ const TableComponent = ({ columns, data, title, noDataMessage }) => {
   const dynamicStatusGreen = ["Activo", "Disponible", "Presente"];
   const dynamicStatusRed = ["Inactivo", "No disponible", "En mora"];
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value.toLowerCase());
+  // Función para cargar datos desde la API
+  const loadData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response =
+        typeof fetchData === "function"
+          ? await fetchData()
+          : await axios.get(fetchData);
+      setData(response.data);
+    } catch (err) {
+      console.error("Error al cargar datos:", err);
+      setError("No se pudieron cargar los datos.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+  // Cargar datos al montar el componente y cuando `onReload` cambie
+  useEffect(() => {
+    loadData();
+  }, [fetchData, onReload]);
 
   const filteredData = data.filter((row) =>
     columns.some((column) =>
-      String(row[column.field]).toLowerCase().includes(searchTerm)
+      String(row[column.field]).toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
 
@@ -65,6 +86,13 @@ const TableComponent = ({ columns, data, title, noDataMessage }) => {
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
+
+  const handleSearch = (e) => setSearchTerm(e.target.value);
+  const handleChangePage = (event, newPage) => setPage(newPage);
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   const handleOpenEditModal = (row) => {
     setSelectedRow(row);
@@ -98,11 +126,10 @@ const TableComponent = ({ columns, data, title, noDataMessage }) => {
       severity: "error",
     });
     handleCloseModals();
+    loadData(); // Recargar datos después de eliminar
   };
 
-  const handleCloseSnackbar = () => {
-    setSnackbar({ ...snackbar, open: false });
-  };
+  const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
 
   return (
     <Box sx={{ mt: 1 }}>
@@ -111,114 +138,127 @@ const TableComponent = ({ columns, data, title, noDataMessage }) => {
           {title}
         </Typography>
       )}
-      <ButtonsExportComponent data={data} columns={columns} title={title} />
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 2,
-        }}
-      >
-        <TextField
-          label="Buscar"
-          variant="outlined"
-          size="small"
-          onChange={handleSearch}
-          sx={{ width: "40%" }}
-        />
-        <Select
-          value={rowsPerPage}
-          onChange={handleChangeRowsPerPage}
-          size="small"
-          sx={{ width: "15%" }}
-        >
-          {[5, 10, 25, 50].map((option) => (
-            <MenuItem key={option} value={option}>
-              {option} registros
-            </MenuItem>
-          ))}
-        </Select>
-      </Box>
-      <TableContainer component={Paper}>
-        {filteredData.length === 0 ? (
-          <Typography variant="body1" align="center" sx={{ p: 4 }}>
-            {noDataMessage}
-          </Typography>
-        ) : (
-          <Table>
-            <TableHead>
-              <TableRow>
-                {columns.map((column) => (
-                  <TableCell
-                    key={column.field}
-                    align={column.align}
-                    sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
-                  >
-                    {column.headerName}
-                  </TableCell>
-                ))}
-                <TableCell
-                  align="center"
-                  sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
-                >
-                  Funciones
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {paginatedData.map((row, rowIndex) => (
-                <TableRow key={rowIndex}>
-                  {columns.map((column) => (
-                    <TableCell
-                      key={column.field}
-                      align={column.align}
-                      sx={{
-                        color:
-                          column.field === "estado"
-                            ? dynamicStatusGreen.includes(row[column.field])
-                              ? "green"
-                              : dynamicStatusRed.includes(row[column.field])
-                              ? "red"
-                              : "inherit"
-                            : "inherit",
-                        fontWeight:
-                          column.field === "estado" ? "bold" : "normal",
-                      }}
-                    >
-                      {row[column.field]}
-                    </TableCell>
-                  ))}
-                  <TableCell align="center">
-                    <Button
-                      size="small"
-                      onClick={() => handleOpenEditModal(row)}
-                    >
-                      <EditIcon />
-                    </Button>
-                    <Button
-                      size="small"
-                      color="error"
-                      onClick={() => handleOpenDeleteModal(row)}
-                    >
-                      <DeleteIcon />
-                    </Button>
-                  </TableCell>
-                </TableRow>
+
+      {loading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
+          <CircularProgress />
+        </Box>
+      ) : error ? (
+        <Typography variant="body1" align="center" color="error">
+          {error}
+        </Typography>
+      ) : (
+        <>
+          <ButtonsExportComponent data={data} columns={columns} title={title} />
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 2,
+            }}
+          >
+            <TextField
+              label="Buscar"
+              variant="outlined"
+              size="small"
+              onChange={handleSearch}
+              sx={{ width: "40%" }}
+            />
+            <Select
+              value={rowsPerPage}
+              onChange={handleChangeRowsPerPage}
+              size="small"
+              sx={{ width: "15%" }}
+            >
+              {[5, 10, 25, 50].map((option) => (
+                <MenuItem key={option} value={option}>
+                  {option} registros
+                </MenuItem>
               ))}
-            </TableBody>
-          </Table>
-        )}
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25, 50]}
-        component="div"
-        count={filteredData.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+            </Select>
+          </Box>
+          <TableContainer component={Paper}>
+            {filteredData.length === 0 ? (
+              <Typography variant="body1" align="center" sx={{ p: 4 }}>
+                {noDataMessage}
+              </Typography>
+            ) : (
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    {columns.map((column) => (
+                      <TableCell
+                        key={column.field}
+                        align={column.align}
+                        sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
+                      >
+                        {column.headerName}
+                      </TableCell>
+                    ))}
+                    <TableCell
+                      align="center"
+                      sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
+                    >
+                      Funciones
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {paginatedData.map((row, rowIndex) => (
+                    <TableRow key={rowIndex}>
+                      {columns.map((column) => (
+                        <TableCell
+                          key={column.field}
+                          align={column.align}
+                          sx={{
+                            color:
+                              column.field === "estado"
+                                ? dynamicStatusGreen.includes(row[column.field])
+                                  ? "green"
+                                  : dynamicStatusRed.includes(row[column.field])
+                                  ? "red"
+                                  : "inherit"
+                                : "inherit",
+                            fontWeight:
+                              column.field === "estado" ? "bold" : "normal",
+                          }}
+                        >
+                          {row[column.field]}
+                        </TableCell>
+                      ))}
+                      <TableCell align="center">
+                        <Button
+                          size="small"
+                          onClick={() => handleOpenEditModal(row)}
+                        >
+                          <EditIcon />
+                        </Button>
+                        <Button
+                          size="small"
+                          color="error"
+                          onClick={() => handleOpenDeleteModal(row)}
+                        >
+                          <DeleteIcon />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25, 50]}
+            component="div"
+            count={filteredData.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </>
+      )}
 
       {/* Modals */}
       <ModalEditComponent

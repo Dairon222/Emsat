@@ -1,5 +1,5 @@
-/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import React, { useState } from "react";
 import {
   Modal,
@@ -10,15 +10,20 @@ import {
   IconButton,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import axios from "axios";
 
 const CreateElementsComponent = ({
   open,
   onClose,
   title,
   columns,
-  onSubmit,
+  endpoint, // Nueva prop para la URL dinámica
+  onSuccess, // Callback para manejar éxito
+  onError, // Callback para manejar errores
 }) => {
   const [formData, setFormData] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   // Maneja los cambios en los campos del formulario
   const handleInputChange = (e) => {
@@ -26,10 +31,25 @@ const CreateElementsComponent = ({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = () => {
-    onSubmit(formData);
-    setFormData({});
-    onClose();
+  // Maneja el envío del formulario
+  const handleSubmit = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await axios.post(endpoint, formData, {
+        headers: { "Content-Type": "application/json" },
+      });
+      if (onSuccess) onSuccess(response.data); // Llama al callback en caso de éxito
+      setFormData({});
+      onClose();
+    } catch (err) {
+      console.error("Error al enviar los datos:", err);
+      setError("Hubo un problema al crear el elemento.");
+      if (onError) onError(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -70,13 +90,19 @@ const CreateElementsComponent = ({
               onChange={handleInputChange}
             />
           ))}
+          {error && (
+            <Typography color="error" variant="body2">
+              {error}
+            </Typography>
+          )}
           <Button
             variant="contained"
             color="primary"
             onClick={handleSubmit}
+            disabled={loading}
             sx={{ mt: 2 }}
           >
-            Crear
+            {loading ? "Creando..." : "Crear"}
           </Button>
         </Box>
       </Box>
