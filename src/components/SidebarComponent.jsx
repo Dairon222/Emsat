@@ -15,6 +15,9 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import PeopleIcon from "@mui/icons-material/People";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import HistoryIcon from '@mui/icons-material/History';
+import ArticleIcon from '@mui/icons-material/Article';
+import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
+import ManIcon from '@mui/icons-material/Man';
 
 import senaLogo from "../assets/logo_sena.png";
 
@@ -24,6 +27,9 @@ const SidebarComponent = ({ drawerWidth, title }) => {
     { text: "Inventario", path: "/inventory", icon: <InventoryIcon /> },
     { text: "Usuarios", path: "/users", icon: <PeopleIcon /> },
     { text: "Préstamos", path: "/loans", icon: <AssignmentIcon /> },
+    { text: "Fichas", path: "/fichas", icon: <ArticleIcon /> },
+    { text: "Ambientes", path: "/enviroments", icon: <MeetingRoomIcon /> },
+    { text: "Roles", path: "/roles", icon: <ManIcon /> },
     { text: "Morosos", path: "/morosos", icon: <HistoryIcon /> },
   ];
 

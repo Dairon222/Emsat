@@ -9,6 +9,9 @@ import Login from "./pages/Login";
 import NotFound from "./pages/Notfound";
 import SedeProvider from "./context/SedeContext";
 import Morosos from "./pages/Morosos";
+import Enviroments from "./pages/Enviroments";
+import Roles from "./pages/Roles";
+import Fichas from "./pages/Fichas";
 
 const theme = createTheme({
   palette: {
@@ -35,6 +38,9 @@ const App = () => {
                     <Route path="/users" element={<Users />} />
                     <Route path="/loans" element={<Loans />} />
                     <Route path="/morosos" element={<Morosos />} />
+                    <Route path="/fichas" element={<Fichas />} />
+                    <Route path="/enviroments" element={<Enviroments />} />
+                    <Route path="/roles" element={<Roles />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Layout>

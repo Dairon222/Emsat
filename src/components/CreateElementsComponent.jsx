@@ -8,22 +8,24 @@ import {
   TextField,
   Button,
   IconButton,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import axios from "axios";
+import api from "../api/axios";
 
 const CreateElementsComponent = ({
   open,
   onClose,
   title,
   columns,
-  endpoint, // Nueva prop para la URL dinámica
-  onSuccess, // Callback para manejar éxito
+  endpoint, // Recibe el endpoint dinámico como prop
+  onSuccess, // Callback para manejar el éxito
   onError, // Callback para manejar errores
 }) => {
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "" });
 
   // Maneja los cambios en los campos del formulario
   const handleInputChange = (e) => {
@@ -31,22 +33,36 @@ const CreateElementsComponent = ({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Maneja el cierre del Snackbar
+  const handleCloseSnackbar = () => {
+    setSnackbar({ open: false, message: "", severity: "" });
+  };
+
   // Maneja el envío del formulario
   const handleSubmit = async () => {
     setLoading(true);
-    setError(null);
+    setSnackbar({ open: false, message: "", severity: "" }); // Resetear el estado del Snackbar
 
     try {
-      const response = await axios.post(endpoint, formData, {
-        headers: { "Content-Type": "application/json" },
+      const response = await api.post(endpoint, formData); // Utiliza el endpoint dinámico
+      setSnackbar({
+        open: true,
+        message: "Elemento creado exitosamente.",
+        severity: "success",
       });
-      if (onSuccess) onSuccess(response.data); // Llama al callback en caso de éxito
-      setFormData({});
-      onClose();
-    } catch (err) {
-      console.error("Error al enviar los datos:", err);
-      setError("Hubo un problema al crear el elemento.");
-      if (onError) onError(err);
+
+      if (onSuccess) onSuccess(response.data); // Llama al callback onSuccess
+      setFormData({}); // Limpia el formulario
+      onClose(); // Cierra el modal
+    } catch (error) {
+      console.error("Error al crear el elemento:", error);
+      setSnackbar({
+        open: true,
+        message: "Hubo un problema al crear el elemento. Inténtalo de nuevo.",
+        severity: "error",
+      });
+
+      if (onError) onError(error); // Llama al callback onError
     } finally {
       setLoading(false);
     }
@@ -90,11 +106,6 @@ const CreateElementsComponent = ({
               onChange={handleInputChange}
             />
           ))}
-          {error && (
-            <Typography color="error" variant="body2">
-              {error}
-            </Typography>
-          )}
           <Button
             variant="contained"
             color="primary"
@@ -105,6 +116,22 @@ const CreateElementsComponent = ({
             {loading ? "Creando..." : "Crear"}
           </Button>
         </Box>
+
+        {/* Snackbar para retroalimentación */}
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={4000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity={snackbar.severity}
+            sx={{ width: "100%" }}
+          >
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
       </Box>
     </Modal>
   );

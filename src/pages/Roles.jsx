@@ -7,15 +7,11 @@ import CreateElementsComponent from "../components/CreateElementsComponent";
 import api from "../api/axios"
 
 const columns = [
-  { field: "nombre", headerName: "Nombre", align: "center" },
-  { field: "apellido", headerName: "Apellido", align: "center" },
-  { field: "identificacion", headerName: "Identificación", align: "center" },
-  { field: "celular", headerName: "Celular", align: "center" },
-  { field: "rol_id", headerName: "Rol ID", align: "center" },
-  { field: "ficha_id", headerName: "Ficha ID", align: "center" },
+  { field: "id", headerName: "Id rol", align: "center" },
+  { field: "tipo", headerName: "Tipo", align: "center" },
 ];
 
-const Users = () => {
+const Roles = () => {
   const [openModal, setOpenModal] = useState(false); // Controla la apertura del modal
   const [reloadTable, setReloadTable] = useState(false); // Controla la recarga de la tabla
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "" }); // Estado para Snackbar
@@ -34,29 +30,29 @@ const Users = () => {
     setSnackbar({ open: false, message: "", severity: "" });
   };
 
-  // Crear un nuevo usuario
+  // Crear un nuevo rol
   const handleCreate = async (newData) => {
     try {
-      const response = await api.post("usuario", newData); // Endpoint dinámico para usuarios
-      showSnackbar("Usuario creado exitosamente.", "success");
+      const response = await api.post("rol", newData); // Endpoint dinámico para roles
+      showSnackbar("Rol creado exitosamente.", "success");
 
-      // Forzar recarga de la tabla tras crear el usuario
+      // Forzar recarga de la tabla tras crear el rol
       setReloadTable((prev) => !prev);
       handleCloseModal(); // Cierra el modal
     } catch (error) {
-      console.error("Error al crear el usuario:", error);
-      showSnackbar("Hubo un problema al crear el usuario.", "error");
+      console.error("Error al crear el rol:", error);
+      showSnackbar("Hubo un problema al crear el rol.", "error");
     }
   };
 
   return (
     <>
-      <HeaderComponent title="Usuarios" />
+      <HeaderComponent title="Roles" />
       <Container maxWidth="xl" sx={{ mt: 3 }}>
         {/* Botón para abrir el modal */}
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
           <Typography variant="body1" gutterBottom>
-            Administra los usuarios del sistema.
+            Roles del sistema.
           </Typography>
           <Button
             variant="contained"
@@ -67,33 +63,33 @@ const Users = () => {
             }}
             onClick={handleOpenModal}
           >
-            Crear usuario
+            Crear rol
           </Button>
         </Box>
 
-        {/* Tabla con datos de usuarios */}
+        {/* Tabla con datos de los roles */}
         <TableComponent
           columns={columns}
-          fetchData="usuario" // Endpoint relativo para obtener usuarios
-          title="Lista de Usuarios"
-          noDataMessage="No se encontraron usuarios."
+          fetchData="rol" // Endpoint relativo para obtener roles
+          title="Lista de roles"
+          noDataMessage="No se encontraron roles."
           onReload={reloadTable} // Recarga los datos cuando cambia el estado
         />
       </Container>
 
-      {/* Modal para crear nuevos usuarios */}
+      {/* Modal para crear nuevos roles */}
       <CreateElementsComponent
         open={openModal}
         onClose={handleCloseModal}
-        title="Crear Usuario"
+        title="Crear rol"
         columns={columns}
-        endpoint="usuario" // Endpoint dinámico para la creación
+        endpoint="rol" // Endpoint dinámico para la creación
         onSuccess={() => {
-          showSnackbar("Usuario creado exitosamente.", "success");
+          showSnackbar("Rol creado exitosamente.", "success");
           setReloadTable((prev) => !prev); // Recargar la tabla
         }}
         onError={() => {
-          showSnackbar("Hubo un problema al crear el usuario.", "error");
+          showSnackbar("Hubo un problema al crear el rol.", "error");
         }}
       />
 
@@ -116,4 +112,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default Roles;

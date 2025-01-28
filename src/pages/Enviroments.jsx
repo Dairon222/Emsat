@@ -7,15 +7,12 @@ import CreateElementsComponent from "../components/CreateElementsComponent";
 import api from "../api/axios"
 
 const columns = [
-  { field: "nombre", headerName: "Nombre", align: "center" },
-  { field: "apellido", headerName: "Apellido", align: "center" },
-  { field: "identificacion", headerName: "Identificación", align: "center" },
-  { field: "celular", headerName: "Celular", align: "center" },
-  { field: "rol_id", headerName: "Rol ID", align: "center" },
-  { field: "ficha_id", headerName: "Ficha ID", align: "center" },
+  { field: "nombre_ambiente", headerName: "Nombre", align: "center" },
+  { field: "codigo", headerName: "Codigo", align: "center" },
+  { field: "disponible", headerName: "Disponibilidad", align: "center" },
 ];
 
-const Users = () => {
+const Enviroments = () => {
   const [openModal, setOpenModal] = useState(false); // Controla la apertura del modal
   const [reloadTable, setReloadTable] = useState(false); // Controla la recarga de la tabla
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "" }); // Estado para Snackbar
@@ -34,29 +31,29 @@ const Users = () => {
     setSnackbar({ open: false, message: "", severity: "" });
   };
 
-  // Crear un nuevo usuario
+  // Crear un nuevo ambiente
   const handleCreate = async (newData) => {
     try {
-      const response = await api.post("usuario", newData); // Endpoint dinámico para usuarios
-      showSnackbar("Usuario creado exitosamente.", "success");
+      const response = await api.post("ambiente", newData); // Endpoint dinámico para ambientes
+      showSnackbar("Ambiente creado exitosamente.", "success");
 
-      // Forzar recarga de la tabla tras crear el usuario
+      // Forzar recarga de la tabla tras crear el ambiente
       setReloadTable((prev) => !prev);
       handleCloseModal(); // Cierra el modal
     } catch (error) {
-      console.error("Error al crear el usuario:", error);
-      showSnackbar("Hubo un problema al crear el usuario.", "error");
+      console.error("Error al crear el ambiente:", error);
+      showSnackbar("Hubo un problema al crear el ambiente.", "error");
     }
   };
 
   return (
     <>
-      <HeaderComponent title="Usuarios" />
+      <HeaderComponent title="Ambientes" />
       <Container maxWidth="xl" sx={{ mt: 3 }}>
         {/* Botón para abrir el modal */}
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
           <Typography variant="body1" gutterBottom>
-            Administra los usuarios del sistema.
+            Ambientes de la sede.
           </Typography>
           <Button
             variant="contained"
@@ -67,33 +64,33 @@ const Users = () => {
             }}
             onClick={handleOpenModal}
           >
-            Crear usuario
+            Crear ambiente
           </Button>
         </Box>
 
-        {/* Tabla con datos de usuarios */}
+        {/* Tabla con datos de los ammbientes */}
         <TableComponent
           columns={columns}
-          fetchData="usuario" // Endpoint relativo para obtener usuarios
-          title="Lista de Usuarios"
-          noDataMessage="No se encontraron usuarios."
+          fetchData="ambiente" // Endpoint relativo para obtener ambientes
+          title="Lista de ambientes"
+          noDataMessage="No se encontraron ambientes."
           onReload={reloadTable} // Recarga los datos cuando cambia el estado
         />
       </Container>
 
-      {/* Modal para crear nuevos usuarios */}
+      {/* Modal para crear nuevos ambientes */}
       <CreateElementsComponent
         open={openModal}
         onClose={handleCloseModal}
-        title="Crear Usuario"
+        title="Crear ambiente"
         columns={columns}
-        endpoint="usuario" // Endpoint dinámico para la creación
+        endpoint="ambiente" // Endpoint dinámico para la creación
         onSuccess={() => {
-          showSnackbar("Usuario creado exitosamente.", "success");
+          showSnackbar("Ambiente creado exitosamente.", "success");
           setReloadTable((prev) => !prev); // Recargar la tabla
         }}
         onError={() => {
-          showSnackbar("Hubo un problema al crear el usuario.", "error");
+          showSnackbar("Hubo un problema el ambiente.", "error");
         }}
       />
 
@@ -116,4 +113,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default Enviroments;

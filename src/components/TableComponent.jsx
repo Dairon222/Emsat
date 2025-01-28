@@ -1,6 +1,6 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import {
   Table,
@@ -23,7 +23,7 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import axios from "axios";
+import api from "../api/axios"
 import ModalEditComponent from "./ModalEditComponent";
 import ModalDeleteComponent from "./ModalDeleteComponent";
 import ButtonsExportComponent from "./ButtonsExportComponent";
@@ -33,7 +33,7 @@ const TableComponent = ({
   fetchData, // URL o función para obtener datos
   title,
   noDataMessage = "No hay datos disponibles.",
-  onReload, // Función del componente padre para forzar recarga
+  onReload, // Escucha cambios desde el componente padre para recargar datos
 }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -61,7 +61,7 @@ const TableComponent = ({
       const response =
         typeof fetchData === "function"
           ? await fetchData()
-          : await axios.get(fetchData);
+          : await api.get(fetchData); // Usa la instancia `api` configurada
       setData(response.data);
     } catch (err) {
       console.error("Error al cargar datos:", err);
@@ -215,11 +215,11 @@ const TableComponent = ({
                             color:
                               column.field === "estado"
                                 ? dynamicStatusGreen.includes(row[column.field])
-                                  ? "green"
-                                  : dynamicStatusRed.includes(row[column.field])
-                                  ? "red"
-                                  : "inherit"
-                                : "inherit",
+                                ? "green"
+                                : dynamicStatusRed.includes(row[column.field])
+                                ? "red"
+                                : "inherit"
+                              : "inherit",
                             fontWeight:
                               column.field === "estado" ? "bold" : "normal",
                           }}

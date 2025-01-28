@@ -7,15 +7,11 @@ import CreateElementsComponent from "../components/CreateElementsComponent";
 import api from "../api/axios"
 
 const columns = [
-  { field: "nombre", headerName: "Nombre", align: "center" },
-  { field: "apellido", headerName: "Apellido", align: "center" },
-  { field: "identificacion", headerName: "Identificación", align: "center" },
-  { field: "celular", headerName: "Celular", align: "center" },
-  { field: "rol_id", headerName: "Rol ID", align: "center" },
-  { field: "ficha_id", headerName: "Ficha ID", align: "center" },
+  { field: "nombre_ficha", headerName: "Ficha", align: "center" },
+  { field: "numero_ficha", headerName: "Número", align: "center" },
 ];
 
-const Users = () => {
+const Fichas = () => {
   const [openModal, setOpenModal] = useState(false); // Controla la apertura del modal
   const [reloadTable, setReloadTable] = useState(false); // Controla la recarga de la tabla
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "" }); // Estado para Snackbar
@@ -34,29 +30,29 @@ const Users = () => {
     setSnackbar({ open: false, message: "", severity: "" });
   };
 
-  // Crear un nuevo usuario
+  // Crear una nueva ficha
   const handleCreate = async (newData) => {
     try {
-      const response = await api.post("usuario", newData); // Endpoint dinámico para usuarios
-      showSnackbar("Usuario creado exitosamente.", "success");
+      const response = await api.post("ficha", newData); // Endpoint dinámico para fichas
+      showSnackbar("Ficha creada exitosamente.", "success");
 
-      // Forzar recarga de la tabla tras crear el usuario
+      // Forzar recarga de la tabla tras crear la ficha
       setReloadTable((prev) => !prev);
       handleCloseModal(); // Cierra el modal
     } catch (error) {
-      console.error("Error al crear el usuario:", error);
-      showSnackbar("Hubo un problema al crear el usuario.", "error");
+      console.error("Error al crear la ficha:", error);
+      showSnackbar("Hubo un problema al crear la ficha.", "error");
     }
   };
 
   return (
     <>
-      <HeaderComponent title="Usuarios" />
+      <HeaderComponent title="Fichas" />
       <Container maxWidth="xl" sx={{ mt: 3 }}>
         {/* Botón para abrir el modal */}
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
           <Typography variant="body1" gutterBottom>
-            Administra los usuarios del sistema.
+            Fichas de la sede.
           </Typography>
           <Button
             variant="contained"
@@ -67,33 +63,33 @@ const Users = () => {
             }}
             onClick={handleOpenModal}
           >
-            Crear usuario
+            Crear ficha
           </Button>
         </Box>
 
-        {/* Tabla con datos de usuarios */}
+        {/* Tabla con datos de las fichas */}
         <TableComponent
           columns={columns}
-          fetchData="usuario" // Endpoint relativo para obtener usuarios
-          title="Lista de Usuarios"
-          noDataMessage="No se encontraron usuarios."
+          fetchData="ficha" // Endpoint relativo para obtener fichas
+          title="Lista de fichas"
+          noDataMessage="No se encontraron fichas."
           onReload={reloadTable} // Recarga los datos cuando cambia el estado
         />
       </Container>
 
-      {/* Modal para crear nuevos usuarios */}
+      {/* Modal para crear nuevas fichas */}
       <CreateElementsComponent
         open={openModal}
         onClose={handleCloseModal}
-        title="Crear Usuario"
+        title="Crear ficha"
         columns={columns}
-        endpoint="usuario" // Endpoint dinámico para la creación
+        endpoint="ficha" // Endpoint dinámico para la creación
         onSuccess={() => {
-          showSnackbar("Usuario creado exitosamente.", "success");
+          showSnackbar("Ficha creada exitosamente.", "success");
           setReloadTable((prev) => !prev); // Recargar la tabla
         }}
         onError={() => {
-          showSnackbar("Hubo un problema al crear el usuario.", "error");
+          showSnackbar("Hubo un problema al crear la ficha.", "error");
         }}
       />
 
@@ -116,4 +112,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default Fichas;
