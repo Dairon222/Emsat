@@ -23,7 +23,7 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import api from "../api/axios"
+import api from "../api/axios";
 import ModalEditComponent from "./ModalEditComponent";
 import ModalDeleteComponent from "./ModalDeleteComponent";
 import ButtonsExportComponent from "./ButtonsExportComponent";
@@ -34,6 +34,7 @@ const TableComponent = ({
   title,
   noDataMessage = "No hay datos disponibles.",
   onReload, // Escucha cambios desde el componente padre para recargar datos
+  endpoint, // Endpoint dinámico para eliminar elementos
 }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -50,7 +51,13 @@ const TableComponent = ({
     severity: "",
   });
 
-  const dynamicStatusGreen = ["Activo", "Disponible", "Presente"];
+  const dynamicStatusGreen = [
+    "Activo",
+    "Disponible",
+    "Presente",
+    "activo",
+    "devuelto",
+  ];
   const dynamicStatusRed = ["Inactivo", "No disponible", "En mora"];
 
   // Función para cargar datos desde la API
@@ -75,17 +82,6 @@ const TableComponent = ({
   useEffect(() => {
     loadData();
   }, [fetchData, onReload]);
-
-  const filteredData = data.filter((row) =>
-    columns.some((column) =>
-      String(row[column.field]).toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  );
-
-  const paginatedData = filteredData.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
 
   const handleSearch = (e) => setSearchTerm(e.target.value);
   const handleChangePage = (event, newPage) => setPage(newPage);
@@ -119,17 +115,29 @@ const TableComponent = ({
     handleCloseModals();
   };
 
-  const handleDelete = (row) => {
-    setSnackbar({
-      open: true,
-      message: `Elemento eliminado: ${row.nombre}`,
-      severity: "error",
-    });
+  // ✅ Función para eliminar elementos desde la API
+  const handleDelete = async (row) => {
+    try {
+      await api.delete(`${endpoint}/${row.id}`);
+      setSnackbar({
+        open: true,
+        message: "Elemento eliminado correctamente.",
+        severity: "success",
+      });
+      loadData(); // Recargar la tabla después de eliminar
+    } catch (error) {
+      console.error("Error al eliminar el elemento:", error);
+      setSnackbar({
+        open: true,
+        message: "Error al eliminar el elemento.",
+        severity: "error",
+      });
+    }
     handleCloseModals();
-    loadData(); // Recargar datos después de eliminar
   };
 
-  const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
+  const handleCloseSnackbar = () =>
+    setSnackbar({ open: false, message: "", severity: "" });
 
   return (
     <Box sx={{ mt: 1 }}>
@@ -179,7 +187,7 @@ const TableComponent = ({
             </Select>
           </Box>
           <TableContainer component={Paper}>
-            {filteredData.length === 0 ? (
+            {data.length === 0 ? (
               <Typography variant="body1" align="center" sx={{ p: 4 }}>
                 {noDataMessage}
               </Typography>
@@ -205,45 +213,39 @@ const TableComponent = ({
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {paginatedData.map((row, rowIndex) => (
-                    <TableRow key={rowIndex}>
-                      {columns.map((column) => (
-                        <TableCell
-                          key={column.field}
-                          align={column.align}
-                          sx={{
-                            color:
-                              column.field === "estado"
-                                ? dynamicStatusGreen.includes(row[column.field])
-                                ? "green"
-                                : dynamicStatusRed.includes(row[column.field])
-                                ? "red"
-                                : "inherit"
-                              : "inherit",
-                            fontWeight:
-                              column.field === "estado" ? "bold" : "normal",
-                          }}
-                        >
-                          {row[column.field]}
+                  {data
+                    .filter((row) =>
+                      columns.some((column) =>
+                        String(row[column.field])
+                          .toLowerCase()
+                          .includes(searchTerm.toLowerCase())
+                      )
+                    )
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row, rowIndex) => (
+                      <TableRow key={rowIndex}>
+                        {columns.map((column) => (
+                          <TableCell key={column.field} align={column.align}>
+                            {row[column.field]}
+                          </TableCell>
+                        ))}
+                        <TableCell align="center">
+                          <Button
+                            size="small"
+                            onClick={() => handleOpenEditModal(row)}
+                          >
+                            <EditIcon />
+                          </Button>
+                          <Button
+                            size="small"
+                            color="error"
+                            onClick={() => handleOpenDeleteModal(row)}
+                          >
+                            <DeleteIcon />
+                          </Button>
                         </TableCell>
-                      ))}
-                      <TableCell align="center">
-                        <Button
-                          size="small"
-                          onClick={() => handleOpenEditModal(row)}
-                        >
-                          <EditIcon />
-                        </Button>
-                        <Button
-                          size="small"
-                          color="error"
-                          onClick={() => handleOpenDeleteModal(row)}
-                        >
-                          <DeleteIcon />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
             )}
@@ -251,7 +253,7 @@ const TableComponent = ({
           <TablePagination
             rowsPerPageOptions={[5, 10, 25, 50]}
             component="div"
-            count={filteredData.length}
+            count={data.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -272,6 +274,7 @@ const TableComponent = ({
         open={openDeleteModal}
         onClose={handleCloseModals}
         item={selectedRow}
+        endpoint={endpoint}
         onDelete={handleDelete}
       />
 

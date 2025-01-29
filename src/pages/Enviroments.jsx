@@ -9,7 +9,6 @@ import api from "../api/axios"
 const columns = [
   { field: "nombre_ambiente", headerName: "Nombre", align: "center" },
   { field: "codigo", headerName: "Codigo", align: "center" },
-  { field: "disponible", headerName: "Disponibilidad", align: "center" },
 ];
 
 const Enviroments = () => {

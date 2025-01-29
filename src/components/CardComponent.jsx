@@ -1,23 +1,14 @@
 /* eslint-disable react/prop-types */
-import {
-  Card,
-  CardContent,
-  Typography,
-  Box,
-  Button,
-  // eslint-disable-next-line no-unused-vars
-  Icon,
-} from "@mui/material";
+import { Card, CardContent, Typography, Box, Button } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
-const CardComponent = ({ title, description, icon, onClick }) => {
+const CardComponent = ({ title, onCreate, icon, description }) => {
   return (
     <Card
       sx={{
         display: "flex",
         alignItems: "center",
-        paddingLeft: 1,
-        paddingRight: 2,
+        padding: 2,
         boxShadow: 2,
         borderRadius: 2,
         transition: "transform 0.2s, box-shadow 0.2s",
@@ -31,8 +22,8 @@ const CardComponent = ({ title, description, icon, onClick }) => {
         sx={{
           backgroundColor: "#4caf50",
           color: "#fff",
-          width: 60,
-          height: 60,
+          width: 75,
+          height: 75,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -43,21 +34,23 @@ const CardComponent = ({ title, description, icon, onClick }) => {
         {icon || <AddCircleOutlineIcon />}
       </Box>
       <CardContent sx={{ flexGrow: 1 }}>
-        <Typography variant="subtitle1" gutterBottom>
-          {title}
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          {description}
-        </Typography>
+        <Box sx={{ display: "flex", flexDirection: "column", }}>
+          <Typography variant="subtitle" gutterBottom>
+            {title}
+          </Typography>
+          <Typography variant="body2" color="textSecondary">
+            {description}
+          </Typography>
+        </Box>
       </CardContent>
       <Button
         variant="contained"
         color="primary"
-        onClick={onClick}
+        onClick={onCreate}
         sx={{
           textTransform: "none",
           fontWeight: "bold",
-          padding: "8px 18px",
+          padding: "10px 20px",
         }}
       >
         Crear

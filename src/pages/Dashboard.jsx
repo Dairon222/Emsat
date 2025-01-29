@@ -1,34 +1,62 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
-import { Container, Typography, Grid } from "@mui/material";
+import {
+  Container,
+  Typography,
+  Grid,
+  Button,
+  Box,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import HeaderComponent from "../components/HeaderComponent";
 import CardComponent from "../components/CardComponent";
 import CreateElementsComponent from "../components/CreateElementsComponent";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import Inventory2Icon from "@mui/icons-material/Inventory2";
-import AssignmentIcon from "@mui/icons-material/Assignment";
-import ReportIcon from "@mui/icons-material/Report";
+import api from "../api/axios"; // Importamos la instancia de Axios
 
-// Datos dinámicos para las cards y modals
-const cardData = [
-  {
-    title: "Usuarios",
-    description: "Gestiona los usuarios del sistema.",
-    icon: <PersonAddIcon />,
+import PeopleIcon from "@mui/icons-material/People";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import BuildIcon from "@mui/icons-material/Build";
+import SchoolIcon from "@mui/icons-material/School";
+import WorkspacesIcon from "@mui/icons-material/Workspaces";
+import HandshakeIcon from "@mui/icons-material/Handshake";
+import { Description } from "@mui/icons-material";
+
+// Definimos los tipos de entidades con sus respectivas columnas y endpoints
+const entityConfig = {
+  usuario: {
+    title: "Usuario",
+    endpoint: "usuario",
+    description: "Gestiona los usuarios del sistema",
+    icon: <PeopleIcon />,
     columns: [
       { field: "nombre", headerName: "Nombre", align: "center" },
       { field: "apellido", headerName: "Apellido", align: "center" },
-      { field: "identificacion", headerName: "ID", align: "center" },
+      {
+        field: "identificacion",
+        headerName: "Identificación",
+        align: "center",
+      },
       { field: "celular", headerName: "Celular", align: "center" },
-      { field: "rol", headerName: "Rol", align: "center" },
-      { field: "ficha", headerName: "Ficha", align: "center" },
-      { field: "estado", headerName: "Estado", align: "center" },
+      { field: "rol_id", headerName: "Rol ID", align: "center" },
+      { field: "ficha_id", headerName: "Ficha ID", align: "center" },
     ],
   },
-  {
-    title: "Herramientas",
-    description: "Gestiona los elementos del inventario.",
-    icon: <Inventory2Icon />,
+  ficha: {
+    title: "Ficha",
+    endpoint: "ficha",
+    description: "Gestiona las fichas de formación",
+    icon: <SchoolIcon />,
+    columns: [
+      { field: "nombre_ficha", headerName: "Nombre ficha", align: "center" },
+      { field: "numero_ficha", headerName: "Numero de ficha", align: "center" },
+    ],
+  },
+  herramienta: {
+    title: "Herramienta",
+    endpoint: "herramienta",
+    description: "Gestiona las herramientas disponibles",
+    icon: <BuildIcon />,
     columns: [
       {
         field: "nombre_herramienta",
@@ -38,76 +66,167 @@ const cardData = [
       { field: "codigo", headerName: "Código", align: "center" },
       { field: "stock", headerName: "Total", align: "center" },
       { field: "ubicacion", headerName: "Ubicación", align: "center" },
-      { field: "estado", headerName: "Estado", align: "center" },
     ],
   },
-  {
-    title: "Préstamos",
-    description: "Gestiona los préstamos del sistema.",
+  rol: {
+    title: "Rol",
+    endpoint: "rol",
+    description: "Gestiona los roles de usuario",
     icon: <AssignmentIcon />,
+    columns: [{ field: "tipo", headerName: "Tipo de rol", align: "center" }],
+  },
+  ambiente: {
+    title: "Ambiente",
+    endpoint: "ambiente",
+    description: "Gestiona los ambientes de la sede",
+    icon: <WorkspacesIcon />,
     columns: [
-      { field: "id", headerName: "ID", align: "center" },
-      { field: "usuario", headerName: "Usuario", align: "center" },
-      { field: "elemento", headerName: "Elemento", align: "center" },
-      { field: "fecha", headerName: "Fecha de Préstamo", align: "center" },
-      { field: "estado", headerName: "Estado", align: "center" },
+      { field: "nombre_ambiente", headerName: "Nombre", align: "center" },
+      { field: "codigo", headerName: "Codigo ambiente", align: "center" },
     ],
   },
-];
+  prestamo: {
+    title: "Préstamo",
+    endpoint: "prestamo",
+    description: "Gestiona los préstamos de herramientas",
+    icon: <HandshakeIcon />,
+    columns: [
+      { field: "usuario_id", headerName: "Usuario ID", align: "center" },
+      {
+        field: "herramienta_id",
+        headerName: "Herramienta ID",
+        align: "center",
+      },
+      { field: "cantidad", headerName: "Cantidad", align: "center" },
+      {
+        field: "fecha_prestamo",
+        headerName: "Fecha Préstamo",
+        align: "center",
+      },
+      {
+        field: "fecha_devolucion",
+        headerName: "Fecha Devolución",
+        align: "center",
+      },
+    ],
+  },
+};
 
 const Dashboard = () => {
   const [openModal, setOpenModal] = useState(false);
-  const [selectedCard, setSelectedCard] = useState(null); // Card seleccionada para el modal
+  const [selectedEntity, setSelectedEntity] = useState(null);
+  const [reloadTable, setReloadTable] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "",
+  });
 
-  // Maneja la apertura del modal
-  const handleOpenModal = (cardIndex) => {
-    setSelectedCard(cardIndex);
+  // Abrir modal y definir entidad a crear
+  const handleOpenModal = (entity) => {
+    setSelectedEntity(entityConfig[entity]);
     setOpenModal(true);
   };
 
-  // Maneja el cierre del modal
   const handleCloseModal = () => {
-    setSelectedCard(null);
     setOpenModal(false);
+    setSelectedEntity(null);
   };
 
-  const handleCreateElement = (newData) => {
-    console.log("Elemento creado:", newData);
-    handleCloseModal();
+  // Mostrar mensajes en Snackbar
+  const showSnackbar = (message, severity) => {
+    setSnackbar({ open: true, message, severity });
+  };
+
+  // Cerrar el Snackbar
+  const handleCloseSnackbar = () => {
+    setSnackbar({ open: false, message: "", severity: "" });
+  };
+
+  // Crear nuevo elemento en la API
+  const handleCreate = async (newData) => {
+    if (!selectedEntity) return;
+
+    try {
+      const response = await api.post(selectedEntity.endpoint, newData);
+      showSnackbar(`${selectedEntity.title} creado exitosamente.`, "success");
+
+      // Forzar recarga de la tabla tras crear un nuevo elemento
+      setReloadTable((prev) => !prev);
+      handleCloseModal();
+    } catch (error) {
+      console.error(`Error al crear ${selectedEntity.title}:`, error);
+      showSnackbar(
+        `Hubo un problema al crear ${selectedEntity.title}.`,
+        "error"
+      );
+    }
   };
 
   return (
     <>
       <HeaderComponent title="Inicio" />
       <Container maxWidth="xl" sx={{ mt: 3 }}>
-        <Typography variant="h4" gutterBottom>
-          Bienvenido al sistema de gestión
+        <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold" }}>
+          Panel de Control
         </Typography>
-        <Typography variant="body1" gutterBottom>
-          Selecciona una opción para comenzar:
-        </Typography>
-        <Grid container spacing={4} sx={{ mt: 2 }}>
-          {cardData.map((card, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
-              <CardComponent
-                title={card.title}
-                description={card.description}
-                icon={card.icon}
-                onClick={() => handleOpenModal(index)}
-              />
-            </Grid>
-          ))}
+
+        <Grid container spacing={3}>
+          {Object.keys(entityConfig).map((key) => {
+            const entity = entityConfig[key];
+            return (
+              <Grid item xs={12} sm={6} md={4} key={key}>
+                <CardComponent
+                  title={entity.title}
+                  description={entity.description}
+                  icon={entity.icon}
+                  onCreate={() => handleOpenModal(key)}
+                />
+              </Grid>
+            );
+          })}
         </Grid>
       </Container>
-      {selectedCard !== null && (
+
+      {/* Modal reutilizable para crear elementos */}
+      {selectedEntity && (
         <CreateElementsComponent
           open={openModal}
           onClose={handleCloseModal}
-          title={`Crear ${cardData[selectedCard].title}`}
-          columns={cardData[selectedCard].columns}
-          onSubmit={handleCreateElement}
+          title={`Crear ${selectedEntity.title}`}
+          columns={selectedEntity.columns}
+          endpoint={selectedEntity.endpoint}
+          onSuccess={() => {
+            showSnackbar(
+              `${selectedEntity.title} creado exitosamente.`,
+              "success"
+            );
+            setReloadTable((prev) => !prev);
+          }}
+          onError={() => {
+            showSnackbar(
+              `Hubo un problema al crear ${selectedEntity.title}.`,
+              "error"
+            );
+          }}
         />
       )}
+
+      {/* Snackbar para retroalimentación */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </>
   );
 };

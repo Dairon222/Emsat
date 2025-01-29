@@ -1,10 +1,18 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
-import { Container, Typography, Button, Box, Snackbar, Alert } from "@mui/material";
+import {
+  Container,
+  Typography,
+  Button,
+  Box,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import HeaderComponent from "../components/HeaderComponent";
 import TableComponent from "../components/TableComponent";
 import CreateElementsComponent from "../components/CreateElementsComponent";
-import api from "../api/axios"
+import ModalDeleteComponent from "../components/ModalDeleteComponent";
+import api from "../api/axios";
 
 const columns = [
   { field: "nombre", headerName: "Nombre", align: "center" },
@@ -16,36 +24,59 @@ const columns = [
 ];
 
 const Users = () => {
-  const [openModal, setOpenModal] = useState(false); // Controla la apertura del modal
-  const [reloadTable, setReloadTable] = useState(false); // Controla la recarga de la tabla
-  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "" }); // Estado para Snackbar
+  const [openModal, setOpenModal] = useState(false); // Controla el modal de creación
+  const [openDeleteModal, setOpenDeleteModal] = useState(false); // Controla el modal de eliminación
+  const [selectedUser, setSelectedUser] = useState(null); // Usuario seleccionado para eliminar
+  const [reloadTable, setReloadTable] = useState(false); // Para actualizar la tabla después de cambios
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "",
+  });
 
-  // Abrir y cerrar el modal
-  const handleOpenModal = () => setOpenModal(true);
-  const handleCloseModal = () => setOpenModal(false);
+  // Funciones para abrir y cerrar modales
+  const handleOpenCreateModal = () => setOpenModal(true);
+  const handleCloseCreateModal = () => setOpenModal(false);
+  const handleOpenDeleteModal = (user) => {
+    setSelectedUser(user);
+    setOpenDeleteModal(true);
+  };
+  const handleCloseDeleteModal = () => {
+    setSelectedUser(null);
+    setOpenDeleteModal(false);
+  };
 
-  // Mostrar mensajes en Snackbar
+  // Mostrar notificaciones
   const showSnackbar = (message, severity) => {
     setSnackbar({ open: true, message, severity });
   };
-
-  // Cerrar el Snackbar
-  const handleCloseSnackbar = () => {
+  const handleCloseSnackbar = () =>
     setSnackbar({ open: false, message: "", severity: "" });
-  };
 
-  // Crear un nuevo usuario
+  // Crear usuario en la API
   const handleCreate = async (newData) => {
     try {
-      const response = await api.post("usuario", newData); // Endpoint dinámico para usuarios
+      await api.post("usuario", newData);
       showSnackbar("Usuario creado exitosamente.", "success");
-
-      // Forzar recarga de la tabla tras crear el usuario
-      setReloadTable((prev) => !prev);
-      handleCloseModal(); // Cierra el modal
+      setReloadTable((prev) => !prev); // Recargar la tabla
+      handleCloseCreateModal();
     } catch (error) {
       console.error("Error al crear el usuario:", error);
-      showSnackbar("Hubo un problema al crear el usuario.", "error");
+      showSnackbar("Error al crear el usuario.", "error");
+    }
+  };
+
+  // Eliminar usuario en la API
+  const handleDelete = async () => {
+    if (!selectedUser) return;
+    try {
+      await api.delete(`usuario/${selectedUser.id}`);
+      showSnackbar("Usuario eliminado exitosamente.", "success");
+      setReloadTable((prev) => !prev); // Recargar la tabla tras eliminar
+      handleCloseDeleteModal();
+    } catch (error) {
+      console.error("Error al eliminar usuario:", error);
+      showSnackbar("Error al eliminar el usuario.", "error");
     }
   };
 
@@ -53,8 +84,15 @@ const Users = () => {
     <>
       <HeaderComponent title="Usuarios" />
       <Container maxWidth="xl" sx={{ mt: 3 }}>
-        {/* Botón para abrir el modal */}
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+        {/* Botón para abrir el modal de creación */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
+          }}
+        >
           <Typography variant="body1" gutterBottom>
             Administra los usuarios del sistema.
           </Typography>
@@ -65,39 +103,52 @@ const Users = () => {
               transition: "all 0.5s ease",
               ":hover": { backgroundColor: "#2e7d32" },
             }}
-            onClick={handleOpenModal}
+            onClick={handleOpenCreateModal}
           >
             Crear usuario
           </Button>
         </Box>
 
-        {/* Tabla con datos de usuarios */}
         <TableComponent
           columns={columns}
-          fetchData="usuario" // Endpoint relativo para obtener usuarios
+          fetchData="usuario"
           title="Lista de Usuarios"
           noDataMessage="No se encontraron usuarios."
-          onReload={reloadTable} // Recarga los datos cuando cambia el estado
+          onReload={reloadTable}
+          endpoint="usuario"
+          onDelete={handleOpenDeleteModal} // Se pasa la función de eliminación
         />
       </Container>
 
-      {/* Modal para crear nuevos usuarios */}
+      {/* Modal para crear un nuevo usuario */}
       <CreateElementsComponent
         open={openModal}
-        onClose={handleCloseModal}
+        onClose={handleCloseCreateModal}
         title="Crear Usuario"
         columns={columns}
-        endpoint="usuario" // Endpoint dinámico para la creación
+        endpoint="usuario"
         onSuccess={() => {
           showSnackbar("Usuario creado exitosamente.", "success");
-          setReloadTable((prev) => !prev); // Recargar la tabla
+          setReloadTable((prev) => !prev);
         }}
         onError={() => {
-          showSnackbar("Hubo un problema al crear el usuario.", "error");
+          showSnackbar("Error al crear el usuario.", "error");
         }}
       />
 
-      {/* Snackbar para retroalimentación */}
+      {/* Modal para eliminar usuario */}
+      <ModalDeleteComponent
+        open={openDeleteModal}
+        onClose={handleCloseDeleteModal}
+        item={selectedUser}
+        endpoint="usuario"
+        onSuccess={() => {
+          showSnackbar("Usuario eliminado exitosamente.", "success");
+          setReloadTable((prev) => !prev);
+        }}
+      />
+
+      {/* Snackbar para mensajes de éxito o error */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}
