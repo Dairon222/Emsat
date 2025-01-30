@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+// eslint-disable-next-line no-unused-vars
 import React, { useState } from "react";
 import {
   Container,
@@ -12,15 +12,30 @@ import HeaderComponent from "../components/HeaderComponent";
 import TableComponent from "../components/TableComponent";
 import CreateElementsComponent from "../components/CreateElementsComponent";
 import ModalDeleteComponent from "../components/ModalDeleteComponent";
-import api from "../api/axios";
 
 const columns = [
   { field: "nombre", headerName: "Nombre", align: "center" },
   { field: "apellido", headerName: "Apellido", align: "center" },
   { field: "identificacion", headerName: "Identificación", align: "center" },
   { field: "celular", headerName: "Celular", align: "center" },
-  { field: "rol_id", headerName: "Rol ID", align: "center" },
-  { field: "ficha_id", headerName: "Ficha ID", align: "center" },
+  {
+    field: "rol_id",
+    headerName: "Rol",
+    align: "center",
+    renderCell: (params) => {
+      const { tipo } = params.row.rol;
+      return tipo;
+    },
+  },
+  {
+    field: "ficha_id",
+    headerName: "Ficha",
+    align: "center",
+    renderCell: (params) => {
+      const { nombre_ficha } = params.row.ficha;
+      return nombre_ficha;
+    },
+  },
 ];
 
 const Users = () => {
@@ -52,33 +67,6 @@ const Users = () => {
   };
   const handleCloseSnackbar = () =>
     setSnackbar({ open: false, message: "", severity: "" });
-
-  // Crear usuario en la API
-  const handleCreate = async (newData) => {
-    try {
-      await api.post("usuario", newData);
-      showSnackbar("Usuario creado exitosamente.", "success");
-      setReloadTable((prev) => !prev); // Recargar la tabla
-      handleCloseCreateModal();
-    } catch (error) {
-      console.error("Error al crear el usuario:", error);
-      showSnackbar("Error al crear el usuario.", "error");
-    }
-  };
-
-  // Eliminar usuario en la API
-  const handleDelete = async () => {
-    if (!selectedUser) return;
-    try {
-      await api.delete(`usuario/${selectedUser.id}`);
-      showSnackbar("Usuario eliminado exitosamente.", "success");
-      setReloadTable((prev) => !prev); // Recargar la tabla tras eliminar
-      handleCloseDeleteModal();
-    } catch (error) {
-      console.error("Error al eliminar usuario:", error);
-      showSnackbar("Error al eliminar el usuario.", "error");
-    }
-  };
 
   return (
     <>
@@ -116,7 +104,7 @@ const Users = () => {
           noDataMessage="No se encontraron usuarios."
           onReload={reloadTable}
           endpoint="usuario"
-          onDelete={handleOpenDeleteModal} // Se pasa la función de eliminación
+          onDelete={handleOpenDeleteModal}
         />
       </Container>
 
@@ -142,6 +130,8 @@ const Users = () => {
         onClose={handleCloseDeleteModal}
         item={selectedUser}
         endpoint="usuario"
+        keyField="identificacion"
+        deleteMessage="¿Desea eliminar al usuario con identificación"
         onSuccess={() => {
           showSnackbar("Usuario eliminado exitosamente.", "success");
           setReloadTable((prev) => !prev);

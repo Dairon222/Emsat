@@ -30,11 +30,11 @@ import ButtonsExportComponent from "./ButtonsExportComponent";
 
 const TableComponent = ({
   columns,
-  fetchData, // URL o función para obtener datos
+  fetchData,
   title,
   noDataMessage = "No hay datos disponibles.",
-  onReload, // Escucha cambios desde el componente padre para recargar datos
-  endpoint, // Endpoint dinámico para eliminar elementos
+  onReload,
+  endpoint,
 }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -51,16 +51,6 @@ const TableComponent = ({
     severity: "",
   });
 
-  const dynamicStatusGreen = [
-    "Activo",
-    "Disponible",
-    "Presente",
-    "activo",
-    "devuelto",
-  ];
-  const dynamicStatusRed = ["Inactivo", "No disponible", "En mora"];
-
-  // Función para cargar datos desde la API
   const loadData = async () => {
     setLoading(true);
     setError(null);
@@ -68,7 +58,7 @@ const TableComponent = ({
       const response =
         typeof fetchData === "function"
           ? await fetchData()
-          : await api.get(fetchData); // Usa la instancia `api` configurada
+          : await api.get(fetchData);
       setData(response.data);
     } catch (err) {
       console.error("Error al cargar datos:", err);
@@ -78,7 +68,6 @@ const TableComponent = ({
     }
   };
 
-  // Cargar datos al montar el componente y cuando `onReload` cambie
   useEffect(() => {
     loadData();
   }, [fetchData, onReload]);
@@ -105,39 +94,6 @@ const TableComponent = ({
     setOpenDeleteModal(false);
     setSelectedRow(null);
   };
-
-  const handleSaveEdit = (updatedData) => {
-    setSnackbar({
-      open: true,
-      message: "Datos actualizados exitosamente.",
-      severity: "success",
-    });
-    handleCloseModals();
-  };
-
-  // ✅ Función para eliminar elementos desde la API
-  const handleDelete = async (row) => {
-    try {
-      await api.delete(`${endpoint}/${row.id}`);
-      setSnackbar({
-        open: true,
-        message: "Elemento eliminado correctamente.",
-        severity: "success",
-      });
-      loadData(); // Recargar la tabla después de eliminar
-    } catch (error) {
-      console.error("Error al eliminar el elemento:", error);
-      setSnackbar({
-        open: true,
-        message: "Error al eliminar el elemento.",
-        severity: "error",
-      });
-    }
-    handleCloseModals();
-  };
-
-  const handleCloseSnackbar = () =>
-    setSnackbar({ open: false, message: "", severity: "" });
 
   return (
     <Box sx={{ mt: 1 }}>
@@ -226,7 +182,12 @@ const TableComponent = ({
                       <TableRow key={rowIndex}>
                         {columns.map((column) => (
                           <TableCell key={column.field} align={column.align}>
-                            {row[column.field]}
+                            {column.field === "rol"
+                              ? row[column.field]?.tipo // Si el campo es "rol", mostrar tipo
+                              : column.field === "ficha"
+                              ? row[column.field]?.nombre_ficha // Si el campo es "ficha", mostrar nombre_ficha
+                              : row[column.field]}{" "}
+                            {/* Resto de los campos */}
                           </TableCell>
                         ))}
                         <TableCell align="center">
@@ -267,7 +228,6 @@ const TableComponent = ({
         open={openEditModal}
         onClose={handleCloseModals}
         data={selectedRow}
-        onSave={handleSaveEdit}
         title={title}
       />
       <ModalDeleteComponent
@@ -275,18 +235,20 @@ const TableComponent = ({
         onClose={handleCloseModals}
         item={selectedRow}
         endpoint={endpoint}
-        onDelete={handleDelete}
+        keyField="identificacion"
+        deleteMessage="¿Desea eliminar al usuario con identificación"
+        onSuccess={loadData}
       />
 
       {/* Snackbar */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}
-        onClose={handleCloseSnackbar}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert
-          onClose={handleCloseSnackbar}
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
           severity={snackbar.severity}
           sx={{ width: "100%" }}
         >

@@ -3,24 +3,55 @@ import { Modal, Box, Typography, Button, Snackbar, Alert } from "@mui/material";
 import { useState } from "react";
 import api from "../api/axios";
 
-const ModalDeleteComponent = ({ open, onClose, item, endpoint, onSuccess }) => {
-  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "" });
+const ModalDeleteComponent = ({
+  open,
+  onClose,
+  item,
+  endpoint,
+  keyField,
+  deleteMessage,
+  onSuccess,
+}) => {
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "",
+  });
 
   const handleDelete = async () => {
-    if (!item || !endpoint) return;
+    // Extraer el valor de keyField para la eliminación
+    const itemKey = item[keyField];
+    if (!itemKey) {
+      setSnackbar({
+        open: true,
+        message: `No se encontró el campo '${keyField}' en el elemento.`,
+        severity: "error",
+      });
+      return;
+    }
 
     try {
-      await api.delete(`${endpoint}/${item.id}`); // DELETE con el ID del elemento
-      setSnackbar({ open: true, message: "Elemento eliminado correctamente.", severity: "success" });
-      onSuccess(); // Refrescar los datos en la tabla
+      await api.delete(`${endpoint}/${itemKey}`);
+      setSnackbar({
+        open: true,
+        message: "Elemento eliminado correctamente.",
+        severity: "success",
+      });
+      onSuccess(); // Recargar datos
       onClose(); // Cerrar modal
     } catch (error) {
       console.error("Error al eliminar el elemento:", error);
-      setSnackbar({ open: true, message: "Error al eliminar el elemento.", severity: "error" });
+      setSnackbar({
+        open: true,
+        message:
+          error.response?.data?.message || "Error al eliminar el elemento.",
+        severity: "error",
+      });
     }
   };
 
-  const handleCloseSnackbar = () => setSnackbar({ open: false, message: "", severity: "" });
+  const handleCloseSnackbar = () =>
+    setSnackbar({ open: false, message: "", severity: "" });
 
   return (
     <>
@@ -43,7 +74,7 @@ const ModalDeleteComponent = ({ open, onClose, item, endpoint, onSuccess }) => {
           </Typography>
           {item && (
             <Typography>
-              ¿Realmente desea eliminar <b>{item.nombre || `ID: ${item.id}`}</b>?
+              {deleteMessage} <b>{item[keyField]}</b>
             </Typography>
           )}
           <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
@@ -61,7 +92,11 @@ const ModalDeleteComponent = ({ open, onClose, item, endpoint, onSuccess }) => {
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: "100%" }}>
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
           {snackbar.message}
         </Alert>
       </Snackbar>

@@ -1,10 +1,18 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
-import { Container, Typography, Button, Box, Snackbar, Alert } from "@mui/material";
+import {
+  Container,
+  Typography,
+  Button,
+  Box,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import HeaderComponent from "../components/HeaderComponent";
 import TableComponent from "../components/TableComponent";
 import CreateElementsComponent from "../components/CreateElementsComponent";
-import api from "../api/axios"
+import ModalDeleteComponent from "../components/ModalDeleteComponent";
+import api from "../api/axios";
 
 const columns = [
   { field: "nombre_ficha", headerName: "Ficha", align: "center" },
@@ -14,7 +22,11 @@ const columns = [
 const Fichas = () => {
   const [openModal, setOpenModal] = useState(false); // Controla la apertura del modal
   const [reloadTable, setReloadTable] = useState(false); // Controla la recarga de la tabla
-  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "" }); // Estado para Snackbar
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "",
+  }); // Estado para Snackbar
 
   // Abrir y cerrar el modal
   const handleOpenModal = () => setOpenModal(true);
@@ -50,7 +62,14 @@ const Fichas = () => {
       <HeaderComponent title="Fichas" />
       <Container maxWidth="xl" sx={{ mt: 3 }}>
         {/* Botón para abrir el modal */}
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
+          }}
+        >
           <Typography variant="body1" gutterBottom>
             Fichas de la sede.
           </Typography>
@@ -90,6 +109,21 @@ const Fichas = () => {
         }}
         onError={() => {
           showSnackbar("Hubo un problema al crear la ficha.", "error");
+        }}
+      />
+      {/* Modal para eliminar usuario */}
+      <ModalDeleteComponent
+        open={openModal}
+        onClose={handleCloseModal}
+        endpoint="usuario"
+        keyField="numero_ficha"
+        deleteMessage="¿Desea eliminar la ficha "
+        onSuccess={() => {
+          showSnackbar("Ficha eliminada exitosamente.", "success");
+          setReloadTable((prev) => !prev);
+        }}
+        onError={() => {
+          showSnackbar("Error al eliminar la ficha.", "error");
         }}
       />
 
