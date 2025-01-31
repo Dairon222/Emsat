@@ -35,6 +35,8 @@ const TableComponent = ({
   noDataMessage = "No hay datos disponibles.",
   onReload,
   endpoint,
+  keyField,
+  deleteMessage,
 }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -51,6 +53,7 @@ const TableComponent = ({
     severity: "",
   });
 
+  // Cargar datos desde la API
   const loadData = async () => {
     setLoading(true);
     setError(null);
@@ -79,12 +82,16 @@ const TableComponent = ({
     setPage(0);
   };
 
+  // Abrir modal de edición con datos seleccionados
   const handleOpenEditModal = (row) => {
+    if (!row) return;
     setSelectedRow(row);
     setOpenEditModal(true);
   };
 
+  // Abrir modal de eliminación con datos seleccionados
   const handleOpenDeleteModal = (row) => {
+    if (!row) return;
     setSelectedRow(row);
     setOpenDeleteModal(true);
   };
@@ -93,6 +100,28 @@ const TableComponent = ({
     setOpenEditModal(false);
     setOpenDeleteModal(false);
     setSelectedRow(null);
+  };
+
+  // Guardar cambios en la API después de editar
+  const handleSaveEdit = async (updatedData) => {
+    try {
+      await api.put(`${endpoint}/${updatedData[keyField]}`, updatedData);
+      setSnackbar({
+        open: true,
+        message: "Datos actualizados correctamente.",
+        severity: "success",
+      });
+      loadData(); // Refrescar la tabla
+    } catch (error) {
+      console.error("Error al actualizar datos:", error);
+      setSnackbar({
+        open: true,
+        message: "Error al actualizar los datos.",
+        severity: "error",
+      });
+    } finally {
+      handleCloseModals();
+    }
   };
 
   return (
@@ -143,7 +172,14 @@ const TableComponent = ({
             </Select>
           </Box>
           <TableContainer component={Paper}>
-            {data.length === 0 ? (
+            {data.length === 0 ||
+            data.filter((row) =>
+              columns.some((column) =>
+                String(row[column.field])
+                  .toLowerCase()
+                  .includes(searchTerm.toLowerCase())
+              )
+            ).length === 0 ? (
               <Typography variant="body1" align="center" sx={{ p: 4 }}>
                 {noDataMessage}
               </Typography>
@@ -182,12 +218,7 @@ const TableComponent = ({
                       <TableRow key={rowIndex}>
                         {columns.map((column) => (
                           <TableCell key={column.field} align={column.align}>
-                            {column.field === "rol"
-                              ? row[column.field]?.tipo // Si el campo es "rol", mostrar tipo
-                              : column.field === "ficha"
-                              ? row[column.field]?.nombre_ficha // Si el campo es "ficha", mostrar nombre_ficha
-                              : row[column.field]}{" "}
-                            {/* Resto de los campos */}
+                            {row[column.field]}
                           </TableCell>
                         ))}
                         <TableCell align="center">
@@ -223,11 +254,11 @@ const TableComponent = ({
         </>
       )}
 
-      {/* Modals */}
       <ModalEditComponent
         open={openEditModal}
         onClose={handleCloseModals}
         data={selectedRow}
+        onSave={handleSaveEdit} // Se pasa la función handleSaveEdit
         title={title}
       />
       <ModalDeleteComponent
@@ -235,25 +266,18 @@ const TableComponent = ({
         onClose={handleCloseModals}
         item={selectedRow}
         endpoint={endpoint}
-        keyField="identificacion"
-        deleteMessage="¿Desea eliminar al usuario con identificación"
+        keyField={keyField}
+        deleteMessage={deleteMessage}
         onSuccess={loadData}
       />
 
-      {/* Snackbar */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}
         onClose={() => setSnackbar({ ...snackbar, open: false })}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert
-          onClose={() => setSnackbar({ ...snackbar, open: false })}
-          severity={snackbar.severity}
-          sx={{ width: "100%" }}
-        >
-          {snackbar.message}
-        </Alert>
+        <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
       </Snackbar>
     </Box>
   );

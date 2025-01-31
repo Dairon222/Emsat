@@ -1,24 +1,48 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
-import { Container, Typography, Button, Box, Snackbar, Alert } from "@mui/material";
+import {
+  Container,
+  Typography,
+  Button,
+  Box,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import HeaderComponent from "../components/HeaderComponent";
 import TableComponent from "../components/TableComponent";
 import CreateElementsComponent from "../components/CreateElementsComponent";
-import api from "../api/axios"
+import ModalDeleteComponent from "../components/ModalDeleteComponent";
+import api from "../api/axios";
 
 const columns = [
-  { field: "id", headerName: "Id rol", align: "center" },
+  { field: "id", headerName: "Id rol", align: "center"},
   { field: "tipo", headerName: "Tipo", align: "center" },
 ];
 
 const Roles = () => {
   const [openModal, setOpenModal] = useState(false); // Controla la apertura del modal
+
+  const [openDeleteModal, setOpenDeleteModal] = useState(false); // Controla el modal de eliminación
+  const [selectedRol, setSelectedRol] = useState(null); // Ficha seleccionada para eliminar
   const [reloadTable, setReloadTable] = useState(false); // Controla la recarga de la tabla
-  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "" }); // Estado para Snackbar
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "",
+  }); // Estado para Snackbar
 
   // Abrir y cerrar el modal
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
+
+  const handleOpenDeleteModal = (user) => {
+    setSelectedRol(user);
+    setOpenDeleteModal(true);
+  };
+  const handleCloseDeleteModal = () => {
+    setSelectedRol(null);
+    setOpenDeleteModal(false);
+  };
 
   // Mostrar mensajes en Snackbar
   const showSnackbar = (message, severity) => {
@@ -50,7 +74,14 @@ const Roles = () => {
       <HeaderComponent title="Roles" />
       <Container maxWidth="xl" sx={{ mt: 3 }}>
         {/* Botón para abrir el modal */}
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
+          }}
+        >
           <Typography variant="body1" gutterBottom>
             Roles del sistema.
           </Typography>
@@ -72,6 +103,10 @@ const Roles = () => {
           columns={columns}
           fetchData="rol" // Endpoint relativo para obtener roles
           title="Lista de roles"
+          endpoint="rol"
+          keyField="id"
+          onDelete={handleOpenDeleteModal}
+          deleteMessage="Desea eliminar el rol con id"
           noDataMessage="No se encontraron roles."
           onReload={reloadTable} // Recarga los datos cuando cambia el estado
         />
@@ -90,6 +125,16 @@ const Roles = () => {
         }}
         onError={() => {
           showSnackbar("Hubo un problema al crear el rol.", "error");
+        }}
+      />
+
+      {/* Modal para eliminar Ficha */}
+      <ModalDeleteComponent
+        open={openDeleteModal}
+        onClose={handleCloseDeleteModal}
+        item={selectedRol}
+        onSuccess={() => {
+          setReloadTable((prev) => !prev);
         }}
       />
 

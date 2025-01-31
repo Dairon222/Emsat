@@ -20,48 +20,46 @@ const columns = [
 ];
 
 const Fichas = () => {
-  const [openModal, setOpenModal] = useState(false); // Controla la apertura del modal
-  const [reloadTable, setReloadTable] = useState(false); // Controla la recarga de la tabla
+  const [openModal, setOpenModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selectedFicha, setSelectedFicha] = useState(null);
+  const [reloadTable, setReloadTable] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "",
-  }); // Estado para Snackbar
+  });
 
-  // Abrir y cerrar el modal
-  const handleOpenModal = () => setOpenModal(true);
-  const handleCloseModal = () => setOpenModal(false);
-
-  // Mostrar mensajes en Snackbar
-  const showSnackbar = (message, severity) => {
-    setSnackbar({ open: true, message, severity });
-  };
-
-  // Cerrar el Snackbar
-  const handleCloseSnackbar = () => {
-    setSnackbar({ open: false, message: "", severity: "" });
-  };
-
-  // Crear una nueva ficha
-  const handleCreate = async (newData) => {
+  // Función para manejar la actualización de datos del usuario
+  const handleSaveEdit = async (updatedData) => {
     try {
-      const response = await api.post("ficha", newData); // Endpoint dinámico para fichas
-      showSnackbar("Ficha creada exitosamente.", "success");
-
-      // Forzar recarga de la tabla tras crear la ficha
-      setReloadTable((prev) => !prev);
-      handleCloseModal(); // Cierra el modal
+      await api.put(`ficha/${updatedData.numero_ficha}`, updatedData);
+      setSnackbar({
+        open: true,
+        message: "Datos actualizados correctamente.",
+        severity: "success",
+      });
+      setReloadTable((prev) => !prev); // Recargar la tabla
     } catch (error) {
-      console.error("Error al crear la ficha:", error);
-      showSnackbar("Hubo un problema al crear la ficha.", "error");
+      setSnackbar({
+        open: true,
+        message: "Error al actualizar los datos.",
+        severity: "error",
+      });
     }
+  };
+
+  // Controla la apertura y cierre de modales
+  const toggleModal = (modalSetter, value) => modalSetter(value);
+  const handleDeleteSelection = (ficher) => {
+    setSelectedFicha(ficher);
+    setOpenDeleteModal(true);
   };
 
   return (
     <>
       <HeaderComponent title="Fichas" />
       <Container maxWidth="xl" sx={{ mt: 3 }}>
-        {/* Botón para abrir el modal */}
         <Box
           sx={{
             display: "flex",
@@ -71,7 +69,7 @@ const Fichas = () => {
           }}
         >
           <Typography variant="body1" gutterBottom>
-            Fichas de la sede.
+            Administra las fichas del centro de Sena.
           </Typography>
           <Button
             variant="contained"
@@ -80,67 +78,63 @@ const Fichas = () => {
               transition: "all 0.5s ease",
               ":hover": { backgroundColor: "#2e7d32" },
             }}
-            onClick={handleOpenModal}
+            onClick={() => toggleModal(setOpenModal, true)}
           >
             Crear ficha
           </Button>
         </Box>
 
-        {/* Tabla con datos de las fichas */}
         <TableComponent
           columns={columns}
-          fetchData="ficha" // Endpoint relativo para obtener fichas
+          fetchData="ficha"
           title="Lista de fichas"
           noDataMessage="No se encontraron fichas."
-          onReload={reloadTable} // Recarga los datos cuando cambia el estado
+          onReload={reloadTable}
+          endpoint="ficha"
+          keyField="numero_ficha"
+          deleteMessage="Desea eliminar la ficha con numero"
+          onDelete={handleDeleteSelection}
+          onSave={handleSaveEdit} // Pasamos la función onSave aquí
         />
       </Container>
 
-      {/* Modal para crear nuevas fichas */}
       <CreateElementsComponent
         open={openModal}
-        onClose={handleCloseModal}
+        onClose={() => toggleModal(setOpenModal, false)}
         title="Crear ficha"
         columns={columns}
-        endpoint="ficha" // Endpoint dinámico para la creación
+        endpoint="ficha"
         onSuccess={() => {
-          showSnackbar("Ficha creada exitosamente.", "success");
-          setReloadTable((prev) => !prev); // Recargar la tabla
-        }}
-        onError={() => {
-          showSnackbar("Hubo un problema al crear la ficha.", "error");
-        }}
-      />
-      {/* Modal para eliminar usuario */}
-      <ModalDeleteComponent
-        open={openModal}
-        onClose={handleCloseModal}
-        endpoint="usuario"
-        keyField="numero_ficha"
-        deleteMessage="¿Desea eliminar la ficha "
-        onSuccess={() => {
-          showSnackbar("Ficha eliminada exitosamente.", "success");
+          setSnackbar({
+            open: true,
+            message: "ficha creado exitosamente.",
+            severity: "success",
+          });
           setReloadTable((prev) => !prev);
         }}
         onError={() => {
-          showSnackbar("Error al eliminar la ficha.", "error");
+          setSnackbar({
+            open: true,
+            message: "Error al crear la ficha.",
+            severity: "error",
+          });
         }}
       />
 
-      {/* Snackbar para retroalimentación */}
+      <ModalDeleteComponent
+        open={openDeleteModal}
+        onClose={() => toggleModal(setOpenDeleteModal, false)}
+        item={selectedFicha}
+        onSuccess={() => setReloadTable((prev) => !prev)}
+      />
+
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}
-        onClose={handleCloseSnackbar}
+        onClose={() => setSnackbar({ open: false, message: "", severity: "" })}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity={snackbar.severity}
-          sx={{ width: "100%" }}
-        >
-          {snackbar.message}
-        </Alert>
+        <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
       </Snackbar>
     </>
   );

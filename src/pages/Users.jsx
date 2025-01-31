@@ -1,4 +1,4 @@
-// eslint-disable-next-line no-unused-vars
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import {
   Container,
@@ -12,67 +12,58 @@ import HeaderComponent from "../components/HeaderComponent";
 import TableComponent from "../components/TableComponent";
 import CreateElementsComponent from "../components/CreateElementsComponent";
 import ModalDeleteComponent from "../components/ModalDeleteComponent";
+import api from "../api/axios";
 
 const columns = [
   { field: "nombre", headerName: "Nombre", align: "center" },
   { field: "apellido", headerName: "Apellido", align: "center" },
   { field: "identificacion", headerName: "Identificación", align: "center" },
   { field: "celular", headerName: "Celular", align: "center" },
-  {
-    field: "rol_id",
-    headerName: "Rol",
-    align: "center",
-    renderCell: (params) => {
-      const { tipo } = params.row.rol;
-      return tipo;
-    },
-  },
-  {
-    field: "ficha_id",
-    headerName: "Ficha",
-    align: "center",
-    renderCell: (params) => {
-      const { nombre_ficha } = params.row.ficha;
-      return nombre_ficha;
-    },
-  },
+  { field: "rol_id", headerName: "Rol", align: "center" },
+  { field: "ficha_id", headerName: "Ficha", align: "center" },
 ];
 
 const Users = () => {
-  const [openModal, setOpenModal] = useState(false); // Controla el modal de creación
-  const [openDeleteModal, setOpenDeleteModal] = useState(false); // Controla el modal de eliminación
-  const [selectedUser, setSelectedUser] = useState(null); // Usuario seleccionado para eliminar
-  const [reloadTable, setReloadTable] = useState(false); // Para actualizar la tabla después de cambios
+  const [openModal, setOpenModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [reloadTable, setReloadTable] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "",
   });
 
-  // Funciones para abrir y cerrar modales
-  const handleOpenCreateModal = () => setOpenModal(true);
-  const handleCloseCreateModal = () => setOpenModal(false);
-  const handleOpenDeleteModal = (user) => {
+  // Función para manejar la actualización de datos del usuario
+  const handleSaveEdit = async (updatedData) => {
+    try {
+      await api.put(`usuario/${updatedData.identificacion}`, updatedData);
+      setSnackbar({
+        open: true,
+        message: "Datos actualizados correctamente.",
+        severity: "success",
+      });
+      setReloadTable((prev) => !prev); // Recargar la tabla
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: "Error al actualizar los datos del usuario.",
+        severity: "error",
+      });
+    }
+  };
+
+  // Controla la apertura y cierre de modales
+  const toggleModal = (modalSetter, value) => modalSetter(value);
+  const handleDeleteSelection = (user) => {
     setSelectedUser(user);
     setOpenDeleteModal(true);
   };
-  const handleCloseDeleteModal = () => {
-    setSelectedUser(null);
-    setOpenDeleteModal(false);
-  };
-
-  // Mostrar notificaciones
-  const showSnackbar = (message, severity) => {
-    setSnackbar({ open: true, message, severity });
-  };
-  const handleCloseSnackbar = () =>
-    setSnackbar({ open: false, message: "", severity: "" });
 
   return (
     <>
       <HeaderComponent title="Usuarios" />
       <Container maxWidth="xl" sx={{ mt: 3 }}>
-        {/* Botón para abrir el modal de creación */}
         <Box
           sx={{
             display: "flex",
@@ -91,7 +82,7 @@ const Users = () => {
               transition: "all 0.5s ease",
               ":hover": { backgroundColor: "#2e7d32" },
             }}
-            onClick={handleOpenCreateModal}
+            onClick={() => toggleModal(setOpenModal, true)}
           >
             Crear usuario
           </Button>
@@ -104,54 +95,50 @@ const Users = () => {
           noDataMessage="No se encontraron usuarios."
           onReload={reloadTable}
           endpoint="usuario"
-          onDelete={handleOpenDeleteModal}
+          keyField="identificacion"
+          deleteMessage="Desea eliminar al usuario con identificación"
+          onDelete={handleDeleteSelection}
+          onSave={handleSaveEdit} // Pasamos la función onSave aquí
         />
       </Container>
 
-      {/* Modal para crear un nuevo usuario */}
       <CreateElementsComponent
         open={openModal}
-        onClose={handleCloseCreateModal}
+        onClose={() => toggleModal(setOpenModal, false)}
         title="Crear Usuario"
         columns={columns}
         endpoint="usuario"
         onSuccess={() => {
-          showSnackbar("Usuario creado exitosamente.", "success");
+          setSnackbar({
+            open: true,
+            message: "Usuario creado exitosamente.",
+            severity: "success",
+          });
           setReloadTable((prev) => !prev);
         }}
         onError={() => {
-          showSnackbar("Error al crear el usuario.", "error");
+          setSnackbar({
+            open: true,
+            message: "Error al crear el usuario.",
+            severity: "error",
+          });
         }}
       />
 
-      {/* Modal para eliminar usuario */}
       <ModalDeleteComponent
         open={openDeleteModal}
-        onClose={handleCloseDeleteModal}
+        onClose={() => toggleModal(setOpenDeleteModal, false)}
         item={selectedUser}
-        endpoint="usuario"
-        keyField="identificacion"
-        deleteMessage="¿Desea eliminar al usuario con identificación"
-        onSuccess={() => {
-          showSnackbar("Usuario eliminado exitosamente.", "success");
-          setReloadTable((prev) => !prev);
-        }}
+        onSuccess={() => setReloadTable((prev) => !prev)}
       />
 
-      {/* Snackbar para mensajes de éxito o error */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}
-        onClose={handleCloseSnackbar}
+        onClose={() => setSnackbar({ open: false, message: "", severity: "" })}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity={snackbar.severity}
-          sx={{ width: "100%" }}
-        >
-          {snackbar.message}
-        </Alert>
+        <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
       </Snackbar>
     </>
   );

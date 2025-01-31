@@ -74,7 +74,7 @@ const ModalDeleteComponent = ({
           </Typography>
           {item && (
             <Typography>
-              {deleteMessage} <b>{item[keyField]}</b>
+              ¿{deleteMessage} <b>{item[keyField]}</b>?
             </Typography>
           )}
           <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
