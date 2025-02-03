@@ -1,10 +1,18 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
-import { Container, Typography, Button, Box, Snackbar, Alert } from "@mui/material";
+import {
+  Container,
+  Typography,
+  Button,
+  Box,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import HeaderComponent from "../components/HeaderComponent";
 import TableComponent from "../components/TableComponent";
 import CreateElementsComponent from "../components/CreateElementsComponent";
-import api from "../api/axios"
+import ModalDeleteComponent from "../components/ModalDeleteComponent";
+import api from "../api/axios";
 
 const columns = [
   { field: "usuario_id", headerName: "Id usuario", align: "center" },
@@ -13,47 +21,55 @@ const columns = [
 ];
 
 const Loans = () => {
-  const [openModal, setOpenModal] = useState(false); // Controla la apertura del modal
-  const [reloadTable, setReloadTable] = useState(false); // Controla la recarga de la tabla
-  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "" }); // Estado para Snackbar
+  const [openModal, setOpenModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selectedLoan, setSelectedLoan] = useState(null);
+  const [reloadTable, setReloadTable] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "",
+  });
 
-  // Abrir y cerrar el modal
-  const handleOpenModal = () => setOpenModal(true);
-  const handleCloseModal = () => setOpenModal(false);
-
-  // Mostrar mensajes en Snackbar
-  const showSnackbar = (message, severity) => {
-    setSnackbar({ open: true, message, severity });
-  };
-
-  // Cerrar el Snackbar
-  const handleCloseSnackbar = () => {
-    setSnackbar({ open: false, message: "", severity: "" });
-  };
-
-  // Crear un nuevo prestamo
-  const handleCreate = async (newData) => {
+  // Función para manejar la actualización de datos de los préstamos
+  const handleSaveEdit = async (updatedData) => {
     try {
-      const response = await api.post("prestamo", newData); // Endpoint dinámico para prestamos
-      showSnackbar("Préstamo creado exitosamente.", "success");
-
-      // Forzar recarga de la tabla tras crear el prestamo
-      setReloadTable((prev) => !prev);
-      handleCloseModal(); // Cierra el modal
+      await api.put(`prestamo/${updatedData.id}`, updatedData);
+      setSnackbar({
+        open: true,
+        message: "Datos actualizados correctamente.",
+        severity: "success",
+      });
+      setReloadTable((prev) => !prev); // Recargar la tabla
     } catch (error) {
-      console.error("Error al crear el prestamo:", error);
-      showSnackbar("Hubo un problema al crear el prestamo.", "error");
+      setSnackbar({
+        open: true,
+        severity: "error",
+      });
     }
+  };
+
+  // Controla la apertura y cierre de modales
+  const toggleModal = (modalSetter, value) => modalSetter(value);
+  const handleDeleteSelection = (loan) => {
+    setSelectedLoan(loan);
+    setOpenDeleteModal(true);
   };
 
   return (
     <>
-      <HeaderComponent title="Prestamos" />
+      <HeaderComponent title="Préstamos" />
       <Container maxWidth="xl" sx={{ mt: 3 }}>
-        {/* Botón para abrir el modal */}
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
+          }}
+        >
           <Typography variant="body1" gutterBottom>
-            Administra los prestamos del sistema.
+            Administra los prestamos de la sede.
           </Typography>
           <Button
             variant="contained"
@@ -62,52 +78,63 @@ const Loans = () => {
               transition: "all 0.5s ease",
               ":hover": { backgroundColor: "#2e7d32" },
             }}
-            onClick={handleOpenModal}
+            onClick={() => toggleModal(setOpenModal, true)}
           >
             Crear préstamo
           </Button>
         </Box>
 
-        {/* Tabla con datos de los prestamos */}
         <TableComponent
           columns={columns}
-          fetchData="prestamo" // Endpoint relativo para obtener prestamos
+          fetchData="prestamo"
           title="Lista de prestamos"
-          noDataMessage="No hay prestamos activos."
-          onReload={reloadTable} // Recarga los datos cuando cambia el estado
+          noDataMessage="No se encontraron prestamos activos."
+          onReload={reloadTable}
+          endpoint="prestamo"
+          keyField="id"
+          deleteMessage="Desea eliminar el prestamo con id "
+          onDelete={handleDeleteSelection}
+          onSave={handleSaveEdit}
         />
       </Container>
 
-      {/* Modal para crear nuevos prestamos */}
       <CreateElementsComponent
         open={openModal}
-        onClose={handleCloseModal}
+        onClose={() => toggleModal(setOpenModal, false)}
         title="Crear prestamo"
         columns={columns}
-        endpoint="prestamo" // Endpoint dinámico para la creación
+        endpoint="prestamo"
         onSuccess={() => {
-          showSnackbar("Prestamo creado exitosamente.", "success");
-          setReloadTable((prev) => !prev); // Recargar la tabla
+          setSnackbar({
+            open: true,
+            message: "Prestamo creada exitosamente.",
+            severity: "success",
+          });
+          setReloadTable((prev) => !prev);
         }}
         onError={() => {
-          showSnackbar("Hubo un problema al crear el prestamo.", "error");
+          setSnackbar({
+            open: true,
+            message: "Error al crear el prestamo.",
+            severity: "error",
+          });
         }}
       />
 
-      {/* Snackbar para retroalimentación */}
+      <ModalDeleteComponent
+        open={openDeleteModal}
+        onClose={() => toggleModal(setOpenDeleteModal, false)}
+        item={selectedLoan}
+        onSuccess={() => setReloadTable((prev) => !prev)}
+      />
+
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}
-        onClose={handleCloseSnackbar}
+        onClose={() => setSnackbar({ open: false, message: "", severity: "" })}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity={snackbar.severity}
-          sx={{ width: "100%" }}
-        >
-          {snackbar.message}
-        </Alert>
+        <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
       </Snackbar>
     </>
   );

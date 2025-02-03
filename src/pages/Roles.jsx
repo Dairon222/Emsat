@@ -20,60 +20,46 @@ const columns = [
 ];
 
 const Roles = () => {
-  const [openModal, setOpenModal] = useState(false); // Controla la apertura del modal
-
-  const [openDeleteModal, setOpenDeleteModal] = useState(false); // Controla el modal de eliminación
-  const [selectedRol, setSelectedRol] = useState(null); // Ficha seleccionada para eliminar
-  const [reloadTable, setReloadTable] = useState(false); // Controla la recarga de la tabla
+  const [openModal, setOpenModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selectedRol, setSelectedRol] = useState(null);
+  const [reloadTable, setReloadTable] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "",
-  }); // Estado para Snackbar
+  });
 
-  // Abrir y cerrar el modal
-  const handleOpenModal = () => setOpenModal(true);
-  const handleCloseModal = () => setOpenModal(false);
-
-  const handleOpenDeleteModal = (user) => {
-    setSelectedRol(user);
-    setOpenDeleteModal(true);
-  };
-  const handleCloseDeleteModal = () => {
-    setSelectedRol(null);
-    setOpenDeleteModal(false);
-  };
-
-  // Mostrar mensajes en Snackbar
-  const showSnackbar = (message, severity) => {
-    setSnackbar({ open: true, message, severity });
-  };
-
-  // Cerrar el Snackbar
-  const handleCloseSnackbar = () => {
-    setSnackbar({ open: false, message: "", severity: "" });
-  };
-
-  // Crear un nuevo rol
-  const handleCreate = async (newData) => {
+  // Función para manejar la actualización de datos de los roles
+  const handleSaveEdit = async (updatedData) => {
     try {
-      const response = await api.post("rol", newData); // Endpoint dinámico para roles
-      showSnackbar("Rol creado exitosamente.", "success");
-
-      // Forzar recarga de la tabla tras crear el rol
-      setReloadTable((prev) => !prev);
-      handleCloseModal(); // Cierra el modal
+      await api.put(`rol/${updatedData.tipo}`, updatedData);
+      setSnackbar({
+        open: true,
+        message: "Datos actualizados correctamente.",
+        severity: "success",
+      });
+      setReloadTable((prev) => !prev); // Recargar la tabla
     } catch (error) {
-      console.error("Error al crear el rol:", error);
-      showSnackbar("Hubo un problema al crear el rol.", "error");
+      setSnackbar({
+        open: true,
+        message: "Error al actualizar los datos.",
+        severity: "error",
+      });
     }
+  };
+
+  // Controla la apertura y cierre de modales
+  const toggleModal = (modalSetter, value) => modalSetter(value);
+  const handleDeleteSelection = (rol) => {
+    setSelectedRol(rol);
+    setOpenDeleteModal(true);
   };
 
   return (
     <>
       <HeaderComponent title="Roles" />
       <Container maxWidth="xl" sx={{ mt: 3 }}>
-        {/* Botón para abrir el modal */}
         <Box
           sx={{
             display: "flex",
@@ -83,7 +69,7 @@ const Roles = () => {
           }}
         >
           <Typography variant="body1" gutterBottom>
-            Roles del sistema.
+            Roles del centro Sena.
           </Typography>
           <Button
             variant="contained"
@@ -92,66 +78,63 @@ const Roles = () => {
               transition: "all 0.5s ease",
               ":hover": { backgroundColor: "#2e7d32" },
             }}
-            onClick={handleOpenModal}
+            onClick={() => toggleModal(setOpenModal, true)}
           >
             Crear rol
           </Button>
         </Box>
 
-        {/* Tabla con datos de los roles */}
         <TableComponent
           columns={columns}
-          fetchData="rol" // Endpoint relativo para obtener roles
+          fetchData="rol"
           title="Lista de roles"
-          endpoint="rol"
-          keyField="id"
-          onDelete={handleOpenDeleteModal}
-          deleteMessage="Desea eliminar el rol con id"
           noDataMessage="No se encontraron roles."
-          onReload={reloadTable} // Recarga los datos cuando cambia el estado
+          onReload={reloadTable}
+          endpoint="rol"
+          keyField="tipo"
+          deleteMessage="Desea eliminar el rol de tipo "
+          onDelete={handleDeleteSelection}
+          onSave={handleSaveEdit} // Pasamos la función onSave aquí
         />
       </Container>
 
-      {/* Modal para crear nuevos roles */}
       <CreateElementsComponent
         open={openModal}
-        onClose={handleCloseModal}
+        onClose={() => toggleModal(setOpenModal, false)}
         title="Crear rol"
         columns={columns}
-        endpoint="rol" // Endpoint dinámico para la creación
+        endpoint="rol"
         onSuccess={() => {
-          showSnackbar("Rol creado exitosamente.", "success");
-          setReloadTable((prev) => !prev); // Recargar la tabla
-        }}
-        onError={() => {
-          showSnackbar("Hubo un problema al crear el rol.", "error");
-        }}
-      />
-
-      {/* Modal para eliminar Ficha */}
-      <ModalDeleteComponent
-        open={openDeleteModal}
-        onClose={handleCloseDeleteModal}
-        item={selectedRol}
-        onSuccess={() => {
+          setSnackbar({
+            open: true,
+            message: "Rol creado exitosamente.",
+            severity: "success",
+          });
           setReloadTable((prev) => !prev);
         }}
+        onError={() => {
+          setSnackbar({
+            open: true,
+            message: "Error al crear el rol.",
+            severity: "error",
+          });
+        }}
       />
 
-      {/* Snackbar para retroalimentación */}
+      <ModalDeleteComponent
+        open={openDeleteModal}
+        onClose={() => toggleModal(setOpenDeleteModal, false)}
+        item={selectedRol}
+        onSuccess={() => setReloadTable((prev) => !prev)}
+      />
+
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}
-        onClose={handleCloseSnackbar}
+        onClose={() => setSnackbar({ open: false, message: "", severity: "" })}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity={snackbar.severity}
-          sx={{ width: "100%" }}
-        >
-          {snackbar.message}
-        </Alert>
+        <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
       </Snackbar>
     </>
   );

@@ -37,6 +37,7 @@ const TableComponent = ({
   endpoint,
   keyField,
   deleteMessage,
+  hiddenFields
 }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -142,7 +143,7 @@ const TableComponent = ({
         </Typography>
       ) : (
         <>
-          <ButtonsExportComponent data={data} columns={columns} title={title} />
+          <ButtonsExportComponent data={data} columns={columns} title={title} hiddenFields={hiddenFields} />
           <Box
             sx={{
               display: "flex",
@@ -187,40 +188,44 @@ const TableComponent = ({
               <Table>
                 <TableHead>
                   <TableRow>
-                    {columns.map((column) => (
-                      <TableCell
-                        key={column.field}
-                        align={column.align}
-                        sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
-                      >
-                        {column.headerName}
-                      </TableCell>
-                    ))}
+                    {columns
+                      .filter((column) => !column.hidden) // Columnas visibles
+                      .map((column) => (
+                        <TableCell
+                          key={column.field}
+                          align={column.align}
+                          sx={{
+                            backgroundColor: "#f5f5f5",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {column.headerName}
+                        </TableCell>
+                      ))}
                     <TableCell
                       align="center"
-                      sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
+                      sx={{
+                        backgroundColor: "#f5f5f5",
+                        fontWeight: "bold",
+                      }}
                     >
                       Funciones
                     </TableCell>
                   </TableRow>
                 </TableHead>
+
                 <TableBody>
                   {data
-                    .filter((row) =>
-                      columns.some((column) =>
-                        String(row[column.field])
-                          .toLowerCase()
-                          .includes(searchTerm.toLowerCase())
-                      )
-                    )
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, rowIndex) => (
                       <TableRow key={rowIndex}>
-                        {columns.map((column) => (
-                          <TableCell key={column.field} align={column.align}>
-                            {row[column.field]}
-                          </TableCell>
-                        ))}
+                        {columns
+                          .filter((column) => !column.hidden) // Columnas visibles
+                          .map((column) => (
+                            <TableCell key={column.field} align={column.align}>
+                              {row[column.field]}
+                            </TableCell>
+                          ))}
                         <TableCell align="center">
                           <Button
                             size="small"
@@ -258,8 +263,9 @@ const TableComponent = ({
         open={openEditModal}
         onClose={handleCloseModals}
         data={selectedRow}
-        onSave={handleSaveEdit} // Se pasa la función handleSaveEdit
+        onSave={handleSaveEdit}
         title={title}
+        hiddenFields={hiddenFields} // Campos que no se mostrarán
       />
       <ModalDeleteComponent
         open={openDeleteModal}

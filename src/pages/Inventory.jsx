@@ -1,10 +1,18 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
-import { Container, Typography, Button, Box, Snackbar, Alert } from "@mui/material";
+import {
+  Container,
+  Typography,
+  Button,
+  Box,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import HeaderComponent from "../components/HeaderComponent";
 import TableComponent from "../components/TableComponent";
 import CreateElementsComponent from "../components/CreateElementsComponent";
-import api from "../api/axios"
+import ModalDeleteComponent from "../components/ModalDeleteComponent";
+import api from "../api/axios";
 
 const columns = [
   { field: "nombre_herramienta", headerName: "Herramienta", align: "center" },
@@ -14,47 +22,55 @@ const columns = [
 ];
 
 const Inventory = () => {
-  const [openModal, setOpenModal] = useState(false); // Controla la apertura del modal
-  const [reloadTable, setReloadTable] = useState(false); // Controla la recarga de la tabla
-  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "" }); // Estado para Snackbar
+  const [openModal, setOpenModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selectedTool, setSelectedTool] = useState(null);
+  const [reloadTable, setReloadTable] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "",
+  });
 
-  // Abrir y cerrar el modal
-  const handleOpenModal = () => setOpenModal(true);
-  const handleCloseModal = () => setOpenModal(false);
-
-  // Mostrar mensajes en Snackbar
-  const showSnackbar = (message, severity) => {
-    setSnackbar({ open: true, message, severity });
-  };
-
-  // Cerrar el Snackbar
-  const handleCloseSnackbar = () => {
-    setSnackbar({ open: false, message: "", severity: "" });
-  };
-
-  // Crear una nueva herramienta
-  const handleCreate = async (newData) => {
+  // Función para manejar la actualización de datos de las herramientas
+  const handleSaveEdit = async (updatedData) => {
     try {
-      const response = await api.post("herramienta", newData); // Endpoint dinámico para herramientas
-      showSnackbar("Herramienta creada exitosamente.", "success");
-
-      // Forzar recarga de la tabla tras crear la herramienta
-      setReloadTable((prev) => !prev);
-      handleCloseModal(); // Cierra el modal
+      await api.put(`herramienta/${updatedData.codigo}`, updatedData);
+      setSnackbar({
+        open: true,
+        message: "Datos actualizados correctamente.",
+        severity: "success",
+      });
+      setReloadTable((prev) => !prev); // Recargar la tabla
     } catch (error) {
-      console.error("Error al crear el usuario:", error);
-      showSnackbar("Hubo un problema al crear la herramienta.", "error");
+      setSnackbar({
+        open: true,
+        severity: "error",
+      });
     }
+  };
+
+  // Controla la apertura y cierre de modales
+  const toggleModal = (modalSetter, value) => modalSetter(value);
+  const handleDeleteSelection = (tool) => {
+    setSelectedTool(tool);
+    setOpenDeleteModal(true);
   };
 
   return (
     <>
       <HeaderComponent title="Herramientas" />
       <Container maxWidth="xl" sx={{ mt: 3 }}>
-        {/* Botón para abrir el modal */}
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
+          }}
+        >
           <Typography variant="body1" gutterBottom>
-            Administra las herramientas del sistema.
+            Administra las herramientas y elementos del sistema y la sede.
           </Typography>
           <Button
             variant="contained"
@@ -63,52 +79,63 @@ const Inventory = () => {
               transition: "all 0.5s ease",
               ":hover": { backgroundColor: "#2e7d32" },
             }}
-            onClick={handleOpenModal}
+            onClick={() => toggleModal(setOpenModal, true)}
           >
             Crear herramienta
           </Button>
         </Box>
 
-        {/* Tabla con datos de las herramientas */}
         <TableComponent
           columns={columns}
-          fetchData="herramienta" // Endpoint relativo para obtener herramientas
+          fetchData="herramienta"
           title="Lista de herramientas"
           noDataMessage="No se encontraron herramientas."
-          onReload={reloadTable} // Recarga los datos cuando cambia el estado
+          onReload={reloadTable}
+          endpoint="herramienta"
+          keyField="codigo"
+          deleteMessage="Desea eliminar la herramienta con código"
+          onDelete={handleDeleteSelection}
+          onSave={handleSaveEdit}
         />
       </Container>
 
-      {/* Modal para crear nuevas herramientas */}
       <CreateElementsComponent
         open={openModal}
-        onClose={handleCloseModal}
+        onClose={() => toggleModal(setOpenModal, false)}
         title="Crear herramienta"
         columns={columns}
-        endpoint="herramienta" // Endpoint dinámico para la creación
+        endpoint="herramienta"
         onSuccess={() => {
-          showSnackbar("Herramienta creada exitosamente.", "success");
-          setReloadTable((prev) => !prev); // Recargar la tabla
+          setSnackbar({
+            open: true,
+            message: "Herramienta creada exitosamente.",
+            severity: "success",
+          });
+          setReloadTable((prev) => !prev);
         }}
         onError={() => {
-          showSnackbar("Hubo un problema al crear la herramienta.", "error");
+          setSnackbar({
+            open: true,
+            message: "Error al crear la herramienta.",
+            severity: "error",
+          });
         }}
       />
 
-      {/* Snackbar para retroalimentación */}
+      <ModalDeleteComponent
+        open={openDeleteModal}
+        onClose={() => toggleModal(setOpenDeleteModal, false)}
+        item={selectedTool}
+        onSuccess={() => setReloadTable((prev) => !prev)}
+      />
+
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}
-        onClose={handleCloseSnackbar}
+        onClose={() => setSnackbar({ open: false, message: "", severity: "" })}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity={snackbar.severity}
-          sx={{ width: "100%" }}
-        >
-          {snackbar.message}
-        </Alert>
+        <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
       </Snackbar>
     </>
   );

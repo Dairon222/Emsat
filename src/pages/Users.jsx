@@ -15,12 +15,13 @@ import ModalDeleteComponent from "../components/ModalDeleteComponent";
 import api from "../api/axios";
 
 const columns = [
+  { field: "id", headerName: "Id user", align: "center", hidden: true},
   { field: "nombre", headerName: "Nombre", align: "center" },
   { field: "apellido", headerName: "Apellido", align: "center" },
   { field: "identificacion", headerName: "Identificación", align: "center" },
   { field: "celular", headerName: "Celular", align: "center" },
-  { field: "rol_id", headerName: "Rol", align: "center" },
-  { field: "ficha_id", headerName: "Ficha", align: "center" },
+  { field: "rol_id", headerName: "Rol", align: "center", hidden: true },
+  { field: "ficha_id", headerName: "Ficha", align: "center", hidden: true },
 ];
 
 const Users = () => {
@@ -91,14 +92,23 @@ const Users = () => {
         <TableComponent
           columns={columns}
           fetchData="usuario"
-          title="Lista de Usuarios"
+          title="Lista de usuarios"
           noDataMessage="No se encontraron usuarios."
           onReload={reloadTable}
           endpoint="usuario"
           keyField="identificacion"
           deleteMessage="Desea eliminar al usuario con identificación"
           onDelete={handleDeleteSelection}
-          onSave={handleSaveEdit} // Pasamos la función onSave aquí
+          onSave={handleSaveEdit}
+          hiddenFields={[
+            "id",
+            "created_at",
+            "updated_at",
+            "ficha",
+            "rol",
+            "rol_id",
+            "ficha_id",
+          ]} // Campos que no se mostrarán
         />
       </Container>
 

@@ -3,7 +3,14 @@
 import { useState, useEffect } from "react";
 import { Modal, Box, Typography, TextField, Button } from "@mui/material";
 
-const ModalEditComponent = ({ open, onClose, data, onSave, title }) => {
+const ModalEditComponent = ({
+  open,
+  onClose,
+  data,
+  onSave,
+  title,
+  hiddenFields = [],
+}) => {
   const [formData, setFormData] = useState({});
 
   useEffect(() => {
@@ -46,18 +53,20 @@ const ModalEditComponent = ({ open, onClose, data, onSave, title }) => {
         </Typography>
         {data && (
           <Box>
-            {Object.keys(data).map((key) => (
-              <TextField
-                key={key}
-                name={key}
-                label={key.charAt(0).toUpperCase() + key.slice(1)}
-                value={formData[key] || ""}
-                onChange={handleInputChange}
-                fullWidth
-                size="small"
-                sx={{ mb: 2 }}
-              />
-            ))}
+            {Object.keys(data)
+              .filter((key) => !hiddenFields.includes(key)) // Ocultar campos especificados
+              .map((key) => (
+                <TextField
+                  key={key}
+                  name={key}
+                  label={key.charAt(0).toUpperCase() + key.slice(1)}
+                  value={formData[key] || ""}
+                  onChange={handleInputChange}
+                  fullWidth
+                  size="small"
+                  sx={{ mb: 2 }}
+                />
+              ))}
           </Box>
         )}
         <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>

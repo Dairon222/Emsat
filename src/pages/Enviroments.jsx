@@ -1,10 +1,18 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
-import { Container, Typography, Button, Box, Snackbar, Alert } from "@mui/material";
+import {
+  Container,
+  Typography,
+  Button,
+  Box,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import HeaderComponent from "../components/HeaderComponent";
 import TableComponent from "../components/TableComponent";
 import CreateElementsComponent from "../components/CreateElementsComponent";
-import api from "../api/axios"
+import ModalDeleteComponent from "../components/ModalDeleteComponent";
+import api from "../api/axios";
 
 const columns = [
   { field: "nombre_ambiente", headerName: "Nombre", align: "center" },
@@ -12,47 +20,55 @@ const columns = [
 ];
 
 const Enviroments = () => {
-  const [openModal, setOpenModal] = useState(false); // Controla la apertura del modal
-  const [reloadTable, setReloadTable] = useState(false); // Controla la recarga de la tabla
-  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "" }); // Estado para Snackbar
+  const [openModal, setOpenModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selectedEnviroment, setSelectedEnviroment] = useState(null);
+  const [reloadTable, setReloadTable] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "",
+  });
 
-  // Abrir y cerrar el modal
-  const handleOpenModal = () => setOpenModal(true);
-  const handleCloseModal = () => setOpenModal(false);
-
-  // Mostrar mensajes en Snackbar
-  const showSnackbar = (message, severity) => {
-    setSnackbar({ open: true, message, severity });
-  };
-
-  // Cerrar el Snackbar
-  const handleCloseSnackbar = () => {
-    setSnackbar({ open: false, message: "", severity: "" });
-  };
-
-  // Crear un nuevo ambiente
-  const handleCreate = async (newData) => {
+  // Función para manejar la actualización de datos de los ambientes
+  const handleSaveEdit = async (updatedData) => {
     try {
-      const response = await api.post("ambiente", newData); // Endpoint dinámico para ambientes
-      showSnackbar("Ambiente creado exitosamente.", "success");
-
-      // Forzar recarga de la tabla tras crear el ambiente
-      setReloadTable((prev) => !prev);
-      handleCloseModal(); // Cierra el modal
+      await api.put(`ambiente/${updatedData.codigo}`, updatedData);
+      setSnackbar({
+        open: true,
+        message: "Datos actualizados correctamente.",
+        severity: "success",
+      });
+      setReloadTable((prev) => !prev); // Recargar la tabla
     } catch (error) {
-      console.error("Error al crear el ambiente:", error);
-      showSnackbar("Hubo un problema al crear el ambiente.", "error");
+      setSnackbar({
+        open: true,
+        severity: "error",
+      });
     }
+  };
+
+  // Controla la apertura y cierre de modales
+  const toggleModal = (modalSetter, value) => modalSetter(value);
+  const handleDeleteSelection = (enviroment) => {
+    setSelectedEnviroment(enviroment);
+    setOpenDeleteModal(true);
   };
 
   return (
     <>
       <HeaderComponent title="Ambientes" />
       <Container maxWidth="xl" sx={{ mt: 3 }}>
-        {/* Botón para abrir el modal */}
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
+          }}
+        >
           <Typography variant="body1" gutterBottom>
-            Ambientes de la sede.
+            Administra los ambientes de la sede.
           </Typography>
           <Button
             variant="contained"
@@ -61,52 +77,63 @@ const Enviroments = () => {
               transition: "all 0.5s ease",
               ":hover": { backgroundColor: "#2e7d32" },
             }}
-            onClick={handleOpenModal}
+            onClick={() => toggleModal(setOpenModal, true)}
           >
             Crear ambiente
           </Button>
         </Box>
 
-        {/* Tabla con datos de los ammbientes */}
         <TableComponent
           columns={columns}
-          fetchData="ambiente" // Endpoint relativo para obtener ambientes
+          fetchData="ambiente"
           title="Lista de ambientes"
           noDataMessage="No se encontraron ambientes."
-          onReload={reloadTable} // Recarga los datos cuando cambia el estado
+          onReload={reloadTable}
+          endpoint="ambiente"
+          keyField="codigo"
+          deleteMessage="Desea eliminar el ambiente #  "
+          onDelete={handleDeleteSelection}
+          onSave={handleSaveEdit}
         />
       </Container>
 
-      {/* Modal para crear nuevos ambientes */}
       <CreateElementsComponent
         open={openModal}
-        onClose={handleCloseModal}
+        onClose={() => toggleModal(setOpenModal, false)}
         title="Crear ambiente"
         columns={columns}
-        endpoint="ambiente" // Endpoint dinámico para la creación
+        endpoint="ambiente"
         onSuccess={() => {
-          showSnackbar("Ambiente creado exitosamente.", "success");
-          setReloadTable((prev) => !prev); // Recargar la tabla
+          setSnackbar({
+            open: true,
+            message: "Ambiente creado exitosamente.",
+            severity: "success",
+          });
+          setReloadTable((prev) => !prev);
         }}
         onError={() => {
-          showSnackbar("Hubo un problema el ambiente.", "error");
+          setSnackbar({
+            open: true,
+            message: "Error al crear el ambiente.",
+            severity: "error",
+          });
         }}
       />
 
-      {/* Snackbar para retroalimentación */}
+      <ModalDeleteComponent
+        open={openDeleteModal}
+        onClose={() => toggleModal(setOpenDeleteModal, false)}
+        item={selectedEnviroment}
+        onSuccess={() => setReloadTable((prev) => !prev)}
+      />
+
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}
-        onClose={handleCloseSnackbar}
+        onClose={() => setSnackbar({ open: false, message: "", severity: "" })}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity={snackbar.severity}
-          sx={{ width: "100%" }}
-        >
-          {snackbar.message}
-        </Alert>
+        <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
       </Snackbar>
     </>
   );
