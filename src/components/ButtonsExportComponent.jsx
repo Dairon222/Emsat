@@ -7,18 +7,32 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { FileCopy, PictureAsPdf, TableChart } from "@mui/icons-material";
 
-const ButtonsExportComponent = ({ data, columns, title }) => {
-  const [snackbar, setSnackbar] = React.useState({ open: false, message: "", severity: "" });
+const ButtonsExportComponent = ({
+  data,
+  columns,
+  title,
+  hiddenFields = [],
+}) => {
+  const [snackbar, setSnackbar] = React.useState({
+    open: false,
+    message: "",
+    severity: "",
+  });
 
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
+  // 🔥 Filtrar columnas visibles para la exportación
+  const visibleColumns = columns.filter(
+    (col) => !hiddenFields.includes(col.field)
+  );
+
   // Exportar a Excel
   const handleExportExcel = () => {
     const exportData = data.map((row) => {
       const rowData = {};
-      columns.forEach((col) => {
+      visibleColumns.forEach((col) => {
         rowData[col.headerName] = row[col.field];
       });
       return rowData;
@@ -27,36 +41,53 @@ const ButtonsExportComponent = ({ data, columns, title }) => {
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
 
     const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
     saveAs(blob, `${title || "data"}.xlsx`);
-    setSnackbar({ open: true, message: "Datos exportados a Excel exitosamente.", severity: "success" });
+    setSnackbar({
+      open: true,
+      message: "Datos exportados a Excel exitosamente.",
+      severity: "success",
+    });
   };
 
   // Exportar a PDF
   const handleExportPDF = () => {
     const doc = new jsPDF();
-    const tableColumnHeaders = columns.map((col) => col.headerName);
+    const tableColumnHeaders = visibleColumns.map((col) => col.headerName);
     const tableRows = data.map((row) =>
-      columns.map((col) => row[col.field] || "")
+      visibleColumns.map((col) => row[col.field] || "")
     );
 
     doc.text(title || "Datos Exportados", 14, 15);
     doc.autoTable({ head: [tableColumnHeaders], body: tableRows, startY: 20 });
     doc.save(`${title || "data"}.pdf`);
-    setSnackbar({ open: true, message: "Datos exportados a PDF exitosamente.", severity: "success" });
+    setSnackbar({
+      open: true,
+      message: "Datos exportados a PDF exitosamente.",
+      severity: "success",
+    });
   };
 
   // Copiar al Portapapeles
   const handleCopyToClipboard = () => {
     const textToCopy = [
-      columns.map((col) => col.headerName).join("\t"),
-      ...data.map((row) => columns.map((col) => row[col.field] || "").join("\t")),
+      visibleColumns.map((col) => col.headerName).join("\t"),
+      ...data.map((row) =>
+        visibleColumns.map((col) => row[col.field] || "").join("\t")
+      ),
     ].join("\n");
 
     navigator.clipboard.writeText(textToCopy).then(() => {
-      setSnackbar({ open: true, message: "Datos copiados al portapapeles.", severity: "success" });
+      setSnackbar({
+        open: true,
+        message: "Datos copiados al portapapeles.",
+        severity: "success",
+      });
     });
   };
 
@@ -87,7 +118,11 @@ const ButtonsExportComponent = ({ data, columns, title }) => {
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: "100%" }}>
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
           {snackbar.message}
         </Alert>
       </Snackbar>

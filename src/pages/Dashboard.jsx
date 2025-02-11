@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Typography,
@@ -9,20 +9,22 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useSede } from "../context/SedeContext";
 import HeaderComponent from "../components/HeaderComponent";
 import CardComponent from "../components/CardComponent";
 import CreateElementsComponent from "../components/CreateElementsComponent";
-import api from "../api/axios"; // Importamos la instancia de Axios
+import api from "../api/axios";
 
+// Iconos
 import PeopleIcon from "@mui/icons-material/People";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import BuildIcon from "@mui/icons-material/Build";
 import SchoolIcon from "@mui/icons-material/School";
 import WorkspacesIcon from "@mui/icons-material/Workspaces";
 import HandshakeIcon from "@mui/icons-material/Handshake";
-import { Description } from "@mui/icons-material";
 
-// Definimos los tipos de entidades con sus respectivas columnas y endpoints
+// Configuración de entidades y sus columnas
 const entityConfig = {
   usuario: {
     title: "Usuario",
@@ -32,11 +34,7 @@ const entityConfig = {
     columns: [
       { field: "nombre", headerName: "Nombre", align: "center" },
       { field: "apellido", headerName: "Apellido", align: "center" },
-      {
-        field: "identificacion",
-        headerName: "Identificación",
-        align: "center",
-      },
+      { field: "identificacion", headerName: "Identificación", align: "center" },
       { field: "celular", headerName: "Celular", align: "center" },
       { field: "rol_id", headerName: "Rol ID", align: "center" },
       { field: "ficha_id", headerName: "Ficha ID", align: "center" },
@@ -49,7 +47,7 @@ const entityConfig = {
     icon: <SchoolIcon />,
     columns: [
       { field: "nombre_ficha", headerName: "Nombre ficha", align: "center" },
-      { field: "numero_ficha", headerName: "Numero de ficha", align: "center" },
+      { field: "numero_ficha", headerName: "Número de ficha", align: "center" },
     ],
   },
   herramienta: {
@@ -58,11 +56,7 @@ const entityConfig = {
     description: "Gestiona las herramientas disponibles",
     icon: <BuildIcon />,
     columns: [
-      {
-        field: "nombre_herramienta",
-        headerName: "Herramienta",
-        align: "center",
-      },
+      { field: "nombre_herramienta", headerName: "Herramienta", align: "center" },
       { field: "codigo", headerName: "Código", align: "center" },
       { field: "stock", headerName: "Total", align: "center" },
       { field: "ubicacion", headerName: "Ubicación", align: "center" },
@@ -82,7 +76,7 @@ const entityConfig = {
     icon: <WorkspacesIcon />,
     columns: [
       { field: "nombre_ambiente", headerName: "Nombre", align: "center" },
-      { field: "codigo", headerName: "Codigo ambiente", align: "center" },
+      { field: "codigo", headerName: "Código ambiente", align: "center" },
     ],
   },
   prestamo: {
@@ -92,37 +86,23 @@ const entityConfig = {
     icon: <HandshakeIcon />,
     columns: [
       { field: "usuario_id", headerName: "Usuario ID", align: "center" },
-      {
-        field: "herramienta_id",
-        headerName: "Herramienta ID",
-        align: "center",
-      },
+      { field: "herramienta_id", headerName: "Herramienta ID", align: "center" },
       { field: "cantidad", headerName: "Cantidad", align: "center" },
-      {
-        field: "fecha_prestamo",
-        headerName: "Fecha Préstamo",
-        align: "center",
-      },
-      {
-        field: "fecha_devolucion",
-        headerName: "Fecha Devolución",
-        align: "center",
-      },
+      { field: "fecha_prestamo", headerName: "Fecha Préstamo", align: "center" },
+      { field: "fecha_devolucion", headerName: "Fecha Devolución", align: "center" },
     ],
   },
 };
 
 const Dashboard = () => {
+  const { sede, logout } = useSede();
+  const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
   const [selectedEntity, setSelectedEntity] = useState(null);
   const [reloadTable, setReloadTable] = useState(false);
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: "",
-    severity: "",
-  });
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "" });
 
-  // Abrir modal y definir entidad a crear
+
   const handleOpenModal = (entity) => {
     setSelectedEntity(entityConfig[entity]);
     setOpenModal(true);
@@ -133,33 +113,25 @@ const Dashboard = () => {
     setSelectedEntity(null);
   };
 
-  // Mostrar mensajes en Snackbar
   const showSnackbar = (message, severity) => {
     setSnackbar({ open: true, message, severity });
   };
 
-  // Cerrar el Snackbar
   const handleCloseSnackbar = () => {
     setSnackbar({ open: false, message: "", severity: "" });
   };
 
-  // Crear nuevo elemento en la API
   const handleCreate = async (newData) => {
     if (!selectedEntity) return;
 
     try {
-      const response = await api.post(selectedEntity.endpoint, newData);
+      await api.post(selectedEntity.endpoint, newData);
       showSnackbar(`${selectedEntity.title} creado exitosamente.`, "success");
-
-      // Forzar recarga de la tabla tras crear un nuevo elemento
       setReloadTable((prev) => !prev);
       handleCloseModal();
     } catch (error) {
       console.error(`Error al crear ${selectedEntity.title}:`, error);
-      showSnackbar(
-        `Hubo un problema al crear ${selectedEntity.title}.`,
-        "error"
-      );
+      showSnackbar(`Hubo un problema al crear ${selectedEntity.title}.`, "error");
     }
   };
 
@@ -167,9 +139,11 @@ const Dashboard = () => {
     <>
       <HeaderComponent title="Inicio" />
       <Container maxWidth="xl" sx={{ mt: 3 }}>
-        <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold" }}>
-          Panel de Control
-        </Typography>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+          <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+            Panel de Control
+          </Typography>
+        </Box>
 
         <Grid container spacing={3}>
           {Object.keys(entityConfig).map((key) => {
@@ -197,33 +171,18 @@ const Dashboard = () => {
           columns={selectedEntity.columns}
           endpoint={selectedEntity.endpoint}
           onSuccess={() => {
-            showSnackbar(
-              `${selectedEntity.title} creado exitosamente.`,
-              "success"
-            );
+            showSnackbar(`${selectedEntity.title} creado exitosamente.`, "success");
             setReloadTable((prev) => !prev);
           }}
           onError={() => {
-            showSnackbar(
-              `Hubo un problema al crear ${selectedEntity.title}.`,
-              "error"
-            );
+            showSnackbar(`Hubo un problema al crear ${selectedEntity.title}.`, "error");
           }}
         />
       )}
 
-      {/* Snackbar para retroalimentación */}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={4000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity={snackbar.severity}
-          sx={{ width: "100%" }}
-        >
+      {/* Snackbar para notificaciones */}
+      <Snackbar open={snackbar.open} autoHideDuration={4000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: "100%" }}>
           {snackbar.message}
         </Alert>
       </Snackbar>

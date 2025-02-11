@@ -37,7 +37,7 @@ const TableComponent = ({
   endpoint,
   keyField,
   deleteMessage,
-  hiddenFields
+  hiddenFields,
 }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -143,7 +143,12 @@ const TableComponent = ({
         </Typography>
       ) : (
         <>
-          <ButtonsExportComponent data={data} columns={columns} title={title} hiddenFields={hiddenFields} />
+          <ButtonsExportComponent
+            data={data}
+            columns={columns}
+            title={title}
+            hiddenFields={hiddenFields}
+          />
           <Box
             sx={{
               display: "flex",
@@ -175,11 +180,13 @@ const TableComponent = ({
           <TableContainer component={Paper}>
             {data.length === 0 ||
             data.filter((row) =>
-              columns.some((column) =>
-                String(row[column.field])
-                  .toLowerCase()
-                  .includes(searchTerm.toLowerCase())
-              )
+              columns
+                .filter((column) => !column.hidden) // Solo buscar en columnas visibles
+                .some((column) =>
+                  String(row[column.field])
+                    .toLowerCase()
+                    .includes(searchTerm.toLowerCase())
+                )
             ).length === 0 ? (
               <Typography variant="body1" align="center" sx={{ p: 4 }}>
                 {noDataMessage}
@@ -189,7 +196,7 @@ const TableComponent = ({
                 <TableHead>
                   <TableRow>
                     {columns
-                      .filter((column) => !column.hidden) // Columnas visibles
+                      .filter((column) => !column.hidden) // Solo mostrar columnas visibles
                       .map((column) => (
                         <TableCell
                           key={column.field}
@@ -204,10 +211,7 @@ const TableComponent = ({
                       ))}
                     <TableCell
                       align="center"
-                      sx={{
-                        backgroundColor: "#f5f5f5",
-                        fontWeight: "bold",
-                      }}
+                      sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
                     >
                       Funciones
                     </TableCell>
@@ -216,11 +220,20 @@ const TableComponent = ({
 
                 <TableBody>
                   {data
+                    .filter((row) =>
+                      columns
+                        .filter((column) => !column.hidden) // Buscar solo en columnas visibles
+                        .some((column) =>
+                          String(row[column.field])
+                            .toLowerCase()
+                            .includes(searchTerm.toLowerCase())
+                        )
+                    )
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, rowIndex) => (
                       <TableRow key={rowIndex}>
                         {columns
-                          .filter((column) => !column.hidden) // Columnas visibles
+                          .filter((column) => !column.hidden) // Mostrar solo columnas visibles
                           .map((column) => (
                             <TableCell key={column.field} align={column.align}>
                               {row[column.field]}
@@ -247,6 +260,7 @@ const TableComponent = ({
               </Table>
             )}
           </TableContainer>
+
           <TablePagination
             rowsPerPageOptions={[5, 10, 25, 50]}
             component="div"
