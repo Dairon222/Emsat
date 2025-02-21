@@ -20,8 +20,9 @@ const columns = [
   { field: "apellido", headerName: "Apellido", align: "center" },
   { field: "identificacion", headerName: "Identificación", align: "center" },
   { field: "celular", headerName: "Celular", align: "center" },
-  { field: "rol_id", headerName: "Rol", align: "center", hidden: true },
-  { field: "ficha_id", headerName: "Ficha", align: "center", hidden: true },
+  { field: "rol_id", headerName: "Rol", align: "center"},
+  { field: "ficha_id", headerName: "Ficha", align: "center" },
+
 ];
 
 const Users = () => {

@@ -31,7 +31,7 @@ const SidebarComponent = ({ drawerWidth, title }) => {
     { text: "Fichas", path: "/fichas", icon: <SchoolIcon /> },
     { text: "Ambientes", path: "/enviroments", icon: <MeetingRoomIcon /> },
     { text: "Roles", path: "/roles", icon: <ManIcon /> },
-    { text: "Morosos", path: "/morosos", icon: <HistoryIcon /> },
+    { text: "Historial", path: "/historial", icon: <HistoryIcon /> },
   ];
 
   return (

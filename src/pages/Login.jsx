@@ -91,7 +91,7 @@ const Login = () => {
 
         // 🔹 Redirección basada en el ID del usuario
         if (userData.id === 4) {
-          navigate("/dashboard");
+          navigate("/users");
         } else {
           navigate("/dashboard");
         }

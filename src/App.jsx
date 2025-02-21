@@ -12,6 +12,7 @@ import Morosos from "./pages/Morosos";
 import Enviroments from "./pages/Enviroments";
 import Roles from "./pages/Roles";
 import Fichas from "./pages/Fichas";
+import Historial from "./pages/Historial";
 
 const theme = createTheme({
   palette: {
@@ -41,6 +42,7 @@ const App = () => {
                     <Route path="/fichas" element={<Fichas />} />
                     <Route path="/enviroments" element={<Enviroments />} />
                     <Route path="/roles" element={<Roles />} />
+                    <Route path="/historial" element={<Historial />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Layout>
