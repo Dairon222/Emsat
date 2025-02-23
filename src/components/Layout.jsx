@@ -5,7 +5,8 @@ import SidebarComponent from "./SidebarComponent";
 
 const drawerWidth = 240; // Ancho de la barra lateral
 
-const Layout = ({ children, sede }) => {
+const Layout = ({ children }) => {
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -21,10 +22,10 @@ const Layout = ({ children, sede }) => {
           width: { sm: `calc(100% - ${drawerWidth}px)` },
         }}
       >
-        <HeaderComponent sede={sede}  />
+        {/* 🔹 Pasar la sede obtenida del contexto */}
+        <HeaderComponent />
 
         <Toolbar />
-
         {children}
       </Box>
     </Box>

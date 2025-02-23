@@ -3,20 +3,21 @@ import { AppBar, Toolbar, Typography, Box, Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useSede } from "../context/SedeContext";
+import { useNavigate } from "react-router-dom";
 
 const HeaderComponent = ({ title }) => {
-  const { sede } = useSede();
 
-  const navLinks = [{ text: "Salir", path: "/", icon: <LogoutIcon /> }];
+  const navigate = useNavigate();
+  const { sede, logout } = useSede();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/"); // Redirigir al login
+  };
 
   return (
     <AppBar position="fixed">
-      <Toolbar
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-        }}
-      >
+      <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
         <Box sx={{ display: "flex", alignItems: "center", p: 1 }}>
           <Link
             to="/dashboard"
@@ -39,29 +40,22 @@ const HeaderComponent = ({ title }) => {
 
         {/* Navegación */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 2, mr: 5 }}>
-          {navLinks.map((link) => (
-            <Button
-              key={link.text}
-              component={Link}
-              to={link.path}
-              color="inherit"
-              startIcon={link.icon}
-              sx={{
-                textTransform: "none",
-                p:1.5,
-                "&:hover": {
-                  backgroundColor: "#ffffff20",
-                  borderRadius: 1,
-                },
-              }}
-            >
-              {link.text}
-            </Button>
-          ))}
+          <Button
+            onClick={handleLogout} // 🔹 Ahora el botón de "Salir" cierra sesión
+            color="inherit"
+            startIcon={<LogoutIcon />}
+            sx={{
+              textTransform: "none",
+              p: 1.5,
+              "&:hover": { backgroundColor: "#ffffff20", borderRadius: 1 },
+            }}
+          >
+            Salir
+          </Button>
 
-          {/* Sede Seleccionada */}
+          {/* 🔹 Mostrar la sede seleccionada */}
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            {sede || "Sede no seleccionada"}
+            {sede ? sede : "Selecciona una sede"}
           </Typography>
         </Box>
       </Toolbar>

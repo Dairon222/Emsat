@@ -9,16 +9,5 @@ const api = axios.create({
   },
 });
 
-export const deleteData = async (endpoint, id) => {
-  try {
-    const response = await api.delete(`${endpoint}/${id}`, {
-      headers: { "Content-Type": "application/json" }, 
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error al eliminar:", error);
-    throw error;
-  }
-};
 
 export default api;

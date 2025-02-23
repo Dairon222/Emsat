@@ -95,7 +95,6 @@ const entityConfig = {
 };
 
 const Dashboard = () => {
-  const { sede, logout } = useSede();
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
   const [selectedEntity, setSelectedEntity] = useState(null);

@@ -1,38 +1,29 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable no-unused-vars */
-import React, { createContext, useState, useContext, useEffect } from "react";
+import React, { createContext, useState, useContext } from "react";
+import Layout from "../components/Layout";
 
 const SedeContext = createContext();
 
-export const useSede = () => useContext(SedeContext);
+export const useSede = () => {
+  const context = useContext(SedeContext);
+  return context;
+};
 
 const SedeProvider = ({ children }) => {
-  const [sede, setSede] = useState(() => {
-    // Obtener la sesión desde el almacenamiento local al iniciar
-    const storedSede = localStorage.getItem("selectedSede");
-    return storedSede ? JSON.parse(storedSede) : null;
-  });
+  const [sede, setSede] = useState(() => localStorage.getItem("sede") || null);
 
-  // Actualizar la sede en el estado y en localStorage
   const updateSede = (newSede) => {
     setSede(newSede);
-    localStorage.setItem("selectedSede", JSON.stringify(newSede));
+    localStorage.setItem("sede", newSede);
   };
 
-  // Función para cerrar sesión
-  const logout = () => {
+  const logout = (navigate) => {
     setSede(null);
-    localStorage.removeItem("selectedSede");
+    localStorage.removeItem("sede");
+    localStorage.removeItem("userId");
   };
-
-  // Si el usuario ya está autenticado, mantiene la sesión activa
-  useEffect(() => {
-    const storedSede = localStorage.getItem("selectedSede");
-    if (storedSede) {
-      setSede(JSON.parse(storedSede));
-    }
-  }, []);
 
   return (
     <SedeContext.Provider value={{ sede, updateSede, logout }}>

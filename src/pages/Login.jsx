@@ -22,6 +22,7 @@ const Login = () => {
   const [sedes, setSedes] = useState([]);
   const [selectedSede, setSelectedSede] = useState("");
   const [selectedNumeroSede, setSelectedNumeroSede] = useState(null);
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -30,13 +31,13 @@ const Login = () => {
   });
   const navigate = useNavigate();
 
-  // Cargar sedes desde la API
   useEffect(() => {
     const fetchSedes = async () => {
       try {
-        const response = await api.get("sede"); // La API debe devolver también el numero_sede
+        const response = await api.get("sede");
         setSedes(response.data);
       } catch (error) {
+        console.error("Error al cargar sedes:", error);
         setSnackbar({
           open: true,
           message: "No se pudieron cargar las sedes.",
@@ -47,7 +48,6 @@ const Login = () => {
     fetchSedes();
   }, []);
 
-  // Mostrar notificación
   const showSnackbar = (message, severity) => {
     setSnackbar({ open: true, message, severity });
   };
@@ -55,56 +55,52 @@ const Login = () => {
   const handleCloseSnackbar = () =>
     setSnackbar({ open: false, message: "", severity: "" });
 
-  // Manejar el cambio de selección de sede
   const handleSelectSede = (event) => {
     const sedeSeleccionada = event.target.value;
     setSelectedSede(sedeSeleccionada);
-
-    // Buscar el número de sede correspondiente
     const sedeData = sedes.find((s) => s.nombre_sede === sedeSeleccionada);
     if (sedeData) {
       setSelectedNumeroSede(sedeData.numero_sede);
     }
   };
 
-  // Manejar el inicio de sesión
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (!selectedSede || !password) {
+    if (!username || !password || !selectedSede) {
       showSnackbar("Por favor completa todos los campos.", "warning");
       return;
     }
 
     try {
       const response = await api.post("login-sede", {
-        username: selectedSede,
+        username,
         contrasena: password,
+        nombre_sede: selectedSede,
       });
 
-      console.log("API Response:", response.data); // 🔍 Ver qué responde la API
+      console.log("Respuesta del servidor:", response.data);
 
-      const userData = response.data.user; // 🔹 Extraer correctamente el usuario
+      const userData = response?.data?.user;
 
-      if (userData?.id) {
-        updateSede(userData.sede); // Guarda la sede en el contexto
-        localStorage.setItem("userId", userData.id); // Guarda el ID del usuario
+      if (userData && userData.id) {
+        const sedeFinal = userData.nombre_sede || selectedSede;
+        updateSede(sedeFinal);
+        console.log("Sede actualizada:", sedeFinal);
+        localStorage.setItem("userId", userData.id);
+        localStorage.setItem("sede", sedeFinal);
 
-        // 🔹 Redirección basada en el ID del usuario
-        if (userData.id === 4) {
-          navigate("/users");
-        } else {
-          navigate("/dashboard");
-        }
+        navigate(userData.id === 4 ? "/users" : "/dashboard");
 
         showSnackbar("Inicio de sesión exitoso.", "success");
       } else {
-        throw new Error("Credenciales incorrectas.");
+        throw new Error("Credenciales incorrectas o datos incompletos.");
       }
     } catch (error) {
-      console.error("Error en el inicio de sesión:", error);
+      console.error("Error en login:", error);
       showSnackbar("Verifica tus credenciales.", "error");
     }
   };
+
   return (
     <Box
       sx={{
@@ -144,25 +140,39 @@ const Login = () => {
         </Box>
 
         <Box component="form" onSubmit={handleLogin}>
+          <TextField
+            fullWidth
+            id="username"
+            label="Nombre de usuario"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            sx={{ mb: 3 }}
+          />
+          <TextField
+            fullWidth
+            type="password"
+            id="password"
+            label="Contraseña"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            sx={{ mb: 3 }}
+          />
           <FormControl fullWidth sx={{ mb: 3 }}>
             <InputLabel id="sede-label">Selecciona la sede</InputLabel>
             <Select
               labelId="sede-label"
-              id="username"
+              id="nombre_sede"
               value={selectedSede}
               onChange={handleSelectSede}
               required
               MenuProps={{ PaperProps: { sx: { maxHeight: 200 } } }}
-              sx={{
-                borderRadius: "5px",
-                boxShadow: "0 0 4px rgba(20, 159, 34, 0.5)",
-                ".MuiSelect-select": { textAlign: "left" },
-              }}
             >
               {sedes.length > 0 ? (
                 sedes.map((sede) => (
                   <MenuItem key={sede.id} value={sede.nombre_sede}>
-                    {sede.nombre_sede} (#{sede.numero_sede})
+                    {sede.nombre_sede}
                   </MenuItem>
                 ))
               ) : (
@@ -170,72 +180,11 @@ const Login = () => {
               )}
             </Select>
           </FormControl>
-
-          <TextField
-            type="password"
-            id="contrasena"
-            label="Contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            fullWidth
-            required
-            sx={{
-              mb: 3,
-              borderRadius: "5px",
-              boxShadow: "0 0 4px rgba(20, 159, 34, 0.5)",
-            }}
-          />
-
-          <Button
-            type="submit"
-            variant="contained"
-            fullWidth
-            sx={{
-              backgroundColor: "#03b12fcc",
-              color: "white",
-              fontSize: "1em",
-              fontWeight: "bold",
-              padding: "15px",
-              borderRadius: "5px",
-              transition: "background-color 0.3s ease",
-              "&:hover": { backgroundColor: "#333" },
-            }}
-          >
+          <Button type="submit" variant="contained" fullWidth>
             Iniciar Sesión
           </Button>
         </Box>
-
-        <Typography
-          variant="body2"
-          sx={{
-            mt: 2,
-            a: {
-              textDecoration: "none",
-              color: "#333",
-              fontSize: "0.9em",
-              transition: "color 0.3s",
-            },
-            "a:hover": { color: "rgba(197, 36, 36, 0.811)" },
-          }}
-        >
-          <a href="/recuperar-contraseña">¿Olvidaste tu contraseña?</a>
-        </Typography>
       </Box>
-
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={4000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity={snackbar.severity}
-          sx={{ width: "100%" }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 };
