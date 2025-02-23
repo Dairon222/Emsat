@@ -95,6 +95,14 @@ const Loans = () => {
           deleteMessage="Desea eliminar el prestamo con id "
           onDelete={handleDeleteSelection}
           onSave={handleSaveEdit}
+          hiddenFields={[
+            "id",
+            "created_at",
+            "updated_at",
+            "usuario_id",
+            "herramienta_id",
+            "ambiente_id",
+          ]}
         />
       </Container>
 

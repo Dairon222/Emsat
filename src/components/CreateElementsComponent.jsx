@@ -19,41 +19,43 @@ const CreateElementsComponent = ({
   onClose,
   title,
   columns,
-  endpoint, // Recibe el endpoint dinámico como prop
-  onSuccess, // Callback para manejar el éxito
-  onError, // Callback para manejar errores
+  endpoint,
+  onSuccess,
+  onError,
+  hiddenFields = [],
 }) => {
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
-  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "" });
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "",
+  });
 
-  // Maneja los cambios en los campos del formulario
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Maneja el cierre del Snackbar
   const handleCloseSnackbar = () => {
     setSnackbar({ open: false, message: "", severity: "" });
   };
 
-  // Maneja el envío del formulario
   const handleSubmit = async () => {
     setLoading(true);
-    setSnackbar({ open: false, message: "", severity: "" }); // Resetear el estado del Snackbar
+    setSnackbar({ open: false, message: "", severity: "" });
 
     try {
-      const response = await api.post(endpoint, formData); // Utiliza el endpoint dinámico
+      const response = await api.post(endpoint, formData);
       setSnackbar({
         open: true,
         message: "Elemento creado exitosamente.",
         severity: "success",
       });
 
-      if (onSuccess) onSuccess(response.data); // Llama al callback onSuccess
-      setFormData({}); // Limpia el formulario
-      onClose(); // Cierra el modal
+      if (onSuccess) onSuccess(response.data);
+      setFormData({});
+      onClose();
     } catch (error) {
       console.error("Error al crear el elemento:", error);
       setSnackbar({
@@ -61,8 +63,7 @@ const CreateElementsComponent = ({
         message: "Hubo un problema al crear el elemento. Inténtalo de nuevo.",
         severity: "error",
       });
-
-      if (onError) onError(error); // Llama al callback onError
+      if (onError) onError(error);
     } finally {
       setLoading(false);
     }
@@ -95,17 +96,19 @@ const CreateElementsComponent = ({
           component="form"
           sx={{ display: "flex", flexDirection: "column", gap: 2 }}
         >
-          {columns.map((column) => (
-            <TextField
-              key={column.field}
-              label={column.headerName}
-              name={column.field}
-              variant="outlined"
-              size="small"
-              fullWidth
-              onChange={handleInputChange}
-            />
-          ))}
+          {columns
+            .filter((column) => !column.hidden)
+            .map((column) => (
+              <TextField
+                key={column.field}
+                label={column.headerName}
+                name={column.field}
+                variant="outlined"
+                size="small"
+                fullWidth
+                onChange={handleInputChange}
+              />
+            ))}
           <Button
             variant="contained"
             color="primary"
@@ -117,7 +120,6 @@ const CreateElementsComponent = ({
           </Button>
         </Box>
 
-        {/* Snackbar para retroalimentación */}
         <Snackbar
           open={snackbar.open}
           autoHideDuration={4000}

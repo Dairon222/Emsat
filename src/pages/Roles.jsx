@@ -12,10 +12,11 @@ import HeaderComponent from "../components/HeaderComponent";
 import TableComponent from "../components/TableComponent";
 import CreateElementsComponent from "../components/CreateElementsComponent";
 import ModalDeleteComponent from "../components/ModalDeleteComponent";
+import ModalEditComponent from "../components/ModalEditComponent";
 import api from "../api/axios";
 
 const columns = [
-  { field: "id", headerName: "Id rol", align: "center"},
+  { field: "id", headerName: "Id rol", align: "center" },
   { field: "tipo", headerName: "Tipo", align: "center" },
 ];
 
