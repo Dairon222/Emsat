@@ -139,6 +139,32 @@ const Login = () => {
           </Typography>
         </Box>
 
+        <FormControl fullWidth sx={{ mb: 3 }}>
+          <InputLabel id="sede-label">Selecciona la sede</InputLabel>
+          <Select
+            labelId="sede-label"
+            id="nombre_sede"
+            value={selectedSede}
+            onChange={handleSelectSede}
+            required
+            MenuProps={{ PaperProps: { sx: { maxHeight: 200 } } }}
+            sx={{
+              borderRadius: "5px",
+              boxShadow: "0 0 4px rgba(20, 159, 34, 0.5)",
+              ".MuiSelect-select": { textAlign: "left" },
+            }}
+          >
+            {sedes.length > 0 ? (
+              sedes.map((sede) => (
+                <MenuItem key={sede.id} value={sede.nombre_sede}>
+                  {sede.nombre_sede}
+                </MenuItem>
+              ))
+            ) : (
+              <MenuItem disabled>Cargando sedes...</MenuItem>
+            )}
+          </Select>
+        </FormControl>
         <Box component="form" onSubmit={handleLogin}>
           <TextField
             fullWidth
@@ -147,7 +173,11 @@ const Login = () => {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
-            sx={{ mb: 3 }}
+            sx={{
+              mb: 3,
+              borderRadius: "5px",
+              boxShadow: "0 0 4px rgba(20, 159, 34, 0.5)",
+            }}
           />
           <TextField
             fullWidth
@@ -157,30 +187,27 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            sx={{ mb: 3 }}
+            sx={{
+              mb: 3,
+              borderRadius: "5px",
+              boxShadow: "0 0 4px rgba(20, 159, 34, 0.5)",
+            }}
           />
-          <FormControl fullWidth sx={{ mb: 3 }}>
-            <InputLabel id="sede-label">Selecciona la sede</InputLabel>
-            <Select
-              labelId="sede-label"
-              id="nombre_sede"
-              value={selectedSede}
-              onChange={handleSelectSede}
-              required
-              MenuProps={{ PaperProps: { sx: { maxHeight: 200 } } }}
-            >
-              {sedes.length > 0 ? (
-                sedes.map((sede) => (
-                  <MenuItem key={sede.id} value={sede.nombre_sede}>
-                    {sede.nombre_sede}
-                  </MenuItem>
-                ))
-              ) : (
-                <MenuItem disabled>Cargando sedes...</MenuItem>
-              )}
-            </Select>
-          </FormControl>
-          <Button type="submit" variant="contained" fullWidth>
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            sx={{
+              backgroundColor: "#03b12fcc",
+              color: "white",
+              fontSize: "1em",
+              fontWeight: "bold",
+              padding: "15px",
+              borderRadius: "5px",
+              transition: "background-color 0.3s ease",
+              "&:hover": { backgroundColor: "#333" },
+            }}
+          >
             Iniciar Sesión
           </Button>
         </Box>
