@@ -20,8 +20,8 @@ const columns = [
   { field: "apellido", headerName: "Apellido", align: "center" },
   { field: "identificacion", headerName: "Identificación", align: "center" },
   { field: "celular", headerName: "Celular", align: "center" },
-  { field: "rol_id", headerName: "Rol", align: "center", hidden:true},
-  { field: "ficha_id", headerName: "Ficha", align: "center",hidden:true },
+  { field: "rol_id", headerName: "Rol id", align: "center"},
+  { field: "ficha_id", headerName: "Ficha id", align: "center" },
 
 ];
 
@@ -102,12 +102,9 @@ const Users = () => {
           onDelete={handleDeleteSelection}
           onSave={handleSaveEdit}
           hiddenFields={[
+            "id",
             "created_at",
-            "updated_at",
-            "ficha",
-            "rol",
-            "rol_id",
-            "ficha_id",
+            "updated_at"
           ]} // Campos que no se mostrarán
         />
       </Container>

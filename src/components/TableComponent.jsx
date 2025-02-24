@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Table,
   TableBody,
@@ -54,27 +53,40 @@ const TableComponent = ({
     severity: "",
   });
 
-  // Cargar datos desde la API
-  const loadData = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response =
-        typeof fetchData === "function"
-          ? await fetchData()
-          : await api.get(fetchData);
-      setData(response.data);
-    } catch (err) {
-      console.error("Error al cargar datos:", err);
-      setError("No se pudieron cargar los datos.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        const response =
+          typeof fetchData === "function"
+            ? await fetchData()
+            : await api.get(fetchData);
+        setData(response.data);
+      } catch (err) {
+        console.error("Error al cargar datos:", err);
+        setError(
+          err.response?.data?.message || "No se pudieron cargar los datos."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
     loadData();
   }, [fetchData, onReload]);
+
+  const filteredData = useMemo(
+    () =>
+      data.filter((row) =>
+        columns
+          .filter((col) => !col.hidden)
+          .some((col) =>
+            String(row[col.field])
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())
+          )
+      ),
+    [data, searchTerm, columns]
+  );
 
   const handleSearch = (e) => setSearchTerm(e.target.value);
   const handleChangePage = (event, newPage) => setPage(newPage);
@@ -83,16 +95,12 @@ const TableComponent = ({
     setPage(0);
   };
 
-  // Abrir modal de edición con datos seleccionados
   const handleOpenEditModal = (row) => {
-    if (!row) return;
     setSelectedRow(row);
     setOpenEditModal(true);
   };
 
-  // Abrir modal de eliminación con datos seleccionados
   const handleOpenDeleteModal = (row) => {
-    if (!row) return;
     setSelectedRow(row);
     setOpenDeleteModal(true);
   };
@@ -103,16 +111,23 @@ const TableComponent = ({
     setSelectedRow(null);
   };
 
-  // Guardar cambios en la API después de editar
   const handleSaveEdit = async (updatedData) => {
     try {
       await api.put(`${endpoint}/${updatedData[keyField]}`, updatedData);
+      setData(
+        (prevData) =>
+          prevData.map((row) =>
+            row[keyField] === updatedData[keyField] ? updatedData : row
+          ),
+        console.log("Datos enviados para actualizar:", updatedData),
+        console.log("ID extraído:", updatedData[keyField]),
+        console.log(`URL de la petición: ${endpoint}/${updatedData[keyField]}`),
+      );
       setSnackbar({
         open: true,
         message: "Datos actualizados correctamente.",
         severity: "success",
       });
-      loadData(); // Refrescar la tabla
     } catch (error) {
       console.error("Error al actualizar datos:", error);
       setSnackbar({
@@ -178,16 +193,7 @@ const TableComponent = ({
             </Select>
           </Box>
           <TableContainer component={Paper}>
-            {data.length === 0 ||
-            data.filter((row) =>
-              columns
-                .filter((column) => !column.hidden) // Solo buscar en columnas visibles
-                .some((column) =>
-                  String(row[column.field])
-                    .toLowerCase()
-                    .includes(searchTerm.toLowerCase())
-                )
-            ).length === 0 ? (
+            {filteredData.length === 0 ? (
               <Typography variant="body1" align="center" sx={{ p: 4 }}>
                 {noDataMessage}
               </Typography>
@@ -196,17 +202,17 @@ const TableComponent = ({
                 <TableHead>
                   <TableRow>
                     {columns
-                      .filter((column) => !column.hidden) // Solo mostrar columnas visibles
-                      .map((column) => (
+                      .filter((col) => !col.hidden)
+                      .map((col) => (
                         <TableCell
-                          key={column.field}
-                          align={column.align}
+                          key={col.field}
+                          align={col.align}
                           sx={{
                             backgroundColor: "#f5f5f5",
                             fontWeight: "bold",
                           }}
                         >
-                          {column.headerName}
+                          {col.headerName}
                         </TableCell>
                       ))}
                     <TableCell
@@ -217,26 +223,16 @@ const TableComponent = ({
                     </TableCell>
                   </TableRow>
                 </TableHead>
-
                 <TableBody>
-                  {data
-                    .filter((row) =>
-                      columns
-                        .filter((column) => !column.hidden) // Buscar solo en columnas visibles
-                        .some((column) =>
-                          String(row[column.field])
-                            .toLowerCase()
-                            .includes(searchTerm.toLowerCase())
-                        )
-                    )
+                  {filteredData
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, rowIndex) => (
                       <TableRow key={rowIndex}>
                         {columns
-                          .filter((column) => !column.hidden) // Mostrar solo columnas visibles
-                          .map((column) => (
-                            <TableCell key={column.field} align={column.align}>
-                              {row[column.field]}
+                          .filter((col) => !col.hidden)
+                          .map((col) => (
+                            <TableCell key={col.field} align={col.align}>
+                              {row[col.field]}
                             </TableCell>
                           ))}
                         <TableCell align="center">
@@ -264,7 +260,7 @@ const TableComponent = ({
           <TablePagination
             rowsPerPageOptions={[5, 10, 25, 50]}
             component="div"
-            count={data.length}
+            count={filteredData.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -278,8 +274,7 @@ const TableComponent = ({
         onClose={handleCloseModals}
         data={selectedRow}
         onSave={handleSaveEdit}
-        title={title}
-        hiddenFields={hiddenFields} // Campos que no se mostrarán
+        hiddenFields={hiddenFields}
       />
       <ModalDeleteComponent
         open={openDeleteModal}
@@ -288,7 +283,9 @@ const TableComponent = ({
         endpoint={endpoint}
         keyField={keyField}
         deleteMessage={deleteMessage}
-        onSuccess={loadData}
+        onSuccess={() =>
+          setData(data.filter((d) => d[keyField] !== selectedRow[keyField]))
+        }
       />
 
       <Snackbar

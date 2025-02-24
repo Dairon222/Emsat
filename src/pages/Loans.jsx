@@ -15,9 +15,51 @@ import ModalDeleteComponent from "../components/ModalDeleteComponent";
 import api from "../api/axios";
 
 const columns = [
-  { field: "usuario_id", headerName: "Id usuario", align: "center" },
-  { field: "identificacion", headerName: "Identificación", align: "center" },
-  { field: "estado_prestamo", headerName: "Estado", align: "center" },
+  {
+    field: "usuario_id",
+    headerName: "Id usuario",
+    align: "center",
+    hidden: true,
+  },
+  { field: "id", headerName: "Id", align: "center", hidden: true },
+  { field: "identificacion", headerName: "Identificación usuario", align: "center" },
+  {
+    field: "estado_prestamo",
+    headerName: "Estado",
+    align: "center",
+    hidden: true,
+  },
+  {
+    field: "usuario_id",
+    headerName: "Id usuario",
+    align: "center",
+    hidden: true,
+  },
+  {
+    field: "herramienta_id",
+    headerName: "Id herramienta",
+    align: "center",
+    hidden: true,
+  },
+  {
+    field: "ambiente_id",
+    headerName: "Id ambiente",
+    align: "center",
+    hidden: true,
+  },
+  {
+    field: "codigo_herramienta",
+    headerName: "Codigo herramienta",
+    align: "center",
+  },
+  { field: "cantidad", headerName: "Cantidad", align: "center" },
+  { field: "codigo_ambiente", headerName: "Codigo ambiente", align: "center" },
+  {
+    field: "estado_prestamo",
+    headerName: "Estado",
+    align: "center",
+  },
+  { field: "observaciones", headerName: "Observaciones", align: "center" },
 ];
 
 const Loans = () => {
@@ -102,6 +144,7 @@ const Loans = () => {
             "usuario_id",
             "herramienta_id",
             "ambiente_id",
+            "estado_prestamo",
           ]}
         />
       </Container>

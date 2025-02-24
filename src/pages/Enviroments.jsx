@@ -17,6 +17,7 @@ import api from "../api/axios";
 const columns = [
   { field: "nombre_ambiente", headerName: "Nombre", align: "center" },
   { field: "codigo", headerName: "Codigo", align: "center" },
+  { field: "disponible", headerName: "Disponibilidad", align: "center", hidden:true },
 ];
 
 const Enviroments = () => {
@@ -94,6 +95,7 @@ const Enviroments = () => {
           deleteMessage="Desea eliminar el ambiente #  "
           onDelete={handleDeleteSelection}
           onSave={handleSaveEdit}
+          hiddenFields={["id","disponible"]}
         />
       </Container>
 

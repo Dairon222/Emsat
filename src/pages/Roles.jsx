@@ -16,7 +16,7 @@ import ModalEditComponent from "../components/ModalEditComponent";
 import api from "../api/axios";
 
 const columns = [
-  { field: "id", headerName: "Id rol", align: "center" },
+  { field: "id", headerName: "Id rol", align: "center", hidden:true },
   { field: "tipo", headerName: "Tipo", align: "center" },
 ];
 
@@ -31,9 +31,11 @@ const Roles = () => {
     severity: "",
   });
 
+  
   // Función para manejar la actualización de datos de los roles
   const handleSaveEdit = async (updatedData) => {
     try {
+      
       await api.put(`rol/${updatedData.tipo}`, updatedData);
       setSnackbar({
         open: true,
@@ -96,6 +98,7 @@ const Roles = () => {
           deleteMessage="Desea eliminar el rol de tipo "
           onDelete={handleDeleteSelection}
           onSave={handleSaveEdit} // Pasamos la función onSave aquí
+          hiddenFields={["id"]} // Campos que no se mostrarán//
         />
       </Container>
 

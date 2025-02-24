@@ -94,7 +94,8 @@ const Fichas = () => {
           keyField="numero_ficha"
           deleteMessage="Desea eliminar la ficha con numero"
           onDelete={handleDeleteSelection}
-          onSave={handleSaveEdit} // Pasamos la función onSave aquí
+          onSave={handleSaveEdit} // Pasamos la función onSave 
+          hiddenFields={["id", "updated_at", "created_at"]} // Campos que no se mostrarán
         />
       </Container>
 
