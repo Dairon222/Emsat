@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import HeaderComponent from "../components/HeaderComponent";
 import TableComponent from "../components/TableComponent";
-import CreateElementsComponent from "../components/CreateElementsComponent";
+import CreateElementsComponent from "../components/ModalCreateComponent";
 import ModalDeleteComponent from "../components/ModalDeleteComponent";
 import api from "../api/axios";
 
@@ -20,8 +20,8 @@ const columns = [
   { field: "apellido", headerName: "Apellido", align: "center" },
   { field: "identificacion", headerName: "Identificación", align: "center" },
   { field: "celular", headerName: "Celular", align: "center" },
-  { field: "rol_id", headerName: "Rol id", align: "center"},
-  { field: "ficha_id", headerName: "Ficha id", align: "center" },
+  { field: "rol_id", headerName: "Id rol", align: "center"},
+  { field: "ficha_id", headerName: "Id ficha", align: "center" },
 
 ];
 
@@ -104,7 +104,9 @@ const Users = () => {
           hiddenFields={[
             "id",
             "created_at",
-            "updated_at"
+            "updated_at",
+            "ficha",
+            "rol"
           ]} // Campos que no se mostrarán
         />
       </Container>

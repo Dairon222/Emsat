@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { useSede } from "../context/SedeContext";
 import HeaderComponent from "../components/HeaderComponent";
 import CardComponent from "../components/CardComponent";
-import CreateElementsComponent from "../components/CreateElementsComponent";
+import CreateElementsComponent from "../components/ModalCreateComponent";
 import api from "../api/axios";
 
 // Iconos
@@ -88,8 +88,6 @@ const entityConfig = {
       { field: "usuario_id", headerName: "Usuario ID", align: "center" },
       { field: "herramienta_id", headerName: "Herramienta ID", align: "center" },
       { field: "cantidad", headerName: "Cantidad", align: "center" },
-      { field: "fecha_prestamo", headerName: "Fecha Préstamo", align: "center" },
-      { field: "fecha_devolucion", headerName: "Fecha Devolución", align: "center" },
     ],
   },
 };

@@ -10,11 +10,19 @@ import {
 } from "@mui/material";
 import HeaderComponent from "../components/HeaderComponent";
 import TableComponent from "../components/TableComponent";
-import CreateElementsComponent from "../components/CreateElementsComponent";
+import CreateElementsComponent from "../components/ModalCreateComponent";
 import ModalDeleteComponent from "../components/ModalDeleteComponent";
 import api from "../api/axios";
 
 const columns = [
+  { field: "id", headerName: "Id ficha", align: "center" },
+  { field: "nombre_ficha", headerName: "Ficha", align: "center" },
+  { field: "numero_ficha", headerName: "Número", align: "center" },
+];
+
+
+const columnsModal = [
+  { field: "id", headerName: "Id ficha", align: "center", hidden: true },
   { field: "nombre_ficha", headerName: "Ficha", align: "center" },
   { field: "numero_ficha", headerName: "Número", align: "center" },
 ];
@@ -103,7 +111,7 @@ const Fichas = () => {
         open={openModal}
         onClose={() => toggleModal(setOpenModal, false)}
         title="Crear ficha"
-        columns={columns}
+        columns={columnsModal}
         endpoint="ficha"
         onSuccess={() => {
           setSnackbar({

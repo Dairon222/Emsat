@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import HeaderComponent from "../components/HeaderComponent";
 import TableComponent from "../components/TableComponent";
-import CreateElementsComponent from "../components/CreateElementsComponent";
+import CreateElementsComponent from "../components/ModalCreateComponent";
 import ModalDeleteComponent from "../components/ModalDeleteComponent";
 import api from "../api/axios";
 

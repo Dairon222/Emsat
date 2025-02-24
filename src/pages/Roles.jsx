@@ -10,16 +10,18 @@ import {
 } from "@mui/material";
 import HeaderComponent from "../components/HeaderComponent";
 import TableComponent from "../components/TableComponent";
-import CreateElementsComponent from "../components/CreateElementsComponent";
+import CreateElementsComponent from "../components/ModalCreateComponent";
 import ModalDeleteComponent from "../components/ModalDeleteComponent";
-import ModalEditComponent from "../components/ModalEditComponent";
 import api from "../api/axios";
 
 const columns = [
-  { field: "id", headerName: "Id rol", align: "center", hidden:true },
+  { field: "id", headerName: "Id rol", align: "center", },
   { field: "tipo", headerName: "Tipo", align: "center" },
 ];
-
+const columnsModal = [
+  {field: "id", headerName: "Id rol", align: "center", hidden: true},
+  { field: "tipo", headerName: "Tipo", align: "center" },
+]
 const Roles = () => {
   const [openModal, setOpenModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -106,7 +108,7 @@ const Roles = () => {
         open={openModal}
         onClose={() => toggleModal(setOpenModal, false)}
         title="Crear rol"
-        columns={columns}
+        columns={columnsModal}
         endpoint="rol"
         onSuccess={() => {
           setSnackbar({

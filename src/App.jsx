@@ -14,6 +14,8 @@ import Roles from "./pages/Roles";
 import Fichas from "./pages/Fichas";
 import Historial from "./pages/Historial";
 import HeaderComponent from "./components/HeaderComponent";
+import RegisterSede from "./pages/RegisterSede";
+import RegisterUserSede from "./pages/RegisterUserSede";
 
 const theme = createTheme({
   palette: {
@@ -30,6 +32,8 @@ const App = () => {
         <Router>
           <Routes>
             <Route path="/" element={<Login />} />
+            <Route path="/sede" element={<RegisterSede />} />
+            <Route path="/user" element={<RegisterUserSede />} />
             <Route
               path="/*"
               element={
@@ -44,7 +48,6 @@ const App = () => {
                     <Route path="/enviroments" element={<Enviroments />} />
                     <Route path="/roles" element={<Roles />} />
                     <Route path="/historial" element={<Historial />} />
-                    
                     <Route path="/header" element={<HeaderComponent />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
