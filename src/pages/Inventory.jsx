@@ -35,7 +35,7 @@ const Inventory = () => {
   // Función para manejar la actualización de datos de las herramientas
   const handleSaveEdit = async (updatedData) => {
     try {
-      await api.put(`herramienta/${updatedData.codigo}`, updatedData);
+      await api.put(`herramienta/${updatedData.id}`, updatedData);
       setSnackbar({
         open: true,
         message: "Datos actualizados correctamente.",
@@ -92,7 +92,7 @@ const Inventory = () => {
           noDataMessage="No se encontraron herramientas."
           onReload={reloadTable}
           endpoint="herramienta"
-          keyField="codigo"
+          keyField="id"
           deleteMessage="Desea eliminar la herramienta con código"
           onDelete={handleDeleteSelection}
           onSave={handleSaveEdit}

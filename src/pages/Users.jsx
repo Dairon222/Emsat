@@ -38,7 +38,7 @@ const Users = () => {
   // Función para manejar la actualización de datos del usuario
   const handleSaveEdit = async (updatedData) => {
     try {
-      await api.put(`usuario/${updatedData.identificacion}`, updatedData);
+      await api.put(`usuario/${updatedData.id}`, updatedData);
       setSnackbar({
         open: true,
         message: "Datos actualizados correctamente.",
@@ -96,7 +96,7 @@ const Users = () => {
           noDataMessage="No se encontraron usuarios."
           onReload={reloadTable}
           endpoint="usuario"
-          keyField="identificacion"
+          keyField="id"
           deleteMessage="Desea eliminar al usuario con identificación"
           onDelete={handleDeleteSelection}
           onSave={handleSaveEdit}
