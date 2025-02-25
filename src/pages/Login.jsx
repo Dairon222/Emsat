@@ -18,7 +18,6 @@ import { useSede } from "../context/SedeContext";
 import api from "../api/axios";
 
 const Login = () => {
-  const { updateSede } = useSede();
   const [sedes, setSedes] = useState([]);
   const [selectedSede, setSelectedSede] = useState("");
   const [selectedNumeroSede, setSelectedNumeroSede] = useState(null);
@@ -34,7 +33,12 @@ const Login = () => {
   useEffect(() => {
     const fetchSedes = async () => {
       try {
-        const response = await api.get("sede");
+        const token = localStorage.getItem("token");
+        const response = await api.get("sede", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setSedes(response.data);
       } catch (error) {
         console.error("Error al cargar sedes:", error);
@@ -45,6 +49,8 @@ const Login = () => {
         });
       }
     };
+    
+
     fetchSedes();
   }, []);
 
@@ -63,6 +69,7 @@ const Login = () => {
       setSelectedNumeroSede(sedeData.numero_sede);
     }
   };
+  const { login } = useSede(); // Importar la función login
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -81,16 +88,11 @@ const Login = () => {
       console.log("Respuesta del servidor:", response.data);
 
       const userData = response?.data?.user;
+      const token = response?.data?.token;
 
-      if (userData && userData.id) {
-        const sedeFinal = userData.nombre_sede || selectedSede;
-        updateSede(sedeFinal);
-        console.log("Sede actualizada:", sedeFinal);
-        localStorage.setItem("userId", userData.id);
-        localStorage.setItem("sede", sedeFinal);
-
+      if (userData && userData.id && token) {
+        login(token, userData.nombre_sede || selectedSede); // Guardar en el contexto
         navigate(userData.id === 4 ? "/users" : "/dashboard");
-
         showSnackbar("Inicio de sesión exitoso.", "success");
       } else {
         throw new Error("Credenciales incorrectas o datos incompletos.");

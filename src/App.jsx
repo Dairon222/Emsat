@@ -13,7 +13,6 @@ import Enviroments from "./pages/Enviroments";
 import Roles from "./pages/Roles";
 import Fichas from "./pages/Fichas";
 import Historial from "./pages/Historial";
-import HeaderComponent from "./components/HeaderComponent";
 import RegisterSede from "./pages/RegisterSede";
 import RegisterUserSede from "./pages/RegisterUserSede";
 
@@ -48,7 +47,6 @@ const App = () => {
                     <Route path="/enviroments" element={<Enviroments />} />
                     <Route path="/roles" element={<Roles />} />
                     <Route path="/historial" element={<Historial />} />
-                    <Route path="/header" element={<HeaderComponent />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Layout>

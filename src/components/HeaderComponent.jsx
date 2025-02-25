@@ -11,8 +11,7 @@ const HeaderComponent = ({ title }) => {
   const { sede, logout } = useSede();
 
   const handleLogout = () => {
-    logout();
-    navigate("/"); // Redirigir al login
+    logout(navigate); 
   };
 
   return (
@@ -41,7 +40,7 @@ const HeaderComponent = ({ title }) => {
         {/* Navegación */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 2, mr: 5 }}>
           <Button
-            onClick={handleLogout} // 🔹 Ahora el botón de "Salir" cierra sesión
+            onClick={handleLogout} // botón de "Salir" cierra sesión
             color="inherit"
             startIcon={<LogoutIcon />}
             sx={{
