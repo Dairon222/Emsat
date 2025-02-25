@@ -22,7 +22,6 @@ const columns = [
   { field: "celular", headerName: "Celular", align: "center" },
   { field: "rol_id", headerName: "Id rol", align: "center"},
   { field: "ficha_id", headerName: "Id ficha", align: "center" },
-
 ];
 
 const Users = () => {
