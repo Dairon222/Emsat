@@ -38,7 +38,7 @@ const Roles = () => {
   const handleSaveEdit = async (updatedData) => {
     try {
       
-      await api.put(`rol/${updatedData.tipo}`, updatedData);
+      await api.put(`rol/${updatedData.id}`, updatedData);
       setSnackbar({
         open: true,
         message: "Datos actualizados correctamente.",
@@ -96,7 +96,7 @@ const Roles = () => {
           noDataMessage="No se encontraron roles."
           onReload={reloadTable}
           endpoint="rol"
-          keyField="tipo"
+          keyField="id"
           deleteMessage="Desea eliminar el rol de tipo "
           onDelete={handleDeleteSelection}
           onSave={handleSaveEdit} // Pasamos la función onSave aquí

@@ -41,7 +41,7 @@ const Fichas = () => {
   // Función para manejar la actualización de datos del usuario
   const handleSaveEdit = async (updatedData) => {
     try {
-      await api.put(`ficha/${updatedData.numero_ficha}`, updatedData);
+      await api.put(`ficha/${updatedData.id}`, updatedData);
       setSnackbar({
         open: true,
         message: "Datos actualizados correctamente.",
@@ -99,7 +99,7 @@ const Fichas = () => {
           noDataMessage="No se encontraron fichas."
           onReload={reloadTable}
           endpoint="ficha"
-          keyField="numero_ficha"
+          keyField="id"
           deleteMessage="Desea eliminar la ficha con numero"
           onDelete={handleDeleteSelection}
           onSave={handleSaveEdit} // Pasamos la función onSave 

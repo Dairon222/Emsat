@@ -34,7 +34,7 @@ const Enviroments = () => {
   // Función para manejar la actualización de datos de los ambientes
   const handleSaveEdit = async (updatedData) => {
     try {
-      await api.put(`ambiente/${updatedData.codigo}`, updatedData);
+      await api.put(`ambiente/${updatedData.id}`, updatedData);
       setSnackbar({
         open: true,
         message: "Datos actualizados correctamente.",
@@ -91,7 +91,7 @@ const Enviroments = () => {
           noDataMessage="No se encontraron ambientes."
           onReload={reloadTable}
           endpoint="ambiente"
-          keyField="codigo"
+          keyField="id"
           deleteMessage="Desea eliminar el ambiente #  "
           onDelete={handleDeleteSelection}
           onSave={handleSaveEdit}
