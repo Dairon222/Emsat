@@ -69,15 +69,17 @@ const Login = () => {
       setSelectedNumeroSede(sedeData.numero_sede);
     }
   };
-  const { login } = useSede(); // Importar la función login
+
+  const { login } = useSede(); 
 
   const handleLogin = async (e) => {
     e.preventDefault();
+  
     if (!username || !password || !selectedSede) {
       showSnackbar("Por favor completa todos los campos.", "warning");
       return;
     }
-
+  
     try {
       const response = await api.post("login-sede", {
         username,
@@ -85,15 +87,23 @@ const Login = () => {
         nombre_sede: selectedSede,
       });
 
+      //Respuesta al inicio de sesión
       console.log("Respuesta del servidor:", response.data);
-
+  
       const userData = response?.data?.user;
       const token = response?.data?.token;
-
-      if (userData && userData.id && token) {
-        login(token, userData.nombre_sede || selectedSede); // Guardar en el contexto
-        navigate(userData.id === 4 ? "/users" : "/dashboard");
+  
+      if (userData && token) {
+        sessionStorage.setItem("token", token);
+        sessionStorage.setItem("sede", userData.sede || selectedSede);
+  
+        login(token, userData.sede || selectedSede); 
         showSnackbar("Inicio de sesión exitoso.", "success");
+
+        // Prueba del guardado de token
+        console.log("Nuevo token guardado en sessionStorage:", sessionStorage.getItem("token"));
+  
+        navigate(userData.id === 10 ? "/users" : "/dashboard");
       } else {
         throw new Error("Credenciales incorrectas o datos incompletos.");
       }
@@ -102,7 +112,7 @@ const Login = () => {
       showSnackbar("Verifica tus credenciales.", "error");
     }
   };
-
+  
   return (
     <Box
       sx={{

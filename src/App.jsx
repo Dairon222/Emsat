@@ -8,7 +8,6 @@ import Loans from "./pages/Loans";
 import Login from "./pages/Login";
 import NotFound from "./pages/Notfound";
 import SedeProvider from "./context/SedeContext";
-import Morosos from "./pages/Morosos";
 import Enviroments from "./pages/Enviroments";
 import Roles from "./pages/Roles";
 import Fichas from "./pages/Fichas";
@@ -42,7 +41,6 @@ const App = () => {
                     <Route path="/inventory" element={<Inventory />} />
                     <Route path="/users" element={<Users />} />
                     <Route path="/loans" element={<Loans />} />
-                    <Route path="/morosos" element={<Morosos />} />
                     <Route path="/fichas" element={<Fichas />} />
                     <Route path="/enviroments" element={<Enviroments />} />
                     <Route path="/roles" element={<Roles />} />

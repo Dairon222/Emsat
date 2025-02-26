@@ -97,11 +97,11 @@ const Roles = () => {
           onReload={reloadTable}
           endpoint="rol"
           keyField="id"
-          deleteMessage="Desea eliminar el rol de tipo "
+          deleteMessage="Desea eliminar el rol de tipo "P
           nameDelete="tipo"
           onDelete={handleDeleteSelection}
-          onSave={handleSaveEdit} // Pasamos la función onSave aquí
-          hiddenFields={["id"]} // Campos que no se mostrarán//
+          onSave={handleSaveEdit} 
+          hiddenFields={["id"]} 
         />
       </Container>
 

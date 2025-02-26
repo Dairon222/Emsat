@@ -15,7 +15,6 @@ import HeaderComponent from "../components/HeaderComponent";
 import CardComponent from "../components/CardComponent";
 import CreateElementsComponent from "../components/ModalCreateComponent";
 import api from "../api/axios";
-
 // Iconos
 import PeopleIcon from "@mui/icons-material/People";
 import AssignmentIcon from "@mui/icons-material/Assignment";
@@ -34,7 +33,11 @@ const entityConfig = {
     columns: [
       { field: "nombre", headerName: "Nombre", align: "center" },
       { field: "apellido", headerName: "Apellido", align: "center" },
-      { field: "identificacion", headerName: "Identificación", align: "center" },
+      {
+        field: "identificacion",
+        headerName: "Identificación",
+        align: "center",
+      },
       { field: "celular", headerName: "Celular", align: "center" },
       { field: "rol_id", headerName: "Rol ID", align: "center" },
       { field: "ficha_id", headerName: "Ficha ID", align: "center" },
@@ -56,7 +59,11 @@ const entityConfig = {
     description: "Gestiona las herramientas disponibles",
     icon: <BuildIcon />,
     columns: [
-      { field: "nombre_herramienta", headerName: "Herramienta", align: "center" },
+      {
+        field: "nombre_herramienta",
+        headerName: "Herramienta",
+        align: "center",
+      },
       { field: "codigo", headerName: "Código", align: "center" },
       { field: "stock", headerName: "Total", align: "center" },
       { field: "ubicacion", headerName: "Ubicación", align: "center" },
@@ -86,7 +93,11 @@ const entityConfig = {
     icon: <HandshakeIcon />,
     columns: [
       { field: "usuario_id", headerName: "Usuario ID", align: "center" },
-      { field: "herramienta_id", headerName: "Herramienta ID", align: "center" },
+      {
+        field: "herramienta_id",
+        headerName: "Herramienta ID",
+        align: "center",
+      },
       { field: "cantidad", headerName: "Cantidad", align: "center" },
     ],
   },
@@ -94,11 +105,15 @@ const entityConfig = {
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { token } = useSede();
   const [openModal, setOpenModal] = useState(false);
   const [selectedEntity, setSelectedEntity] = useState(null);
   const [reloadTable, setReloadTable] = useState(false);
-  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "" });
-
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "",
+  });
 
   const handleOpenModal = (entity) => {
     setSelectedEntity(entityConfig[entity]);
@@ -118,25 +133,24 @@ const Dashboard = () => {
     setSnackbar({ open: false, message: "", severity: "" });
   };
 
-  const handleCreate = async (newData) => {
-    if (!selectedEntity) return;
-
-    try {
-      await api.post(selectedEntity.endpoint, newData);
-      showSnackbar(`${selectedEntity.title} creado exitosamente.`, "success");
-      setReloadTable((prev) => !prev);
-      handleCloseModal();
-    } catch (error) {
-      console.error(`Error al crear ${selectedEntity.title}:`, error);
-      showSnackbar(`Hubo un problema al crear ${selectedEntity.title}.`, "error");
+  useEffect(() => {
+    if (!token) {
+      navigate("/");
     }
-  };
+  }, [token, navigate]);
 
   return (
     <>
       <HeaderComponent title="Inicio" />
       <Container maxWidth="xl" sx={{ mt: 3 }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
+          }}
+        >
           <Typography variant="h5" sx={{ fontWeight: "bold" }}>
             Panel de Control
           </Typography>
@@ -168,18 +182,33 @@ const Dashboard = () => {
           columns={selectedEntity.columns}
           endpoint={selectedEntity.endpoint}
           onSuccess={() => {
-            showSnackbar(`${selectedEntity.title} creado exitosamente.`, "success");
+            showSnackbar(
+              `${selectedEntity.title} creado exitosamente.`,
+              "success"
+            );
             setReloadTable((prev) => !prev);
           }}
           onError={() => {
-            showSnackbar(`Hubo un problema al crear ${selectedEntity.title}.`, "error");
+            showSnackbar(
+              `Hubo un problema al crear ${selectedEntity.title}.`,
+              "error"
+            );
           }}
         />
       )}
 
       {/* Snackbar para notificaciones */}
-      <Snackbar open={snackbar.open} autoHideDuration={4000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
-        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: "100%" }}>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
           {snackbar.message}
         </Alert>
       </Snackbar>

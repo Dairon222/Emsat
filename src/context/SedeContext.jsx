@@ -11,9 +11,9 @@ export const useSede = () => {
 };
 
 const SedeProvider = ({ children }) => {
-  const [sede, setSede] = useState(() => localStorage.getItem("sede") || null);
-  const [token, setToken] = useState(() => localStorage.getItem("token") || null);
-
+  const [sede, setSede] = useState(() => sessionStorage.getItem("sede") || null);
+  const [token, setToken] = useState(() => sessionStorage.getItem("token") || null);
+  
   useEffect(() => {
     setToken(localStorage.getItem("token"));
   }, []);
@@ -26,8 +26,8 @@ const SedeProvider = ({ children }) => {
   const login = (newToken, newSede) => {
     setToken(newToken);
     setSede(newSede);
-    localStorage.setItem("token", newToken);
-    localStorage.setItem("sede", newSede);
+    sessionStorage.setItem("token", newToken);
+    sessionStorage.setItem("sede", newSede);
   };
 
 
@@ -40,12 +40,11 @@ const SedeProvider = ({ children }) => {
       console.error("Error al cerrar sesión:", error.response?.data || error.message);
     }
   
-    // Limpiar el estado y el almacenamiento local
     setSede(null);
     setToken(null);
-    localStorage.removeItem("sede");
-    localStorage.removeItem("token");
-    localStorage.removeItem("userId");
+    sessionStorage.removeItem("sede");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("userId");
   
     // Redirigir al login
     navigate("/");

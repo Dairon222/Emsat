@@ -1,6 +1,5 @@
 import axios from "axios";
 
-// Configuración de la base URL para la API
 const api = axios.create({
   baseURL: "http://127.0.0.1:8000/api/", // Base general para la API
   headers: {
@@ -12,7 +11,8 @@ const api = axios.create({
 // Interceptor para agregar el token a cada solicitud
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
+    console.log("Enviando solicitud con token:", token);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
