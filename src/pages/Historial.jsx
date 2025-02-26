@@ -1,19 +1,19 @@
 
 import { Container, Typography, Box } from "@mui/material";
 import HeaderComponent from "../components/HeaderComponent";
-import TableComponent from "../components/TableComponent";
-import api from "../api/axios"; // Asegúrate de que la ruta es correcta
-
+import TableHistorial   from "../components/TableHistorialComponent";
+import api from "../api/axios"; 
 
 const columns = [
-  { field: "id", headerName: "Id", align: "center", hidden: true },
   { field: "usuario_id", headerName: "Id usuario", align: "center" },
   { field: "prestamo_id", headerName: "ID prestamo", align: "center" },
+  // Pendiente para orgnanizar la forma en que se ve la fecha
+  { field: "created_at", headerName: "Fecha de creación", align: "center" },
   { field: "estado", headerName: "Estado", align: "center" },
 ];
 
 const fetchHistorial = async () => {
-  const response = await api.get("/historial"); // Asegúrate de que el endpoint es correcto
+  const response = await api.get("historial"); 
   return response.data;
 };
 
@@ -35,14 +35,11 @@ const Historial = () => {
           </Typography>
         </Box>
 
-        <TableComponent
+        <TableHistorial
           columns={columns}
-          fetchData={fetchHistorial} // Pasar la función en lugar de un string
+          fetchData={fetchHistorial} 
           title="Historial de los préstamos"
           noDataMessage="No se encontró algún dato relacionado."
-          endpoint="historial"
-          keyField="id"
-          hiddenFields={["id", "created_at", "updated_at"]}
         />
       </Container>
     </>

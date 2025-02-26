@@ -47,11 +47,12 @@ const columns = [
     align: "center",
   },
   { field: "cantidad", headerName: "Cantidad", align: "center" },
-  { field: "codigo_ambiente", headerName: "Codigo ambiente", align: "center" },
+  { field: "codigo_ambiente", headerName: "Codigo ambiente", align: "center", hidden:true },
   {
     field: "estado_prestamo",
     headerName: "Estado",
     align: "center",
+    hidden: true,
   },
   { field: "observaciones", headerName: "Observaciones", align: "center" },
 ];
@@ -129,7 +130,7 @@ const Loans = () => {
           endpoint="prestamo"
           keyField="id"
           deleteMessage="Desea finalizar el prestamo de la herramienta con código"
-          nameDelete="codigo_herramienta"
+          nameDelete="id"
           onDelete={handleDeleteSelection}
           onSave={handleSaveEdit}
           hiddenFields={[

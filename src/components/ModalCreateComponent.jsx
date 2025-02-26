@@ -22,7 +22,6 @@ const CreateElementsComponent = ({
   endpoint,
   onSuccess,
   onError,
-  hiddenFields = [],
 }) => {
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
@@ -45,8 +44,12 @@ const CreateElementsComponent = ({
     setLoading(true);
     setSnackbar({ open: false, message: "", severity: "" });
 
+    console.log("Datos enviados:", formData);
+
     try {
       const response = await api.post(endpoint, formData);
+      console.log("Respuesta de la API:", response.data); 
+
       setSnackbar({
         open: true,
         message: "Elemento creado exitosamente.",
