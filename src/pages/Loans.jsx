@@ -30,12 +30,6 @@ const columns = [
     hidden: true,
   },
   {
-    field: "usuario_id",
-    headerName: "Id usuario",
-    align: "center",
-    hidden: true,
-  },
-  {
     field: "herramienta_id",
     headerName: "Id herramienta",
     align: "center",
@@ -134,7 +128,8 @@ const Loans = () => {
           onReload={reloadTable}
           endpoint="prestamo"
           keyField="id"
-          deleteMessage="Desea eliminar el prestamo con id "
+          deleteMessage="Desea finalizar el prestamo de la herramienta con código"
+          nameDelete="codigo_herramienta"
           onDelete={handleDeleteSelection}
           onSave={handleSaveEdit}
           hiddenFields={[

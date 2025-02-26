@@ -37,6 +37,7 @@ const TableComponent = ({
   keyField,
   deleteMessage,
   hiddenFields,
+  nameDelete,
 }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -121,7 +122,7 @@ const TableComponent = ({
           ),
         console.log("Datos enviados para actualizar:", updatedData),
         console.log("ID extraído:", updatedData[keyField]),
-        console.log(`URL de la petición: ${endpoint}/${updatedData[keyField]}`),
+        console.log(`URL de la petición: ${endpoint}/${updatedData[keyField]}`)
       );
       setSnackbar({
         open: true,
@@ -283,6 +284,7 @@ const TableComponent = ({
         endpoint={endpoint}
         keyField={keyField}
         deleteMessage={deleteMessage}
+        nameDelete={nameDelete}
         onSuccess={() =>
           setData(data.filter((d) => d[keyField] !== selectedRow[keyField]))
         }

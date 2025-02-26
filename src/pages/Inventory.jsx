@@ -94,6 +94,7 @@ const Inventory = () => {
           endpoint="herramienta"
           keyField="id"
           deleteMessage="Desea eliminar la herramienta con código"
+          nameDelete="codigo"
           onDelete={handleDeleteSelection}
           onSave={handleSaveEdit}
           hiddenFields={["id", "created_at", "updated_at"]} // Campos que no se mostrarán

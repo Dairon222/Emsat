@@ -98,6 +98,7 @@ const Roles = () => {
           endpoint="rol"
           keyField="id"
           deleteMessage="Desea eliminar el rol de tipo "
+          nameDelete="tipo"
           onDelete={handleDeleteSelection}
           onSave={handleSaveEdit} // Pasamos la función onSave aquí
           hiddenFields={["id"]} // Campos que no se mostrarán//

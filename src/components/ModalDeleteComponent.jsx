@@ -11,12 +11,16 @@ const ModalDeleteComponent = ({
   keyField,
   deleteMessage,
   onSuccess,
+  nameDelete,
 }) => {
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "",
   });
+
+  const itemName = item ?.[nameDelete] || item?.[keyField] || "Elemento";
+
 
   const handleDelete = async () => {
     // Extraer el valor de keyField para la eliminación
@@ -74,7 +78,7 @@ const ModalDeleteComponent = ({
           </Typography>
           {item && (
             <Typography>
-              ¿{deleteMessage} <b>{item[keyField]}</b>?
+              ¿{deleteMessage} <b>{itemName}</b>?
             </Typography>
           )}
           <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>

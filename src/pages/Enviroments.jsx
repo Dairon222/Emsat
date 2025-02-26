@@ -93,6 +93,7 @@ const Enviroments = () => {
           endpoint="ambiente"
           keyField="id"
           deleteMessage="Desea eliminar el ambiente #  "
+          nameDelete="codigo"
           onDelete={handleDeleteSelection}
           onSave={handleSaveEdit}
           hiddenFields={["id","disponible"]}

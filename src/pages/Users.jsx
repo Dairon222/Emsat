@@ -97,9 +97,10 @@ const Users = () => {
           onReload={reloadTable}
           endpoint="usuario"
           keyField="id"
-          deleteMessage="Desea eliminar al usuario con identificación"
+          deleteMessage="Desea eliminar al usuario con identificacion"
           onDelete={handleDeleteSelection}
           onSave={handleSaveEdit}
+          nameDelete="identificacion"
           hiddenFields={[
             "id",
             "created_at",

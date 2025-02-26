@@ -100,7 +100,8 @@ const Fichas = () => {
           onReload={reloadTable}
           endpoint="ficha"
           keyField="id"
-          deleteMessage="Desea eliminar la ficha con numero"
+          deleteMessage="Desea eliminar la ficha con numero de ficha"
+          nameDelete="numero_ficha"
           onDelete={handleDeleteSelection}
           onSave={handleSaveEdit} // Pasamos la función onSave 
           hiddenFields={["id", "updated_at", "created_at"]} // Campos que no se mostrarán
