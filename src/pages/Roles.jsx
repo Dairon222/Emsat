@@ -17,10 +17,13 @@ import api from "../api/axios";
 const columns = [
   { field: "id", headerName: "Id rol", align: "center", },
   { field: "tipo", headerName: "Tipo", align: "center" },
+  { field: "usuariosede_id", headerName: "Usuario sede", align: "center" },
 ];
 const columnsModal = [
   {field: "id", headerName: "Id rol", align: "center", hidden: true},
   { field: "tipo", headerName: "Tipo", align: "center" },
+  
+  { field: "usuariosede_id", headerName: "Usuario sede", align: "center" },
 ]
 const Roles = () => {
   const [openModal, setOpenModal] = useState(false);

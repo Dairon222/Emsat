@@ -98,7 +98,7 @@ const Inventory = () => {
           nameDelete="codigo"
           onDelete={handleDeleteSelection}
           onSave={handleSaveEdit}
-          hiddenFields={["id", "created_at", "updated_at"]} // Campos que no se mostrarán
+          hiddenFields={["id","usuariosede_id", "created_at", "updated_at"]} // Campos que no se mostrarán
         />
       </Container>
 

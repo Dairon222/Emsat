@@ -14,11 +14,11 @@ import HomeIcon from "@mui/icons-material/Home";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import PeopleIcon from "@mui/icons-material/People";
 import AssignmentIcon from "@mui/icons-material/Assignment";
-import HistoryIcon from '@mui/icons-material/History';
+import HistoryIcon from "@mui/icons-material/History";
 
 import SchoolIcon from "@mui/icons-material/School";
-import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
-import ManIcon from '@mui/icons-material/Man';
+import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+import ManIcon from "@mui/icons-material/Man";
 
 import senaLogo from "../assets/logo_sena.png";
 
@@ -83,10 +83,16 @@ const SidebarComponent = ({ drawerWidth, title }) => {
             color="inherit"
             sx={{
               textTransform: "none",
+              fontWeight: "bold",
+              transition: "all 0.3s",
               "&:hover": {
                 backgroundColor: "#f5f5f5",
                 color: "black",
                 borderRadius: 1,
+                transform: "scale(1.1)",
+                ".MuiListItemIcon-root": {
+                  color: "primary.main",
+                },
               },
             }}
           >

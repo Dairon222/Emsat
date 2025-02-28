@@ -22,8 +22,8 @@ const CardComponent = ({ title, onCreate, icon, description }) => {
         sx={{
           backgroundColor: "#4caf50",
           color: "#fff",
-          width: 75,
-          height: 75,
+          width: 100,
+          height: 100,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",

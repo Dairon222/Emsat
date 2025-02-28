@@ -104,7 +104,7 @@ const Fichas = () => {
           nameDelete="numero_ficha"
           onDelete={handleDeleteSelection}
           onSave={handleSaveEdit} // Pasamos la función onSave 
-          hiddenFields={["id", "updated_at", "created_at"]} // Campos que no se mostrarán
+          hiddenFields={["id","usuariosede_id", "updated_at", "created_at"]} // Campos que no se mostrarán
         />
       </Container>
 

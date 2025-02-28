@@ -6,12 +6,11 @@ import { useSede } from "../context/SedeContext";
 import { useNavigate } from "react-router-dom";
 
 const HeaderComponent = ({ title }) => {
-
   const navigate = useNavigate();
   const { sede, logout } = useSede();
 
   const handleLogout = () => {
-    logout(navigate); 
+    logout(navigate);
   };
 
   return (
@@ -37,8 +36,11 @@ const HeaderComponent = ({ title }) => {
           </Link>
         </Box>
 
-        {/* Navegación */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 2, mr: 5 }}>
+          <Typography variant="h6" sx={{ fontWeight: "bold", pr: 2 }}>
+            {sede ? sede : "Selecciona una sede"}
+          </Typography>
+
           <Button
             onClick={handleLogout} // botón de "Salir" cierra sesión
             color="inherit"
@@ -51,11 +53,6 @@ const HeaderComponent = ({ title }) => {
           >
             Salir
           </Button>
-
-          {/* 🔹 Mostrar la sede seleccionada */}
-          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            {sede ? sede : "Selecciona una sede"}
-          </Typography>
         </Box>
       </Toolbar>
     </AppBar>

@@ -121,7 +121,6 @@ const CreateFormsComponent = ({
                 sx={{
                   borderRadius: "5px",
                   boxShadow: "0 0 4px rgba(20, 159, 34, 0.5)",
-                  marginTop: "0.5rem",
                   gap: "0.3rem",
                 }}
               />

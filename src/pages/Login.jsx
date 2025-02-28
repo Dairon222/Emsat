@@ -49,7 +49,6 @@ const Login = () => {
         });
       }
     };
-    
 
     fetchSedes();
   }, []);
@@ -61,48 +60,32 @@ const Login = () => {
   const handleCloseSnackbar = () =>
     setSnackbar({ open: false, message: "", severity: "" });
 
-  const handleSelectSede = (event) => {
-    const sedeSeleccionada = event.target.value;
-    setSelectedSede(sedeSeleccionada);
-    const sedeData = sedes.find((s) => s.nombre_sede === sedeSeleccionada);
-    if (sedeData) {
-      setSelectedNumeroSede(sedeData.numero_sede);
-    }
-  };
-
-  const { login } = useSede(); 
+  const { login } = useSede();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-  
-    if (!username || !password || !selectedSede) {
+
+    if (!username || !password) {
       showSnackbar("Por favor completa todos los campos.", "warning");
       return;
     }
-  
+
     try {
       const response = await api.post("login-sede", {
         username,
         contrasena: password,
-        nombre_sede: selectedSede,
       });
 
-      //Respuesta al inicio de sesión
-      console.log("Respuesta del servidor:", response.data);
-  
       const userData = response?.data?.user;
       const token = response?.data?.token;
-  
+
       if (userData && token) {
         sessionStorage.setItem("token", token);
         sessionStorage.setItem("sede", userData.sede || selectedSede);
-  
-        login(token, userData.sede || selectedSede); 
+
+        login(token, userData.sede || selectedSede);
         showSnackbar("Inicio de sesión exitoso.", "success");
 
-        // Prueba del guardado de token
-        console.log("Nuevo token guardado en sessionStorage:", sessionStorage.getItem("token"));
-  
         navigate(userData.id === 10 ? "/users" : "/dashboard");
       } else {
         throw new Error("Credenciales incorrectas o datos incompletos.");
@@ -112,7 +95,7 @@ const Login = () => {
       showSnackbar("Verifica tus credenciales.", "error");
     }
   };
-  
+
   return (
     <Box
       sx={{
@@ -149,34 +132,14 @@ const Login = () => {
           >
             Inicio de Sesión
           </Typography>
+          <Typography
+            variant="body1"
+            sx={{ color: "gray", fontStyle: "italic" }}
+          >
+            Software de gestión de ambientes y herramientas
+          </Typography>
         </Box>
 
-        <FormControl fullWidth sx={{ mb: 3 }}>
-          <InputLabel id="sede-label">Selecciona la sede</InputLabel>
-          <Select
-            labelId="sede-label"
-            id="nombre_sede"
-            value={selectedSede}
-            onChange={handleSelectSede}
-            required
-            MenuProps={{ PaperProps: { sx: { maxHeight: 200 } } }}
-            sx={{
-              borderRadius: "5px",
-              boxShadow: "0 0 4px rgba(20, 159, 34, 0.5)",
-              ".MuiSelect-select": { textAlign: "left" },
-            }}
-          >
-            {sedes.length > 0 ? (
-              sedes.map((sede) => (
-                <MenuItem key={sede.id} value={sede.nombre_sede}>
-                  {sede.nombre_sede}
-                </MenuItem>
-              ))
-            ) : (
-              <MenuItem disabled>Cargando sedes...</MenuItem>
-            )}
-          </Select>
-        </FormControl>
         <Box component="form" onSubmit={handleLogin}>
           <TextField
             fullWidth
@@ -185,11 +148,7 @@ const Login = () => {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
-            sx={{
-              mb: 3,
-              borderRadius: "5px",
-              boxShadow: "0 0 4px rgba(20, 159, 34, 0.5)",
-            }}
+            sx={{ mb: 3 }}
           />
           <TextField
             fullWidth
@@ -199,16 +158,11 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            sx={{
-              mb: 3,
-              borderRadius: "5px",
-              boxShadow: "0 0 4px rgba(20, 159, 34, 0.5)",
-            }}
+            sx={{ mb: 3 }}
           />
           <Button
             type="submit"
             variant="contained"
-            fullWidth
             sx={{
               backgroundColor: "#03b12fcc",
               color: "white",
@@ -219,6 +173,7 @@ const Login = () => {
               transition: "background-color 0.3s ease",
               "&:hover": { backgroundColor: "#333" },
             }}
+            fullWidth
           >
             Iniciar Sesión
           </Button>
@@ -227,13 +182,8 @@ const Login = () => {
           open={snackbar.open}
           autoHideDuration={4000}
           onClose={handleCloseSnackbar}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
         >
-          <Alert
-            onClose={handleCloseSnackbar}
-            severity={snackbar.severity}
-            sx={{ width: "100%" }}
-          >
+          <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
             {snackbar.message}
           </Alert>
         </Snackbar>

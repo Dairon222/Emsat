@@ -160,7 +160,7 @@ const TableComponent = ({
       ) : (
         <>
           <ButtonsExportComponent
-            data={data}
+            data={filteredData}
             columns={columns}
             title={title}
             hiddenFields={hiddenFields}
