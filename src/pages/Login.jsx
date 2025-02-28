@@ -4,11 +4,7 @@ import {
   Box,
   Typography,
   TextField,
-  Select,
-  MenuItem,
   Button,
-  FormControl,
-  InputLabel,
   Snackbar,
   Alert,
 } from "@mui/material";
@@ -18,40 +14,31 @@ import { useSede } from "../context/SedeContext";
 import api from "../api/axios";
 
 const Login = () => {
-  const [sedes, setSedes] = useState([]);
-  const [selectedSede, setSelectedSede] = useState("");
-  const [selectedNumeroSede, setSelectedNumeroSede] = useState(null);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [credentials, setCredentials] = useState({
+    username: "",
+    password: "",
+  });
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "",
   });
   const navigate = useNavigate();
+  const { login } = useSede();
 
   useEffect(() => {
-    const fetchSedes = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await api.get("sede", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setSedes(response.data);
-      } catch (error) {
-        console.error("Error al cargar sedes:", error);
-        setSnackbar({
-          open: true,
-          message: "No se pudieron cargar las sedes.",
-          severity: "error",
-        });
-      }
-    };
+    if (sessionStorage.getItem("token")) {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
 
-    fetchSedes();
-  }, []);
+  const handleChange = (e) => {
+    setCredentials((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") e.preventDefault();
+  };
 
   const showSnackbar = (message, severity) => {
     setSnackbar({ open: true, message, severity });
@@ -60,33 +47,26 @@ const Login = () => {
   const handleCloseSnackbar = () =>
     setSnackbar({ open: false, message: "", severity: "" });
 
-  const { login } = useSede();
-
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    if (!username || !password) {
+    if (!credentials.username || !credentials.password) {
       showSnackbar("Por favor completa todos los campos.", "warning");
       return;
     }
 
     try {
-      const response = await api.post("login-sede", {
-        username,
-        contrasena: password,
+      const { data } = await api.post("login-sede", {
+        username: credentials.username,
+        contrasena: credentials.password,
       });
 
-      const userData = response?.data?.user;
-      const token = response?.data?.token;
-
-      if (userData && token) {
-        sessionStorage.setItem("token", token);
-        sessionStorage.setItem("sede", userData.sede || selectedSede);
-
-        login(token, userData.sede || selectedSede);
+      if (data?.user && data?.token) {
+        sessionStorage.setItem("token", data.token);
+        sessionStorage.setItem("sede", data.user.sede);
+        login(data.token, data.user.sede);
         showSnackbar("Inicio de sesión exitoso.", "success");
-
-        navigate(userData.id === 10 ? "/users" : "/dashboard");
+        navigate(data.user.id = "/dashboard");
       } else {
         throw new Error("Credenciales incorrectas o datos incompletos.");
       }
@@ -104,38 +84,26 @@ const Login = () => {
         justifyContent: "center",
         height: "100vh",
         background: "linear-gradient(white, rgb(22, 139, 11))",
-        padding: 2,
+        p: 2,
       }}
     >
       <Box
         sx={{
-          backgroundColor: "white",
-          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-          borderRadius: "8px",
-          padding: "20px",
+          bgcolor: "white",
+          boxShadow: 3,
+          borderRadius: 2,
+          p: 3,
           textAlign: "center",
-          maxWidth: "400px",
+          maxWidth: 400,
           width: "100%",
         }}
       >
-        <Box sx={{ mb: 3 }}>
-          <img
-            src={senaLogo}
-            alt="Logo SENA"
-            style={{ width: 80, height: "auto" }}
-          />
-          <Typography
-            variant="h4"
-            component="h1"
-            gutterBottom
-            sx={{ color: "black", fontWeight: "bold" }}
-          >
+        <Box mb={3}>
+          <img src={senaLogo} alt="Logo SENA" style={{ width: 80 }} />
+          <Typography variant="h4" fontWeight="bold" gutterBottom>
             Inicio de Sesión
           </Typography>
-          <Typography
-            variant="body1"
-            sx={{ color: "gray", fontStyle: "italic" }}
-          >
+          <Typography variant="body1" color="gray" fontStyle="italic">
             Software de gestión de ambientes y herramientas
           </Typography>
         </Box>
@@ -143,35 +111,37 @@ const Login = () => {
         <Box component="form" onSubmit={handleLogin}>
           <TextField
             fullWidth
-            id="username"
+            name="username"
             label="Nombre de usuario"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={credentials.username}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
             required
-            sx={{ mb: 3 }}
+            sx={{ mb: 2 }}
           />
           <TextField
             fullWidth
             type="password"
-            id="password"
+            name="password"
             label="Contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={credentials.password}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
             required
-            sx={{ mb: 3 }}
+            sx={{ mb: 2 }}
           />
           <Button
             type="submit"
             variant="contained"
             sx={{
-              backgroundColor: "#03b12fcc",
+              bgcolor: "#03b12fcc",
               color: "white",
               fontSize: "1em",
               fontWeight: "bold",
-              padding: "15px",
-              borderRadius: "5px",
+              py: 1.5,
+              borderRadius: 1,
               transition: "background-color 0.3s ease",
-              "&:hover": { backgroundColor: "#333" },
+              "&:hover": { bgcolor: "#333" },
             }}
             fullWidth
           >

@@ -22,8 +22,7 @@ const columns = [
 const columnsModal = [
   {field: "id", headerName: "Id rol", align: "center", hidden: true},
   { field: "tipo", headerName: "Tipo", align: "center" },
-  
-  { field: "usuariosede_id", headerName: "Usuario sede", align: "center" },
+  { field: "usuariosede_id", headerName: "Usuario sede", align: "center", hidden:true },
 ]
 const Roles = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -35,9 +34,7 @@ const Roles = () => {
     message: "",
     severity: "",
   });
-
   
-  // Función para manejar la actualización de datos de los roles
   const handleSaveEdit = async (updatedData) => {
     try {
       
