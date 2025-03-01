@@ -16,6 +16,7 @@
     "@mui/material": "^6.4.0",
     "@mui/styled-engine-sc": "^6.4.0",
     "axios": "^1.7.9",
+    "dayjs": "^1.11.13",
     "file-saver": "^2.0.5",
     "jspdf": "^2.5.2",
     "jspdf-autotable": "^3.8.4",

@@ -9,10 +9,10 @@ import {
   Alert,
 } from "@mui/material";
 import HeaderComponent from "../components/HeaderComponent";
-import TableComponent from "../components/TableComponent";
 import CreateElementsComponent from "../components/ModalCreateComponent";
 import ModalDeleteComponent from "../components/ModalDeleteComponent";
 import api from "../api/axios";
+import TableComponent from "../components/TableComponent";
 
 const columns = [
   { field: "id", headerName: "Id user", align: "center", hidden: true },
@@ -20,8 +20,25 @@ const columns = [
   { field: "apellido", headerName: "Apellido", align: "center" },
   { field: "identificacion", headerName: "Identificación", align: "center" },
   { field: "celular", headerName: "Celular", align: "center" },
-  { field: "rol_id", headerName: "Id rol", align: "center"},
-  { field: "ficha_id", headerName: "Id ficha", align: "center" },
+  { field: "rol.tipo", headerName: "Rol", align: "center" },
+  { field: "ficha.numero_ficha", headerName: "Ficha", align: "center" },
+  { field: "rol_id", headerName: "Id rol", align: "center", hidden: true },
+  { field: "ficha_id", headerName: "Id ficha", align: "center", hidden: true },
+];
+
+const columnsModal = [
+  { field: "id", headerName: "Id user", align: "center", hidden: true },
+  { field: "nombre", headerName: "Nombre", align: "center" },
+  { field: "apellido", headerName: "Apellido", align: "center" },
+  { field: "identificacion", headerName: "Identificación", align: "center" },
+  { field: "celular", headerName: "Celular", align: "center" },
+  { field: "rol_id", headerName: "Id rol", align: "center", type: "select"},
+  {
+    field: "ficha_id",
+    headerName: "Id ficha",
+    align: "center",
+    type: "select",
+  },
 ];
 
 const Users = () => {
@@ -106,7 +123,9 @@ const Users = () => {
             "created_at",
             "updated_at",
             "ficha",
-            "rol"
+            "rol",
+            "ficha_id",
+            "rol_id",
           ]} // Campos que no se mostrarán
         />
       </Container>
@@ -115,7 +134,7 @@ const Users = () => {
         open={openModal}
         onClose={() => toggleModal(setOpenModal, false)}
         title="Crear Usuario"
-        columns={columns}
+        columns={columnsModal}
         endpoint="usuario"
         onSuccess={() => {
           setSnackbar({
@@ -133,7 +152,7 @@ const Users = () => {
           });
         }}
       />
-      
+
       <ModalDeleteComponent
         open={openDeleteModal}
         onClose={() => toggleModal(setOpenDeleteModal, false)}

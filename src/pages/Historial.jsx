@@ -1,19 +1,32 @@
-
 import { Container, Typography, Box } from "@mui/material";
 import HeaderComponent from "../components/HeaderComponent";
-import TableHistorial   from "../components/TableHistorialComponent";
-import api from "../api/axios"; 
+import TableHistorial from "../components/TableHistorialComponent";
+import api from "../api/axios";
+import dayjs from "dayjs";
 
 const columns = [
-  { field: "usuario_id", headerName: "Id usuario", align: "center" },
-  { field: "prestamo_id", headerName: "ID prestamo", align: "center" },
-  // Pendiente para orgnanizar la forma en que se ve la fecha
-  { field: "created_at", headerName: "Fecha de creación", align: "center" },
+  { field: "usuario.nombre", headerName: "Nombre usuario", align: "center" },
+  {
+    field: "usuario.identificacion",
+    headerName: "Identificacion usuario",
+    align: "center",
+  },
+  {
+    field: "prestamo.codigo_herramienta",
+    headerName: "Código herramienta",
+    align: "center",
+  },
+  {
+    field: "created_at",
+    headerName: "Fecha del préstamo",
+    align: "center",
+    format: (value) => dayjs(value).format("DD/MM/YYYY HH:mm"),
+  },
   { field: "estado", headerName: "Estado", align: "center" },
 ];
 
 const fetchHistorial = async () => {
-  const response = await api.get("historial"); 
+  const response = await api.get("historial");
   return response.data;
 };
 
@@ -37,7 +50,7 @@ const Historial = () => {
 
         <TableHistorial
           columns={columns}
-          fetchData={fetchHistorial} 
+          fetchData={fetchHistorial}
           title="Historial de los préstamos"
           noDataMessage="No se encontró algún dato relacionado."
         />

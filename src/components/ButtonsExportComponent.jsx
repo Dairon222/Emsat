@@ -33,7 +33,10 @@ const ButtonsExportComponent = ({
     const exportData = data.map((row) => {
       const rowData = {};
       visibleColumns.forEach((col) => {
-        rowData[col.headerName] = row[col.field];
+        rowData[col.headerName] = col.field.includes(".")
+          ? col.field.split(".").reduce((acc, key) => acc?.[key], row) ||
+            "No disponible"
+          : row[col.field] || "No disponible";
       });
       return rowData;
     });
@@ -60,7 +63,12 @@ const ButtonsExportComponent = ({
     const doc = new jsPDF();
     const tableColumnHeaders = visibleColumns.map((col) => col.headerName);
     const tableRows = data.map((row) =>
-      visibleColumns.map((col) => row[col.field] || "")
+      visibleColumns.map((col) =>
+        col.field.includes(".")
+          ? col.field.split(".").reduce((acc, key) => acc?.[key], row) ||
+            "No disponible"
+          : row[col.field] || "No disponible"
+      )
     );
 
     doc.text(title || "Datos Exportados", 14, 15);
@@ -78,7 +86,14 @@ const ButtonsExportComponent = ({
     const textToCopy = [
       visibleColumns.map((col) => col.headerName).join("\t"),
       ...data.map((row) =>
-        visibleColumns.map((col) => row[col.field] || "").join("\t")
+        visibleColumns
+          .map((col) =>
+            col.field.includes(".")
+              ? col.field.split(".").reduce((acc, key) => acc?.[key], row) ||
+                "No disponible"
+              : row[col.field] || "No disponible"
+          )
+          .join("\t")
       ),
     ].join("\n");
 
@@ -90,6 +105,7 @@ const ButtonsExportComponent = ({
       });
     });
   };
+  
 
   return (
     <Box sx={{ display: "flex", gap: 2, mb: 2 }}>

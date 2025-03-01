@@ -18,7 +18,6 @@ import {
   CircularProgress,
   Chip,
 } from "@mui/material";
-import api from "../api/axios";
 import ButtonsExportComponent from "./ButtonsExportComponent";
 
 const STATUS_LABELS = {
@@ -28,12 +27,18 @@ const STATUS_LABELS = {
 };
 
 const STATUS_STYLES = {
-  "en mora": { backgroundColor: "#ffcccc", color: "#d32f2f" }, // Rojo claro
-  devuelto: { backgroundColor: "#ccffcc", color: "#388e3c" }, // Verde claro
-  activo: { backgroundColor: "#f07520", color: "#fff" }, // Naranja
+  "en mora": { backgroundColor: "#ffcccc", color: "#d32f2f" },
+  devuelto: { backgroundColor: "#ccffcc", color: "#388e3c" },
+  activo: { backgroundColor: "#f07520", color: "#fff" },
 };
 
-const TableHistorial = ({
+const getNestedValue = (obj, path, defaultValue = "No disponible") => {
+  return path
+    .split(".")
+    .reduce((acc, key) => (acc && acc[key] ? acc[key] : defaultValue), obj);
+};
+
+const TableHistorialComponent = ({
   columns,
   fetchData,
   title,
@@ -51,9 +56,7 @@ const TableHistorial = ({
       setLoading(true);
       try {
         const response =
-          typeof fetchData === "function"
-            ? await fetchData()
-            : await api.get(fetchData);
+          typeof fetchData === "function" ? await fetchData() : { data: [] };
         setData(response.data);
       } catch (err) {
         setError("No se pudieron cargar los datos.");
@@ -167,8 +170,10 @@ const TableHistorial = ({
                                   fontWeight: "bold",
                                 }}
                               />
+                            ) : col.format ? (
+                              col.format(getNestedValue(row, col.field)) // 🔥 Aplica formato si existe
                             ) : (
-                              row[col.field]
+                              getNestedValue(row, col.field) // 🔥 Obtiene el valor anidado
                             )}
                           </TableCell>
                         ))}
@@ -196,4 +201,4 @@ const TableHistorial = ({
   );
 };
 
-export default TableHistorial;
+export default TableHistorialComponent;

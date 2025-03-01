@@ -7,7 +7,7 @@ import {
   Box,
   Snackbar,
   Alert,
-} from "@mui/material";
+} from "@mui/material"
 import HeaderComponent from "../components/HeaderComponent";
 import TableComponent from "../components/TableComponent";
 import CreateElementsComponent from "../components/ModalCreateComponent";
@@ -117,7 +117,7 @@ const Fichas = () => {
         onSuccess={() => {
           setSnackbar({
             open: true,
-            message: "ficha creado exitosamente.",
+            message: "Ficha creado exitosamente.",
             severity: "success",
           });
           setReloadTable((prev) => !prev);

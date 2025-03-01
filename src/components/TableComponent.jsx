@@ -75,20 +75,6 @@ const TableComponent = ({
     loadData();
   }, [fetchData, onReload]);
 
-  const filteredData = useMemo(
-    () =>
-      data.filter((row) =>
-        columns
-          .filter((col) => !col.hidden)
-          .some((col) =>
-            String(row[col.field])
-              .toLowerCase()
-              .includes(searchTerm.toLowerCase())
-          )
-      ),
-    [data, searchTerm, columns]
-  );
-
   const handleSearch = (e) => setSearchTerm(e.target.value);
   const handleChangePage = (event, newPage) => setPage(newPage);
   const handleChangeRowsPerPage = (event) => {
@@ -111,6 +97,22 @@ const TableComponent = ({
     setOpenDeleteModal(false);
     setSelectedRow(null);
   };
+  const filteredData = useMemo(
+    () =>
+      data.filter((row) =>
+        columns
+          .filter((col) => !col.hidden)
+          .some((col) => {
+            const value = col.field
+              .split(".")
+              .reduce((acc, key) => acc?.[key], row);
+            return String(value || "")
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase());
+          })
+      ),
+    [data, searchTerm, columns]
+  );
 
   const handleSaveEdit = async (updatedData) => {
     try {
@@ -233,7 +235,10 @@ const TableComponent = ({
                           .filter((col) => !col.hidden)
                           .map((col) => (
                             <TableCell key={col.field} align={col.align}>
-                              {row[col.field]}
+                              {col.field
+                                .split(".")
+                                .reduce((acc, key) => acc?.[key], row) ??
+                                "No disponible"}
                             </TableCell>
                           ))}
                         <TableCell align="center">
