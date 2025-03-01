@@ -15,13 +15,10 @@ import ModalDeleteComponent from "../components/ModalDeleteComponent";
 import api from "../api/axios";
 
 const columns = [
-  { field: "id", headerName: "Id rol", align: "center", },
+  { field: "id", headerName: "Id rol", align: "center", hidden: true },
   { field: "tipo", headerName: "Tipo", align: "center" },
 ];
-const columnsModal = [
-  {field: "id", headerName: "Id rol", align: "center", hidden: true},
-  { field: "tipo", headerName: "Tipo", align: "center" },
-]
+
 const Roles = () => {
   const [openModal, setOpenModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -107,7 +104,7 @@ const Roles = () => {
         open={openModal}
         onClose={() => toggleModal(setOpenModal, false)}
         title="Crear rol"
-        columns={columnsModal}
+        columns={columns}
         endpoint="rol"
         onSuccess={() => {
           setSnackbar({

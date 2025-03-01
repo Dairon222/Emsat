@@ -52,6 +52,7 @@ const columns = [
     field: "estado_prestamo",
     headerName: "Estado",
     align: "center",
+    hidden: true,
   },
   { field: "observaciones", headerName: "Observaciones", align: "center" },
 ];
@@ -129,7 +130,7 @@ const Loans = () => {
           endpoint="prestamo"
           keyField="id"
           deleteMessage="Desea finalizar el prestamo de la herramienta con código"
-          nameDelete="id"
+          nameDelete="codigo_herramienta"
           onDelete={handleDeleteSelection}
           onSave={handleSaveEdit}
           hiddenFields={[

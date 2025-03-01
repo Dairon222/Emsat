@@ -15,13 +15,6 @@ import ModalDeleteComponent from "../components/ModalDeleteComponent";
 import api from "../api/axios";
 
 const columns = [
-  { field: "id", headerName: "Id ficha", align: "center" },
-  { field: "nombre_ficha", headerName: "Ficha", align: "center" },
-  { field: "numero_ficha", headerName: "Número", align: "center" },
-];
-
-
-const columnsModal = [
   { field: "id", headerName: "Id ficha", align: "center", hidden: true },
   { field: "nombre_ficha", headerName: "Ficha", align: "center" },
   { field: "numero_ficha", headerName: "Número", align: "center" },
@@ -112,7 +105,7 @@ const Fichas = () => {
         open={openModal}
         onClose={() => toggleModal(setOpenModal, false)}
         title="Crear ficha"
-        columns={columnsModal}
+        columns={columns}
         endpoint="ficha"
         onSuccess={() => {
           setSnackbar({
