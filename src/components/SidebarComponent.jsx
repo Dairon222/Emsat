@@ -19,7 +19,6 @@ import SchoolIcon from "@mui/icons-material/School";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 import ManIcon from "@mui/icons-material/Man";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import SettingsIcon from "@mui/icons-material/Settings";
 import senaLogo from "../assets/logo_sena.png";
 
 const SidebarComponent = ({ drawerWidth, title, isAdmin }) => {
@@ -42,7 +41,6 @@ const SidebarComponent = ({ drawerWidth, title, isAdmin }) => {
     },
     { text: "Sedes", path: "/info-sedes", icon: <BuildIcon /> },
     { text: "Usuarios", path: "/info-users", icon: <PeopleIcon /> },
-    { text: "Configuración", path: "/settings", icon: <SettingsIcon /> },
   ];
 
   return (
