@@ -20,6 +20,7 @@ import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 import ManIcon from "@mui/icons-material/Man";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import senaLogo from "../assets/logo_sena.png";
+import BlindsClosedIcon from '@mui/icons-material/BlindsClosed';
 
 const SidebarComponent = ({ drawerWidth, title, isAdmin }) => {
   const navLinks = [
@@ -39,7 +40,7 @@ const SidebarComponent = ({ drawerWidth, title, isAdmin }) => {
       path: "/admin",
       icon: <AdminPanelSettingsIcon />,
     },
-    { text: "Sedes", path: "/info-sedes", icon: <BuildIcon /> },
+    { text: "Sedes", path: "/info-sedes", icon: <BlindsClosedIcon /> },
     { text: "Usuarios", path: "/info-users", icon: <PeopleIcon /> },
   ];
 

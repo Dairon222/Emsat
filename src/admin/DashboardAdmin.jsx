@@ -13,13 +13,14 @@ import CardComponent from "../components/CardComponent";
 import CreateElementsComponent from "../components/ModalCreateComponent";
 // Iconos
 import PeopleIcon from "@mui/icons-material/People";
+import BlindsClosedIcon from '@mui/icons-material/BlindsClosed';
 // Configuración de entidades y sus columnas
 const entityConfig = {
   Sede: {
     title: "Sede",
     endpoint: "sede",
     description: "Crea una nueva sede en el centro Sena",
-    icon: <PeopleIcon />,
+    icon: <BlindsClosedIcon />,
     columns: [
         { field: "id", headerName: "Id sede", align: "center", hidden: true },
         { field: "nombre_sede", headerName: "Nombre sede", align: "center" },
