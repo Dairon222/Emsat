@@ -26,12 +26,6 @@ const Login = () => {
   const navigate = useNavigate();
   const { login } = useSede();
 
-  useEffect(() => {
-    if (sessionStorage.getItem("token")) {
-      navigate("/dashboard");
-    }
-  }, [navigate]);
-
   const handleChange = (e) => {
     setCredentials((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -58,7 +52,7 @@ const Login = () => {
     try {
       const { data } = await api.post("login-sede", {
         username: credentials.username,
-        contrasena: credentials.password,
+        password: credentials.password,
       });
 
       if (data?.user && data?.token) {
@@ -66,7 +60,7 @@ const Login = () => {
         sessionStorage.setItem("sede", data.user.sede);
         login(data.token, data.user.sede);
         showSnackbar("Inicio de sesión exitoso.", "success");
-        navigate(data.user.id = "/dashboard");
+        navigate((data.user.sede === "Administrador" ? "/admin" : "/dashboard"));
       } else {
         throw new Error("Credenciales incorrectas o datos incompletos.");
       }
@@ -74,6 +68,10 @@ const Login = () => {
       console.error("Error en login:", error);
       showSnackbar("Verifica tus credenciales.", "error");
     }
+  };
+
+  const handleResetPassword = () => {
+    navigate("/forgot-password");
   };
 
   return (
@@ -147,6 +145,19 @@ const Login = () => {
           >
             Iniciar Sesión
           </Button>
+          <Typography variant="body2" mt={2}>
+            <a
+              href="/forgot-password"
+              style={{
+                color: "red",
+                textDecoration: "none",
+                transition: "color 0.3s",
+                "&:hover": { color: "black", scale: 1.1 },
+              }}
+            >
+              ¿Recuperar contraseña?{" "}
+            </a>
+          </Typography>
         </Box>
         <Snackbar
           open={snackbar.open}

@@ -11,27 +11,38 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
-import InventoryIcon from "@mui/icons-material/Inventory";
+import BuildIcon from "@mui/icons-material/Build";
 import PeopleIcon from "@mui/icons-material/People";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import HistoryIcon from "@mui/icons-material/History";
-
 import SchoolIcon from "@mui/icons-material/School";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 import ManIcon from "@mui/icons-material/Man";
-
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import SettingsIcon from "@mui/icons-material/Settings";
 import senaLogo from "../assets/logo_sena.png";
 
-const SidebarComponent = ({ drawerWidth, title }) => {
+const SidebarComponent = ({ drawerWidth, title, isAdmin }) => {
   const navLinks = [
     { text: "Inicio", path: "/dashboard", icon: <HomeIcon /> },
-    { text: "Inventario", path: "/inventory", icon: <InventoryIcon /> },
+    { text: "Herramientas", path: "/inventory", icon: <BuildIcon /> },
     { text: "Usuarios", path: "/users", icon: <PeopleIcon /> },
     { text: "Préstamos", path: "/loans", icon: <AssignmentIcon /> },
     { text: "Fichas", path: "/fichas", icon: <SchoolIcon /> },
     { text: "Ambientes", path: "/enviroments", icon: <MeetingRoomIcon /> },
     { text: "Roles", path: "/roles", icon: <ManIcon /> },
     { text: "Historial", path: "/historial", icon: <HistoryIcon /> },
+  ];
+
+  const navLinksAdmin = [
+    {
+      text: "Administración",
+      path: "/admin",
+      icon: <AdminPanelSettingsIcon />,
+    },
+    { text: "Sedes", path: "/info-sedes", icon: <BuildIcon /> },
+    { text: "Usuarios", path: "/info-users", icon: <PeopleIcon /> },
+    { text: "Configuración", path: "/settings", icon: <SettingsIcon /> },
   ];
 
   return (
@@ -47,10 +58,9 @@ const SidebarComponent = ({ drawerWidth, title }) => {
       }}
     >
       <Toolbar>
-        {/* Logo y Título */}
         <Box sx={{ display: "flex", alignItems: "center", p: 1 }}>
           <Link
-            to="/dashboard"
+            to={isAdmin ? "/admin" : "/dashboard"}
             style={{
               display: "flex",
               alignItems: "center",
@@ -73,38 +83,31 @@ const SidebarComponent = ({ drawerWidth, title }) => {
           </Link>
         </Box>
       </Toolbar>
-      <List>
-        {navLinks.map((link) => (
+      <List sx={{ mt: 3 }}>
+        {(isAdmin ? navLinksAdmin : navLinks).map((link) => (
           <ListItem
             button
             key={link.text}
             component={Link}
             to={link.path}
-            color="inherit"
             sx={{
               textTransform: "none",
               fontWeight: "bold",
               transition: "all 0.3s",
+              textDecoration: "none",
+              listStyle: "none",
+              color: "black",
               "&:hover": {
-                backgroundColor: "#f5f5f5",
+                backgroundColor: isAdmin ? "#e3f2fd" : "#f5f5f5",
                 color: "black",
                 borderRadius: 1,
                 transform: "scale(1.1)",
-                ".MuiListItemIcon-root": {
-                  color: "primary.main",
-                },
+                ".MuiListItemIcon-root": { color: "primary.main" },
               },
             }}
           >
-            <ListItemIcon sx={{ fontWeight: "bold" }}>{link.icon}</ListItemIcon>
-            <ListItemText
-              primary={link.text}
-              sx={{
-                textDecoration: "none",
-                listStyle: "none",
-                color: "black",
-              }}
-            />
+            <ListItemIcon>{link.icon}</ListItemIcon>
+            <ListItemText primary={link.text} />
           </ListItem>
         ))}
       </List>

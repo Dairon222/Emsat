@@ -1,134 +1,45 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Container,
   Typography,
   Grid,
-  Button,
   Box,
   Snackbar,
   Alert,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { useSede } from "../context/SedeContext";
 import HeaderComponent from "../components/HeaderComponent";
 import CardComponent from "../components/CardComponent";
 import CreateElementsComponent from "../components/ModalCreateComponent";
-import api from "../api/axios";
 // Iconos
 import PeopleIcon from "@mui/icons-material/People";
-
-import ManIcon from "@mui/icons-material/Man";
-import BuildIcon from "@mui/icons-material/Build";
-import SchoolIcon from "@mui/icons-material/School";
-import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
-import AssignmentIcon from "@mui/icons-material/Assignment";
-
 // Configuración de entidades y sus columnas
 const entityConfig = {
-  usuario: {
-    title: "Usuario",
-    endpoint: "usuario",
-    description: "Crea un nuevo usuario",
+  Sede: {
+    title: "Sede",
+    endpoint: "sede",
+    description: "Crea una nueva sede en el centro Sena",
     icon: <PeopleIcon />,
     columns: [
-      { field: "id", headerName: "Id user", align: "center", hidden: true },
-      { field: "nombre", headerName: "Nombre", align: "center" },
-      { field: "apellido", headerName: "Apellido", align: "center" },
-      {
-        field: "identificacion",
-        headerName: "Identificación",
-        align: "center",
-      },
-      { field: "celular", headerName: "Celular", align: "center" },
-      {
-        field: "rol_id",
-        headerName: "Id rol",
-        align: "center",
-        type: "select",
-      },
-      {
-        field: "ficha_id",
-        headerName: "Id ficha",
-        align: "center",
-        type: "select",
-      },
+        { field: "id", headerName: "Id sede", align: "center", hidden: true },
+        { field: "nombre_sede", headerName: "Nombre sede", align: "center" },
+        { field: "numero_sede", headerName: "Número de la sede", align: "center" },
     ],
   },
-  ficha: {
-    title: "Ficha",
-    endpoint: "ficha",
-    description: "Crea una nueva ficha",
-    icon: <SchoolIcon />,
+  UsuarioSede: {
+    title: "Usuario de la sede",
+    endpoint: "register-sede",
+    description: "Nuevo usuario que administre la sede",
+    icon: <PeopleIcon />,
     columns: [
-      { field: "nombre_ficha", headerName: "Nombre ficha", align: "center" },
-      { field: "numero_ficha", headerName: "Número de ficha", align: "center" },
-    ],
-  },
-  rol: {
-    title: "Rol",
-    endpoint: "rol",
-    description: "Crea un nuevo rol",
-    icon: <ManIcon />,
-    columns: [{ field: "tipo", headerName: "Tipo de rol", align: "center" }],
-  },
-  herramienta: {
-    title: "Herramienta",
-    endpoint: "herramienta",
-    description: "Crea una nueva herramienta",
-    icon: <BuildIcon />,
-    columns: [
-      {
-        field: "id",
-        headerName: "Id herramienta",
-        align: "center",
-        hidden: true,
-      },
-      {
-        field: "nombre_herramienta",
-        headerName: "Herramienta",
-        align: "center",
-      },
-      { field: "codigo", headerName: "Código", align: "center" },
-      { field: "stock", headerName: "Total", align: "center" },
-      { field: "ubicacion", headerName: "Ubicación", align: "center" },
-    ],
-  },
-  ambiente: {
-    title: "Ambiente",
-    endpoint: "ambiente",
-    description: "Crea un nuevo ambiente",
-    icon: <MeetingRoomIcon />,
-    columns: [
-      { field: "nombre_ambiente", headerName: "Nombre", align: "center" },
-      { field: "codigo", headerName: "Código ambiente", align: "center" },
-    ],
-  },
-  prestamo: {
-    title: "Préstamo",
-    endpoint: "prestamo",
-    description: "Crea un nuevo préstamo",
-    icon: <AssignmentIcon />,
-    columns: [
-      {
-        field: "identificacion",
-        headerName: "Identificación usuario",
-        align: "center",
-      },
-    
-      {
-        field: "codigo_herramienta",
-        headerName: "Codigo herramienta",
-        align: "center",
-      },
-      { field: "cantidad", headerName: "Cantidad", align: "center" },
-    
-      { field: "observaciones", headerName: "Observaciones", align: "center" },
+        { field: "id", headerName: "Id sede", align: "center", hidden: true },
+        { field: "nombre_sede", headerName: "Nombre sede", align: "center" },
+        { field: "numero_sede", headerName: "Número de la sede", align: "center" },
     ],
   },
 };
 
-const Dashboard = () => {
+const DashboardAdmin = () => {
   const [openModal, setOpenModal] = useState(false);
   const [selectedEntity, setSelectedEntity] = useState(null);
   const [reloadTable, setReloadTable] = useState(false);
@@ -242,4 +153,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default DashboardAdmin;

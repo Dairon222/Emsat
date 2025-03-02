@@ -3,15 +3,14 @@ import { Box, CssBaseline, Toolbar } from "@mui/material";
 import HeaderComponent from "./HeaderComponent";
 import SidebarComponent from "./SidebarComponent";
 
-const drawerWidth = 240; // Ancho de la barra lateral
+const drawerWidth = 225; // Ancho de la barra lateral
 
-const Layout = ({ children }) => {
-
+const Layout = ({ children, isAdmin = false }) => {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       {/* Barra lateral */}
-      <SidebarComponent drawerWidth={drawerWidth} title="Emsat" />
+      <SidebarComponent drawerWidth={drawerWidth} title="Emsat" isAdmin={isAdmin} />
 
       {/* Contenido principal */}
       <Box

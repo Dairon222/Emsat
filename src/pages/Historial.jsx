@@ -6,6 +6,8 @@ import dayjs from "dayjs";
 
 const columns = [
   { field: "usuario.nombre", headerName: "Nombre usuario", align: "center" },
+  
+  { field: "usuario.celular", headerName: "Celular usuario", align: "center" },
   {
     field: "usuario.identificacion",
     headerName: "Identificacion usuario",

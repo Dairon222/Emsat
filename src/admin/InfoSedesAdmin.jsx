@@ -15,37 +15,26 @@ import ModalDeleteComponent from "../components/ModalDeleteComponent";
 import api from "../api/axios";
 
 const columns = [
-  {
-    field: "identificacion",
-    headerName: "Identificación usuario",
-    align: "center",
-  },
-
-  {
-    field: "codigo_herramienta",
-    headerName: "Codigo herramienta",
-    align: "center",
-  },
-  { field: "cantidad", headerName: "Cantidad", align: "center" },
-
-  { field: "observaciones", headerName: "Observaciones", align: "center" },
+    { field: "id", headerName: "Id sede", align: "center", hidden: true },
+    { field: "nombre_sede", headerName: "Nombre sede", align: "center" },
+    { field: "numero_sede", headerName: "Número de la sede", align: "center" },
 ];
 
-const Loans = () => {
+const InfoSedesAdmin = () => {
   const [openModal, setOpenModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [selectedLoan, setSelectedLoan] = useState(null);
+  const [selectedRol, setSelectedRol] = useState(null);
   const [reloadTable, setReloadTable] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "",
   });
-
-  // Función para manejar la actualización de datos de los préstamos
+  
   const handleSaveEdit = async (updatedData) => {
     try {
-      await api.put(`prestamo/${updatedData.id}`, updatedData);
+      
+      await api.put(`sede/${updatedData.id}`, updatedData);
       setSnackbar({
         open: true,
         message: "Datos actualizados correctamente.",
@@ -55,6 +44,7 @@ const Loans = () => {
     } catch (error) {
       setSnackbar({
         open: true,
+        message: "Error al actualizar los datos.",
         severity: "error",
       });
     }
@@ -62,14 +52,14 @@ const Loans = () => {
 
   // Controla la apertura y cierre de modales
   const toggleModal = (modalSetter, value) => modalSetter(value);
-  const handleDeleteSelection = (loan) => {
-    setSelectedLoan(loan);
+  const handleDeleteSelection = (rol) => {
+    setSelectedRol(rol);
     setOpenDeleteModal(true);
   };
 
   return (
     <>
-      <HeaderComponent title="Préstamos" />
+      <HeaderComponent title="Sedes" />
       <Container maxWidth="xl" sx={{ mt: 3 }}>
         <Box
           sx={{
@@ -80,7 +70,7 @@ const Loans = () => {
           }}
         >
           <Typography variant="body1" gutterBottom>
-            Administra los prestamos de la sede.
+            Sedes del centro Sena.
           </Typography>
           <Button
             variant="contained"
@@ -91,45 +81,36 @@ const Loans = () => {
             }}
             onClick={() => toggleModal(setOpenModal, true)}
           >
-            Crear préstamo
+            Crear sede
           </Button>
         </Box>
 
         <TableComponent
           columns={columns}
-          fetchData="prestamo"
-          title="Lista de prestamos"
-          noDataMessage="No se encontraron prestamos activos."
+          fetchData="sede"
+          title="Lista de sedes"
+          noDataMessage="No se encontraron sedes."
           onReload={reloadTable}
-          endpoint="prestamo"
+          endpoint="sede"
           keyField="id"
-          deleteMessage="Desea finalizar el prestamo del usuario con identificacion "
-          nameDelete="identificacion"
+          deleteMessage="Desea eliminar la sede "
+          nameDelete="nombre_sede"
           onDelete={handleDeleteSelection}
-          onSave={handleSaveEdit}
-          hiddenFields={[
-            "id",
-            "created_at",
-            "updated_at",
-            "usuario_id",
-            "herramienta_id",
-            "ambiente_id",
-            "estado_prestamo",
-            "usuariosede_id",
-          ]}
+          onSave={handleSaveEdit} 
+          hiddenFields={["id"]} 
         />
       </Container>
 
       <CreateElementsComponent
         open={openModal}
         onClose={() => toggleModal(setOpenModal, false)}
-        title="Crear prestamo"
+        title="Crear sede"
         columns={columns}
-        endpoint="prestamo"
+        endpoint="sede"
         onSuccess={() => {
           setSnackbar({
             open: true,
-            message: "Prestamo creada exitosamente.",
+            message: "Sede creada exitosamente.",
             severity: "success",
           });
           setReloadTable((prev) => !prev);
@@ -137,7 +118,7 @@ const Loans = () => {
         onError={() => {
           setSnackbar({
             open: true,
-            message: "Error al crear el prestamo.",
+            message: "Error al crear la sede.",
             severity: "error",
           });
         }}
@@ -146,7 +127,7 @@ const Loans = () => {
       <ModalDeleteComponent
         open={openDeleteModal}
         onClose={() => toggleModal(setOpenDeleteModal, false)}
-        item={selectedLoan}
+        item={selectedRol}
         onSuccess={() => setReloadTable((prev) => !prev)}
       />
 
@@ -162,4 +143,4 @@ const Loans = () => {
   );
 };
 
-export default Loans;
+export default InfoSedesAdmin;

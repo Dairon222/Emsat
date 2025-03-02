@@ -1,4 +1,5 @@
 import CreateFormsComponent from "../components/CreateFormsComponent";
+import { useNavigate } from "react-router-dom";
 
 const columns = [
   { field: "id", headerName: "Id sede", align: "center", hidden: true },
@@ -7,11 +8,18 @@ const columns = [
 ];
 
 const RegisterSede = () => {
+  const navigate = useNavigate();
+
+  const handleSuccess = () => {
+    navigate("/user");
+  };
+
   return (
     <CreateFormsComponent
       title="Crear sede"
       columns={columns}
       endpoint="sede"
+      onSuccess={handleSuccess}
     />
   );
 };
