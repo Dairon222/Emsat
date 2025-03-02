@@ -33,9 +33,11 @@ const entityConfig = {
     description: "Nuevo usuario que administre la sede",
     icon: <PeopleIcon />,
     columns: [
-        { field: "id", headerName: "Id sede", align: "center", hidden: true },
-        { field: "nombre_sede", headerName: "Nombre sede", align: "center" },
-        { field: "numero_sede", headerName: "Número de la sede", align: "center" },
+      { field: "id", headerName: "Id sede", align: "center", hidden: true },
+      { field: "username", headerName: "Nombre usuario", align: "center" },
+      { field: "email", headerName: "Email", align: "center" },
+      { field: "password", headerName: "Contraseña", align: "center" },
+      {field: "numero_sede" , headerName: "Numero de la sede", align: "center"},
     ],
   },
 };
