@@ -18,6 +18,7 @@ const columns = [
     headerName: "Código herramienta",
     align: "center",
   },
+  { field: "prestamo.cantidad", headerName: "Cantidad", align: "center" },
   {
     field: "created_at",
     headerName: "Fecha del préstamo",

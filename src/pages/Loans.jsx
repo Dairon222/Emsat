@@ -15,6 +15,26 @@ import ModalDeleteComponent from "../components/ModalDeleteComponent";
 import api from "../api/axios";
 
 const columns = [
+  { field: "usuario.nombre", headerName: "Nombre usuario", align: "center" },
+  {
+    field: "identificacion",
+    headerName: "Identificación usuario",
+    align: "center",
+  },
+  
+  { field: "usuario.celular", headerName: "Celular usuario", align: "center" },
+
+  {
+    field: "codigo_herramienta",
+    headerName: "Codigo herramienta",
+    align: "center",
+  },
+  { field: "cantidad", headerName: "Cantidad", align: "center" },
+
+  { field: "observaciones", headerName: "Observaciones", align: "center" },
+];
+
+const columnsModal = [
   {
     field: "identificacion",
     headerName: "Identificación usuario",
@@ -30,7 +50,6 @@ const columns = [
 
   { field: "observaciones", headerName: "Observaciones", align: "center" },
 ];
-
 const Loans = () => {
   const [openModal, setOpenModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -112,10 +131,16 @@ const Loans = () => {
             "created_at",
             "updated_at",
             "usuario_id",
-            "herramienta_id",
             "ambiente_id",
+            "herramienta_id",
+            "herramientas",
+            "usuario",
             "estado_prestamo",
             "usuariosede_id",
+            "codigo_ambiente",
+            "identificacion",
+            "codigo_herramienta",
+            "cantidad",
           ]}
         />
       </Container>
@@ -124,12 +149,12 @@ const Loans = () => {
         open={openModal}
         onClose={() => toggleModal(setOpenModal, false)}
         title="Crear prestamo"
-        columns={columns}
+        columns={columnsModal}
         endpoint="prestamo"
         onSuccess={() => {
           setSnackbar({
             open: true,
-            message: "Prestamo creada exitosamente.",
+            message: "Prestamo creado exitosamente.",
             severity: "success",
           });
           setReloadTable((prev) => !prev);
@@ -152,7 +177,7 @@ const Loans = () => {
 
       <Snackbar
         open={snackbar.open}
-        autoHideDuration={4000}
+        autoHideDuration={5000}
         onClose={() => setSnackbar({ open: false, message: "", severity: "" })}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >

@@ -81,23 +81,11 @@ const CreateElementsComponent = ({
     try {
       const response = await api.post(endpoint, formData);
       console.log("Respuesta de la API:", response.data);
-
-      setSnackbar({
-        open: true,
-        message: "Elemento creado exitosamente.",
-        severity: "success",
-      });
-
       if (onSuccess) onSuccess(response.data);
       setFormData({});
       onClose();
     } catch (error) {
       console.error("Error al crear el elemento:", error);
-      setSnackbar({
-        open: true,
-        message: "Hubo un problema al crear el elemento. Inténtalo de nuevo.",
-        severity: "error",
-      });
       if (onError) onError(error);
     } finally {
       setLoading(false);

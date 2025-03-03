@@ -156,7 +156,7 @@ const TableHistorialComponent = ({
                         {columns.map((col) => (
                           <TableCell key={col.field} align={col.align}>
                             {col.field === "estado" ? (
-                              <Chip
+                              <Chip 
                                 label={
                                   STATUS_LABELS[row[col.field]] || "Desconocido"
                                 }
@@ -171,9 +171,9 @@ const TableHistorialComponent = ({
                                 }}
                               />
                             ) : col.format ? (
-                              col.format(getNestedValue(row, col.field)) // 🔥 Aplica formato si existe
+                              col.format(getNestedValue(row, col.field)) 
                             ) : (
-                              getNestedValue(row, col.field) // 🔥 Obtiene el valor anidado
+                              getNestedValue(row, col.field) 
                             )}
                           </TableCell>
                         ))}

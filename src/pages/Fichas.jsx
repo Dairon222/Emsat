@@ -110,7 +110,7 @@ const Fichas = () => {
         onSuccess={() => {
           setSnackbar({
             open: true,
-            message: "Ficha creado exitosamente.",
+            message: "Ficha creada exitosamente.",
             severity: "success",
           });
           setReloadTable((prev) => !prev);
@@ -133,7 +133,7 @@ const Fichas = () => {
 
       <Snackbar
         open={snackbar.open}
-        autoHideDuration={4000}
+        autoHideDuration={3000}
         onClose={() => setSnackbar({ open: false, message: "", severity: "" })}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >

@@ -238,7 +238,7 @@ const TableComponent = ({
                               {col.field
                                 .split(".")
                                 .reduce((acc, key) => acc?.[key], row) ??
-                                "No disponible"}
+                                "No aplica"}
                             </TableCell>
                           ))}
                         <TableCell align="center">
