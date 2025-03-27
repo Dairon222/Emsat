@@ -7,22 +7,33 @@ import {
   Button,
   Snackbar,
   Alert,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
+import {
+  AccountCircle,
+  Lock,
+  Visibility,
+  VisibilityOff,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import senaLogo from "../assets/logo_sena.png";
 import { useSede } from "../context/SedeContext";
 import api from "../api/axios";
+import Captcha from "../components/Captcha";
 
 const Login = () => {
   const [credentials, setCredentials] = useState({
     username: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "",
   });
+  const [selectedIcon, setSelectedIcon] = useState(null);
   const navigate = useNavigate();
   const { login } = useSede();
 
@@ -30,22 +41,20 @@ const Login = () => {
     setCredentials((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") e.preventDefault();
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
   };
-
-  const showSnackbar = (message, severity) => {
-    setSnackbar({ open: true, message, severity });
-  };
-
-  const handleCloseSnackbar = () =>
-    setSnackbar({ open: false, message: "", severity: "" });
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     if (!credentials.username || !credentials.password) {
       showSnackbar("Por favor completa todos los campos.", "warning");
+      return;
+    }
+
+    if (!selectedIcon) {
+      showSnackbar("Selecciona la imagen correcta.", "error");
       return;
     }
 
@@ -58,9 +67,13 @@ const Login = () => {
       if (data?.user && data?.token) {
         sessionStorage.setItem("token", data.token);
         sessionStorage.setItem("sede", data.user.sede);
-        login(data.token, data.user.sede);
+        sessionStorage.setItem("userName", data.user.username); // Guardar el nombre de usuario
+
+        // Ahora pasamos el userName al contexto
+        login(data.token, data.user.sede, data.user.username);
+
         showSnackbar("Inicio de sesión exitoso.", "success");
-        navigate((data.user.sede === "Administrador" ? "/admin" : "/dashboard"));
+        navigate(data.user.sede === "Administrador" ? "/admin" : "/dashboard");
       } else {
         throw new Error("Credenciales incorrectas o datos incompletos.");
       }
@@ -70,9 +83,12 @@ const Login = () => {
     }
   };
 
-  const handleResetPassword = () => {
-    navigate("/forgot-password");
+  const showSnackbar = (message, severity) => {
+    setSnackbar({ open: true, message, severity });
   };
+
+  const handleCloseSnackbar = () =>
+    setSnackbar({ open: false, message: "", severity: "" });
 
   return (
     <Box
@@ -92,7 +108,7 @@ const Login = () => {
           borderRadius: 2,
           p: 3,
           textAlign: "center",
-          maxWidth: 400,
+          maxWidth: 420,
           width: "100%",
         }}
       >
@@ -113,21 +129,50 @@ const Login = () => {
             label="Nombre de usuario"
             value={credentials.username}
             onChange={handleChange}
-            onKeyDown={handleKeyDown}
             required
             sx={{ mb: 2 }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <AccountCircle sx={{ color: "#168b0b" }} />
+                </InputAdornment>
+              ),
+            }}
           />
           <TextField
             fullWidth
-            type="password"
+            type={showPassword ? "text" : "password"}
             name="password"
             label="Contraseña"
             value={credentials.password}
             onChange={handleChange}
-            onKeyDown={handleKeyDown}
             required
             sx={{ mb: 2 }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Lock sx={{ color: "#168b0b" }} />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={handleTogglePasswordVisibility}
+                    edge="end"
+                  >
+                    {showPassword ? (
+                      <VisibilityOff sx={{ color: "#168b0b" }} />
+                    ) : (
+                      <Visibility sx={{ color: "#168b0b" }} />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
+
+          <Captcha onSelect={setSelectedIcon} />
+
           <Button
             type="submit"
             variant="contained"
@@ -136,8 +181,8 @@ const Login = () => {
               color: "white",
               fontSize: "1em",
               fontWeight: "bold",
-              py: 1.5,
               borderRadius: 1,
+              mt: 2,
               transition: "background-color 0.3s ease",
               "&:hover": { bgcolor: "#333" },
             }}
@@ -145,30 +190,21 @@ const Login = () => {
           >
             Iniciar Sesión
           </Button>
-          <Typography variant="body2" mt={2}>
-            <a
-              href="/forgot-password"
-              style={{
-                color: "red",
-                textDecoration: "none",
-                transition: "color 0.3s",
-                "&:hover": { color: "black", scale: 1.1 },
-              }}
-            >
-              ¿Recuperar contraseña?{" "}
-            </a>
-          </Typography>
         </Box>
-        <Snackbar
-          open={snackbar.open}
-          autoHideDuration={4000}
-          onClose={handleCloseSnackbar}
-        >
-          <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
-            {snackbar.message}
-          </Alert>
-        </Snackbar>
       </Box>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

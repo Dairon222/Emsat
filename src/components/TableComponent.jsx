@@ -20,6 +20,7 @@ import {
   Alert,
   CircularProgress,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import api from "../api/axios";
@@ -53,6 +54,8 @@ const TableComponent = ({
     message: "",
     severity: "",
   });
+
+  const theme = useTheme();
 
   useEffect(() => {
     const loadData = async () => {
@@ -211,7 +214,11 @@ const TableComponent = ({
                           key={col.field}
                           align={col.align}
                           sx={{
-                            backgroundColor: "#f5f5f5",
+                            backgroundColor:
+                              theme.palette.mode === "dark"
+                                ? theme.palette.grey[900]
+                                : "#f5f5f5",
+                            color: theme.palette.text.primary,
                             fontWeight: "bold",
                           }}
                         >
@@ -220,7 +227,14 @@ const TableComponent = ({
                       ))}
                     <TableCell
                       align="center"
-                      sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
+                      sx={{
+                        backgroundColor:
+                          theme.palette.mode === "dark"
+                            ? theme.palette.grey[900]
+                            : "#f5f5f5",
+                        color: theme.palette.text.primary,
+                        fontWeight: "bold",
+                      }}
                     >
                       Funciones
                     </TableCell>

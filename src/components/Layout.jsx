@@ -1,18 +1,24 @@
 /* eslint-disable react/prop-types */
-import { Box, CssBaseline, Toolbar } from "@mui/material";
+import { Box, CssBaseline, Toolbar, IconButton } from "@mui/material";
+import { Brightness4, Brightness7 } from "@mui/icons-material";
 import HeaderComponent from "./HeaderComponent";
 import SidebarComponent from "./SidebarComponent";
+import { useThemeContext } from "../context/ThemeContext";
 
-const drawerWidth = 225; // Ancho de la barra lateral
+const drawerWidth = 225;
 
 const Layout = ({ children, isAdmin = false }) => {
+  const { darkMode, toggleDarkMode } = useThemeContext();
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      {/* Barra lateral */}
-      <SidebarComponent drawerWidth={drawerWidth} title="Emsat" isAdmin={isAdmin} />
+      <SidebarComponent
+        drawerWidth={drawerWidth}
+        title="Emsat"
+        isAdmin={isAdmin}
+      />
 
-      {/* Contenido principal */}
       <Box
         component="main"
         sx={{
@@ -21,10 +27,16 @@ const Layout = ({ children, isAdmin = false }) => {
           width: { sm: `calc(100% - ${drawerWidth}px)` },
         }}
       >
-        {/* 🔹 Pasar la sede obtenida del contexto */}
         <HeaderComponent />
-
         <Toolbar />
+        
+        <IconButton
+          onClick={toggleDarkMode}
+          sx={{ position: "absolute", top: 10, right: 10 }}
+        >
+          {darkMode ? <Brightness7 /> : <Brightness4 />}
+        </IconButton>
+
         {children}
       </Box>
     </Box>

@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
+import { CssBaseline } from "@mui/material";
 import Layout from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
 import Inventory from "./pages/Inventory";
@@ -18,17 +18,12 @@ import InfoSedesAdmin from "./admin/InfoSedesAdmin";
 import InfoUsersAdmin from "./admin/InfoUsersAdmin";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./ProtectedRoute";
+import { ThemeProviderComponent } from "./context/ThemeContext";
 
-const theme = createTheme({
-  palette: {
-    primary: { main: "#388e3c" },
-    secondary: { main: "#ef6c00" },
-  },
-});
 
 const App = () => {
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProviderComponent>
       <CssBaseline />
       <SedeProvider>
         <Router>
@@ -138,7 +133,7 @@ const App = () => {
           </Routes>
         </Router>
       </SedeProvider>
-    </ThemeProvider>
+    </ThemeProviderComponent>
   );
 };
 

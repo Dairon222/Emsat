@@ -15,10 +15,10 @@ import {
   MenuItem,
   Box,
   TablePagination,
-  CircularProgress,
-  Chip,
+  CircularProgress
 } from "@mui/material";
 import ButtonsExportComponent from "./ButtonsExportComponent";
+import { useTheme } from "@mui/material/styles";
 
 const STATUS_LABELS = {
   "en mora": "En Mora",
@@ -27,9 +27,9 @@ const STATUS_LABELS = {
 };
 
 const STATUS_STYLES = {
-  "en mora": { backgroundColor: "#ffcccc", color: "#d32f2f" },
-  devuelto: { backgroundColor: "#ccffcc", color: "#388e3c" },
-  activo: { backgroundColor: "#f07520", color: "#fff" },
+  "en mora": { backgroundColor: "red" },
+  devuelto: { backgroundColor: "green"},
+  activo: { backgroundColor: "#f07520" },
 };
 
 const getNestedValue = (obj, path, defaultValue = "No disponible") => {
@@ -66,6 +66,8 @@ const TableHistorialComponent = ({
     };
     loadData();
   }, [fetchData]);
+
+  const theme = useTheme();
 
   const filteredData = useMemo(
     () =>
@@ -141,7 +143,14 @@ const TableHistorialComponent = ({
                       <TableCell
                         key={col.field}
                         align={col.align}
-                        sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
+                        sx={{
+                          backgroundColor:
+                          theme.palette.mode === "dark"
+                            ? theme.palette.grey[900]
+                            : "#f5f5f5",
+                          fontWeight: "bold",
+                          color: theme.palette.text.primary,
+                        }}
                       >
                         {col.headerName}
                       </TableCell>
@@ -149,36 +158,48 @@ const TableHistorialComponent = ({
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredData
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row, rowIndex) => (
-                      <TableRow key={rowIndex}>
-                        {columns.map((col) => (
-                          <TableCell key={col.field} align={col.align}>
-                            {col.field === "estado" ? (
-                              <Chip 
-                                label={
-                                  STATUS_LABELS[row[col.field]] || "Desconocido"
-                                }
+                  {filteredData.map((row, rowIndex) => (
+                    <TableRow key={rowIndex}>
+                      {columns.map((col) => (
+                        <TableCell key={col.field} align={col.align}>
+                          {col.field === "estado" ? (
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                              }}
+                            >
+                              <Box
                                 sx={{
+                                  width: 10,
+                                  height: 10,
+                                  borderRadius: "50%",
                                   backgroundColor:
                                     STATUS_STYLES[row[col.field]]
                                       ?.backgroundColor || "grey",
-                                  color:
-                                    STATUS_STYLES[row[col.field]]?.color ||
-                                    "white",
-                                  fontWeight: "bold",
                                 }}
                               />
+                              <Typography
+                                sx={{
+                                  color:
+                                    STATUS_STYLES[row[col.field]]?.color ||
+                                    "inherit",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                {STATUS_LABELS[row[col.field]] || "Desconocido"}
+                              </Typography>
+                            </Box>
                             ) : col.format ? (
-                              col.format(getNestedValue(row, col.field)) 
+                              col.format(getNestedValue(row, col.field))
                             ) : (
-                              getNestedValue(row, col.field) 
+                              getNestedValue(row, col.field)
                             )}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             )}

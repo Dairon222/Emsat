@@ -6,6 +6,7 @@ import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { FileCopy, PictureAsPdf, TableChart } from "@mui/icons-material";
+import { useSede } from "../context/SedeContext"; // Importar el contexto
 
 const ButtonsExportComponent = ({
   data,
@@ -13,6 +14,8 @@ const ButtonsExportComponent = ({
   title,
   hiddenFields = [],
 }) => {
+  const { sede, userName } = useSede(); // Obtener la sede actual
+
   const [snackbar, setSnackbar] = React.useState({
     open: false,
     message: "",
@@ -23,13 +26,12 @@ const ButtonsExportComponent = ({
     setSnackbar({ ...snackbar, open: false });
   };
 
-  // 🔥 Filtrar columnas visibles para la exportación
   const visibleColumns = columns.filter(
     (col) => !hiddenFields.includes(col.field)
   );
 
-  // Exportar a Excel
   const handleExportExcel = () => {
+    const sedeInfo = [{ Información: `Sede: ${sede || "No disponible"}` }];
     const exportData = data.map((row) => {
       const rowData = {};
       visibleColumns.forEach((col) => {
@@ -41,7 +43,11 @@ const ButtonsExportComponent = ({
       return rowData;
     });
 
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const worksheet = XLSX.utils.json_to_sheet([
+      ...sedeInfo,
+      {},
+      ...exportData,
+    ]);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
     const excelBuffer = XLSX.write(workbook, {
@@ -58,32 +64,44 @@ const ButtonsExportComponent = ({
     });
   };
 
-  // Exportar a PDF
   const handleExportPDF = () => {
     const doc = new jsPDF();
-    const tableColumnHeaders = visibleColumns.map((col) => col.headerName);
-    const tableRows = data.map((row) =>
-      visibleColumns.map((col) =>
-        col.field.includes(".")
-          ? col.field.split(".").reduce((acc, key) => acc?.[key], row) ||
-            "No disponible"
-          : row[col.field] || "No disponible"
-      )
-    );
+    const img = new Image();
+    img.src = "/logo_sena.png";
+    const date = new Date().toLocaleDateString();
+    img.onload = () => {
+      doc.addImage(img, "PNG", 160, 10, 30, 30);
+      doc.setFontSize(12);
+      doc.text(title || "Datos Exportados", 14, 15);
+      doc.text(`Sede: ${sede || "No disponible"}`, 14, 22);
+      doc.text(`Fecha: ${date}`, 14, 29);
+      doc.text(`Usuario: ${userName || "Desconocido"}`, 14, 36);
 
-    doc.text(title || "Datos Exportados", 14, 15);
-    doc.autoTable({ head: [tableColumnHeaders], body: tableRows, startY: 20 });
-    doc.save(`${title || "data"}.pdf`);
+      const tableColumnHeaders = visibleColumns.map((col) => col.headerName);
+      const tableRows = data.map((row) =>
+        visibleColumns.map((col) =>
+          col.field.includes(".")
+            ? col.field.split(".").reduce((acc, key) => acc?.[key], row) ||
+              "No disponible"
+            : row[col.field] || "No disponible"
+        )
+      );
+      doc.autoTable({
+        head: [tableColumnHeaders],
+        body: tableRows,
+        startY: 40,
+      });
+      doc.save(`${title || "data"}.pdf`);
+    };
     setSnackbar({
       open: true,
       message: "Datos exportados a PDF exitosamente.",
       severity: "success",
     });
   };
-
-  // Copiar al Portapapeles
   const handleCopyToClipboard = () => {
     const textToCopy = [
+      `Sede: ${sede || "No disponible"}`,
       visibleColumns.map((col) => col.headerName).join("\t"),
       ...data.map((row) =>
         visibleColumns
@@ -105,7 +123,6 @@ const ButtonsExportComponent = ({
       });
     });
   };
-  
 
   return (
     <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
@@ -127,7 +144,6 @@ const ButtonsExportComponent = ({
         </Button>
       </Tooltip>
 
-      {/* Snackbar para notificaciones */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}

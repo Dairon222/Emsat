@@ -1,4 +1,6 @@
 /* eslint-disable react/prop-types */
+import { useTheme } from "@mui/material/styles";
+import { useThemeContext } from "../context/ThemeContext";
 import {
   Drawer,
   List,
@@ -8,6 +10,8 @@ import {
   Toolbar,
   Typography,
   Box,
+  Divider,
+  Switch,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
@@ -20,9 +24,17 @@ import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 import ManIcon from "@mui/icons-material/Man";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import senaLogo from "../assets/logo_sena.png";
-import BlindsClosedIcon from '@mui/icons-material/BlindsClosed';
+import BlindsClosedIcon from "@mui/icons-material/BlindsClosed";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
+import { useSede } from "../context/SedeContext";
 
 const SidebarComponent = ({ drawerWidth, title, isAdmin }) => {
+  const { userName } = useSede();
+  const { darkMode, toggleDarkMode } = useThemeContext();
+  const theme = useTheme();
+
   const navLinks = [
     { text: "Inicio", path: "/dashboard", icon: <HomeIcon /> },
     { text: "Herramientas", path: "/inventory", icon: <BuildIcon /> },
@@ -53,63 +65,97 @@ const SidebarComponent = ({ drawerWidth, title, isAdmin }) => {
         "& .MuiDrawer-paper": {
           width: drawerWidth,
           boxSizing: "border-box",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          bgcolor: theme.palette.background.default,
+          color: theme.palette.text.primary,
         },
       }}
     >
-      <Toolbar>
-        <Box sx={{ display: "flex", alignItems: "center", p: 1 }}>
-          <Link
-            to={isAdmin ? "/admin" : "/dashboard"}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              textDecoration: "none",
-              color: "inherit",
-            }}
-          >
-            <img
-              src={senaLogo}
-              alt="Logo"
-              style={{ width: 50, height: "auto" }}
-            />
-            <Typography
-              variant="h5"
-              component="div"
-              sx={{ fontWeight: "bold", ml: 2 }}
+      <Box>
+        <Toolbar>
+          <Box sx={{ display: "flex", alignItems: "center", p: 1 }}>
+            <Link
+              to={isAdmin ? "/admin" : "/dashboard"}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                textDecoration: "none",
+                color: "inherit",
+              }}
             >
-              {title}
-            </Typography>
-          </Link>
-        </Box>
-      </Toolbar>
-      <List sx={{ mt: 3 }}>
-        {(isAdmin ? navLinksAdmin : navLinks).map((link) => (
-          <ListItem
-            button
-            key={link.text}
-            component={Link}
-            to={link.path}
-            sx={{
-              textTransform: "none",
-              fontWeight: "bold",
-              transition: "all 0.3s",
-              textDecoration: "none",
-              listStyle: "none",
-              color: "black",
-              "&:hover": {
-                backgroundColor: isAdmin ? "#e3f2fd" : "#f5f5f5",
-                color: "black",
-                borderRadius: 1,
-                transform: "scale(1.1)",
-                ".MuiListItemIcon-root": { color: "primary.main" },
-              },
-            }}
-          >
-            <ListItemIcon>{link.icon}</ListItemIcon>
-            <ListItemText primary={link.text} />
+              <img
+                src={senaLogo}
+                alt="Logo"
+                style={{ width: 50, height: "auto" }}
+              />
+              <Typography
+                variant="h5"
+                component="div"
+                sx={{ fontWeight: "bold", ml: 2 }}
+              >
+                {title}
+              </Typography>
+            </Link>
+          </Box>
+        </Toolbar>
+        <List sx={{ mt: 3 }}>
+          {(isAdmin ? navLinksAdmin : navLinks).map((link) => (
+            <ListItem
+              button
+              key={link.text}
+              component={Link}
+              to={link.path}
+              sx={{
+                textTransform: "none",
+                fontWeight: "bold",
+                transition: "all 0.3s",
+                textDecoration: "none",
+                listStyle: "none",
+                color: theme.palette.text.primary,
+                "&:hover": {
+                  borderRadius: 1,
+                  transform: "scale(1.1)",
+                  ".MuiListItemIcon-root": { color: "primary.main" },
+                },
+              }}
+            >
+              <ListItemIcon sx={{ color: theme.palette.text.primary }}>
+                {link.icon}
+              </ListItemIcon>
+              <ListItemText primary={link.text} />
+            </ListItem>
+          ))}
+        </List>
+      </Box>
+
+      {/* Footer del Sidebar con User y Dark Mode */}
+      <Box sx={{ p: 2 }}>
+        <Divider />
+        <List>
+          {/* Usuario */}
+          <ListItem>
+            <ListItemIcon>
+              <AccountCircleIcon sx={{ color: theme.palette.text.primary }} />
+            </ListItemIcon>
+            <ListItemText primary={userName || "Invitado"} />
           </ListItem>
-        ))}
-      </List>
+
+          {/* Botón de Modo Oscuro */}
+          <ListItem>
+            <ListItemIcon>
+              {darkMode ? (
+                <LightModeIcon sx={{ color: theme.palette.text.primary }} />
+              ) : (
+                <DarkModeIcon sx={{ color: theme.palette.text.primary }} />
+              )}
+            </ListItemIcon>
+            <ListItemText primary={darkMode ? "Modo Claro" : "Modo Oscuro"} />
+            <Switch checked={darkMode} onChange={toggleDarkMode} />
+          </ListItem>
+        </List>
+      </Box>
     </Drawer>
   );
 };
