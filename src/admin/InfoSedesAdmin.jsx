@@ -24,17 +24,17 @@ const InfoSedesAdmin = () => {
   });
 
   const handleToggleSede = async (sedeId, newState) => {
+    // Mostrar el mensaje antes de la petición
+    setSnackbar({
+      open: true,
+      message: `Sede ${newState ? "activada" : "desactivada"} correctamente.`,
+      severity: "success",
+    });
+
     try {
       await api.put(`sede/${sedeId}`, { estado: newState });
 
-      setSnackbar({
-        open: true,
-        message: `Sede ${
-          newState === 1 ? "activada" : "desactivada"
-        } correctamente.`,
-        severity: "success",
-      });
-
+      // Recargar la tabla después de la actualización
       setReloadTable((prev) => !prev);
     } catch (error) {
       setSnackbar({
@@ -62,6 +62,18 @@ const InfoSedesAdmin = () => {
           />
         </Box>
       ),
+    },
+  ];
+
+  const columnsModal = [
+    { field: "id", headerName: "Id sede", align: "center", hidden: true },
+    { field: "nombre_sede", headerName: "Nombre sede", align: "center" },
+    { field: "numero_sede", headerName: "Número de la sede", align: "center" },
+    {
+      field: "estado",
+      headerName: "Estado de la sede",
+      align: "center",
+      hidden: true,
     },
   ];
 
@@ -101,7 +113,7 @@ const InfoSedesAdmin = () => {
           onReload={reloadTable}
           endpoint="sede"
           keyField="id"
-          hiddenFields={["id"]}
+          hiddenFields={["id", "estado"]}
         />
       </Container>
 
@@ -109,7 +121,7 @@ const InfoSedesAdmin = () => {
         open={openModal}
         onClose={() => setOpenModal(false)}
         title="Crear sede"
-        columns={columns}
+        columns={columnsModal}
         endpoint="sede"
         onSuccess={() => {
           setSnackbar({

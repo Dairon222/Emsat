@@ -4,34 +4,35 @@ import { Switch, FormControlLabel, Box, useTheme } from "@mui/material";
 import { CheckCircle } from "@mui/icons-material";
 
 const ToggleSedeButton = ({ sedeId, initialActive, onToggle }) => {
-  const [active, setActive] = useState(initialActive === 1);
+  const [active, setActive] = useState(initialActive); // Ahora es true por defecto
   const theme = useTheme(); // Detectar el tema actual
 
   useEffect(() => {
-    setActive(initialActive === 1);
+    setActive(initialActive); 
   }, [initialActive]);
 
   const handleToggle = () => {
-    const newState = active ? 0 : 1;
-    setActive(newState === 1);
+    const newState = !active;
+    setActive(newState);
     onToggle(sedeId, newState);
   };
 
   return (
     <Box
       sx={{
-        width: "30%",
+        display: "flex",
+        alignItems: "center",
+        width: "35%",
+        backgroundColor: theme.palette.mode === "dark" ? "#424242" : "#e8f5e9",
         padding: 1,
         borderRadius: 1,
-        backgroundColor: theme.palette.mode === "dark" ? "#424242" : "#e8f5e9", // Cambio de color en modo oscuro
       }}
     >
       <FormControlLabel
         control={
           <Switch checked={active} onChange={handleToggle} color="primary" />
         }
-        sx={{ ml: 1 }}
-        label={active}
+        label={active ? "Activo" : "Inactivo"}
         labelPlacement="end"
         checkedIcon={<CheckCircle sx={{ color: "green" }} />}
       />

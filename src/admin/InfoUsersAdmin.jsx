@@ -44,7 +44,7 @@ const InfoUsersAdmin = () => {
   const handleSaveEdit = async (updatedData) => {
     try {
       
-      await api.put(`edit-sede/${updatedData.id}`, updatedData);
+      await api.put(`usuariosede/${updatedData.id}`, updatedData);
       setSnackbar({
         open: true,
         message: "Datos actualizados correctamente.",

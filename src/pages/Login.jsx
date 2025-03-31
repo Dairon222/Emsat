@@ -44,6 +44,7 @@ const Login = () => {
   const handleTogglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };
+
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -58,40 +59,33 @@ const Login = () => {
     }
 
     try {
- 
       const { data } = await api.post("login-sede", {
         username: credentials.username,
         password: credentials.password,
       });
 
       if (data?.user && data?.token) {
-        const nombreSedeUsuario = data.user.sede;
-        const token = data.token;
+        // Obtener información de la sede
+        const sedeResponse = await api.get(`/sede/${data.user.sede}`);
+        const sedeData = sedeResponse.data;
 
-        const responseSede = await api.get("sede");
-        const listaSedes = responseSede.data; 
-        const sedeUsuario = listaSedes.find(
-          (sede) => sede.nombre_sede === nombreSedeUsuario
-        );
-
-        if (sedeUsuario.estado === 0) {
+        if (!sedeData.estado) {
           showSnackbar(
-            "La sede está desactivada. No es posible iniciar sesión.",
+            "La sede está desactivada. No puedes iniciar sesión.",
             "error"
           );
           return;
         }
 
-        sessionStorage.setItem("token", token);
+        // Guardar en sessionStorage solo si la sede está activa
+        sessionStorage.setItem("token", data.token);
         sessionStorage.setItem("sede", data.user.sede);
         sessionStorage.setItem("userName", data.user.username);
-        login(token, data.user.sede, data.user.username);
+
+        login(data.token, data.user.sede, data.user.username);
 
         showSnackbar("Inicio de sesión exitoso.", "success");
-
-        navigate(
-          data.user.sede === "Administrador" ? "/admin" : "/dashboard"
-        );
+        navigate(data.user.sede === "Administrador" ? "/admin" : "/dashboard");
       } else {
         throw new Error("Credenciales incorrectas o datos incompletos.");
       }
