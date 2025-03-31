@@ -139,7 +139,7 @@ const ButtonsExportComponent = ({
       </Tooltip>
 
       <Tooltip title="Copiar al Portapapeles">
-        <Button variant="outlined" color="info" onClick={handleCopyToClipboard}>
+        <Button variant="contained" color="info" onClick={handleCopyToClipboard}>
           <FileCopy />
         </Button>
       </Tooltip>

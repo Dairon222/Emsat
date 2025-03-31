@@ -44,7 +44,6 @@ const Login = () => {
   const handleTogglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };
-
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -59,27 +58,46 @@ const Login = () => {
     }
 
     try {
+ 
       const { data } = await api.post("login-sede", {
         username: credentials.username,
         password: credentials.password,
       });
 
       if (data?.user && data?.token) {
-        sessionStorage.setItem("token", data.token);
-        sessionStorage.setItem("sede", data.user.sede);
-        sessionStorage.setItem("userName", data.user.username); // Guardar el nombre de usuario
+        const nombreSedeUsuario = data.user.sede;
+        const token = data.token;
 
-        // Ahora pasamos el userName al contexto
-        login(data.token, data.user.sede, data.user.username);
+        const responseSede = await api.get("sede");
+        const listaSedes = responseSede.data; 
+        const sedeUsuario = listaSedes.find(
+          (sede) => sede.nombre_sede === nombreSedeUsuario
+        );
+
+        if (sedeUsuario.estado === 0) {
+          showSnackbar(
+            "La sede está desactivada. No es posible iniciar sesión.",
+            "error"
+          );
+          return;
+        }
+
+        sessionStorage.setItem("token", token);
+        sessionStorage.setItem("sede", data.user.sede);
+        sessionStorage.setItem("userName", data.user.username);
+        login(token, data.user.sede, data.user.username);
 
         showSnackbar("Inicio de sesión exitoso.", "success");
-        navigate(data.user.sede === "Administrador" ? "/admin" : "/dashboard");
+
+        navigate(
+          data.user.sede === "Administrador" ? "/admin" : "/dashboard"
+        );
       } else {
         throw new Error("Credenciales incorrectas o datos incompletos.");
       }
     } catch (error) {
       console.error("Error en login:", error);
-      showSnackbar("Verifica tus credenciales.", "error");
+      showSnackbar("Usuario o contraseña incorrectos.", "error");
     }
   };
 
@@ -196,6 +214,7 @@ const Login = () => {
         open={snackbar.open}
         autoHideDuration={4000}
         onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert
           onClose={handleCloseSnackbar}

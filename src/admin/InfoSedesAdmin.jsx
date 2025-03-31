@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Container,
   Typography,
@@ -9,53 +9,61 @@ import {
   Alert,
 } from "@mui/material";
 import HeaderComponent from "../components/HeaderComponent";
-import TableComponent from "../components/TableComponent";
+import TableSedeAdmin from "../components/TableSedeAdmin";
 import CreateElementsComponent from "../components/ModalCreateComponent";
-import ModalDeleteComponent from "../components/ModalDeleteComponent";
 import api from "../api/axios";
-
-const columns = [
-    { field: "id", headerName: "Id sede", align: "center", hidden: true },
-    { field: "nombre_sede", headerName: "Nombre sede", align: "center" },
-    { field: "numero_sede", headerName: "Número de la sede", align: "center" },
-];
+import ToggleSedeButton from "../components/ActiveSede";
 
 const InfoSedesAdmin = () => {
   const [openModal, setOpenModal] = useState(false);
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [selectedRol, setSelectedRol] = useState(null);
   const [reloadTable, setReloadTable] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "",
   });
-  
-  const handleSaveEdit = async (updatedData) => {
+
+  const handleToggleSede = async (sedeId, newState) => {
     try {
-      
-      await api.put(`sede/${updatedData.id}`, updatedData);
+      await api.put(`sede/${sedeId}`, { estado: newState });
+
       setSnackbar({
         open: true,
-        message: "Datos actualizados correctamente.",
+        message: `Sede ${
+          newState === 1 ? "activada" : "desactivada"
+        } correctamente.`,
         severity: "success",
       });
-      setReloadTable((prev) => !prev); // Recargar la tabla
+
+      setReloadTable((prev) => !prev);
     } catch (error) {
       setSnackbar({
         open: true,
-        message: "Error al actualizar los datos.",
+        message: "Error al actualizar el estado de la sede.",
         severity: "error",
       });
     }
   };
 
-  // Controla la apertura y cierre de modales
-  const toggleModal = (modalSetter, value) => modalSetter(value);
-  const handleDeleteSelection = (rol) => {
-    setSelectedRol(rol);
-    setOpenDeleteModal(true);
-  };
+  const columns = [
+    { field: "id", headerName: "Id sede", align: "center", hidden: true },
+    { field: "nombre_sede", headerName: "Nombre sede", align: "center" },
+    { field: "numero_sede", headerName: "Número de la sede", align: "center" },
+    {
+      field: "estado",
+      headerName: "Estado de la sede",
+      align: "center",
+      renderCell: (row) => (
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <ToggleSedeButton
+            sedeId={row.id}
+            initialActive={row.estado}
+            onToggle={handleToggleSede}
+          />
+        </Box>
+      ),
+    },
+  ];
 
   return (
     <>
@@ -79,13 +87,13 @@ const InfoSedesAdmin = () => {
               transition: "all 0.5s ease",
               ":hover": { backgroundColor: "#2e7d32" },
             }}
-            onClick={() => toggleModal(setOpenModal, true)}
+            onClick={() => setOpenModal(true)}
           >
             Crear sede
           </Button>
         </Box>
 
-        <TableComponent
+        <TableSedeAdmin
           columns={columns}
           fetchData="sede"
           title="Lista de sedes"
@@ -93,17 +101,13 @@ const InfoSedesAdmin = () => {
           onReload={reloadTable}
           endpoint="sede"
           keyField="id"
-          deleteMessage="Desea eliminar la sede "
-          nameDelete="nombre_sede"
-          onDelete={handleDeleteSelection}
-          onSave={handleSaveEdit} 
-          hiddenFields={["id"]} 
+          hiddenFields={["id"]}
         />
       </Container>
 
       <CreateElementsComponent
         open={openModal}
-        onClose={() => toggleModal(setOpenModal, false)}
+        onClose={() => setOpenModal(false)}
         title="Crear sede"
         columns={columns}
         endpoint="sede"
@@ -122,13 +126,6 @@ const InfoSedesAdmin = () => {
             severity: "error",
           });
         }}
-      />
-
-      <ModalDeleteComponent
-        open={openDeleteModal}
-        onClose={() => toggleModal(setOpenDeleteModal, false)}
-        item={selectedRol}
-        onSuccess={() => setReloadTable((prev) => !prev)}
       />
 
       <Snackbar

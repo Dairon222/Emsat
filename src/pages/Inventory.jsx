@@ -15,11 +15,60 @@ import ModalDeleteComponent from "../components/ModalDeleteComponent";
 import api from "../api/axios";
 
 const columns = [
-  { field: "id", headerName: "Id herramienta", align: "center", hidden:true },
+  { field: "id", headerName: "Id herramienta", align: "center", hidden: true },
   { field: "nombre_herramienta", headerName: "Herramienta", align: "center" },
   { field: "codigo", headerName: "Código", align: "center" },
   { field: "stock", headerName: "Total", align: "center" },
   { field: "ubicacion", headerName: "Ubicación", align: "center" },
+  {
+    field: "estado_herramienta",
+    headerName: "Estado de la herramienta",
+    align: "center",
+    renderCell: (row) => (
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
+          justifyContent: "center",
+        }}
+      >
+        <Box
+          sx={{
+            width: 10,
+            height: 10,
+            borderRadius: "50%",
+            color: "inherit",
+            backgroundColor:
+              row.estado_herramienta === "Bueno"
+                ? "green"
+                : row.estado_herramienta === "Regular"
+                ? "#f07520"
+                : "red",
+          }}
+        />
+        {row.estado_herramienta}
+      </Box>
+    ),
+  },
+  {
+    field: "detalle_herramienta",
+    headerName: "Detalle de la herramienta",
+    align: "center",
+    renderCell: (row) => (
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
+          justifyContent: "center",
+          wordBreak: "break-word",
+        }}
+      >
+        {row.detalle_herramienta || "En buen estado"}
+      </Box>
+    ),
+  },
 ];
 
 const Inventory = () => {
@@ -33,7 +82,6 @@ const Inventory = () => {
     severity: "",
   });
 
-  // Función para manejar la actualización de datos de las herramientas
   const handleSaveEdit = async (updatedData) => {
     try {
       await api.put(`herramienta/${updatedData.id}`, updatedData);
@@ -42,7 +90,7 @@ const Inventory = () => {
         message: "Datos actualizados correctamente.",
         severity: "success",
       });
-      setReloadTable((prev) => !prev); // Recargar la tabla
+      setReloadTable((prev) => !prev);
     } catch (error) {
       setSnackbar({
         open: true,
@@ -51,7 +99,6 @@ const Inventory = () => {
     }
   };
 
-  // Controla la apertura y cierre de modales
   const toggleModal = (modalSetter, value) => modalSetter(value);
   const handleDeleteSelection = (tool) => {
     setSelectedTool(tool);
@@ -98,7 +145,7 @@ const Inventory = () => {
           nameDelete="codigo"
           onDelete={handleDeleteSelection}
           onSave={handleSaveEdit}
-          hiddenFields={["id","usuariosede_id", "created_at", "updated_at"]} // Campos que no se mostrarán
+          hiddenFields={["id", "usuariosede_id", "created_at", "updated_at"]}
         />
       </Container>
 

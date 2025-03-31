@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Table,
   TableBody,
@@ -22,10 +21,8 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import api from "../api/axios";
 import ModalEditComponent from "./ModalEditComponent";
-import ModalDeleteComponent from "./ModalDeleteComponent";
 import ButtonsExportComponent from "./ButtonsExportComponent";
 
 const TableComponent = ({
@@ -36,9 +33,7 @@ const TableComponent = ({
   onReload,
   endpoint,
   keyField,
-  deleteMessage,
   hiddenFields,
-  nameDelete,
 }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -47,7 +42,6 @@ const TableComponent = ({
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
   const [openEditModal, setOpenEditModal] = useState(false);
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -90,44 +84,18 @@ const TableComponent = ({
     setOpenEditModal(true);
   };
 
-  const handleOpenDeleteModal = (row) => {
-    setSelectedRow(row);
-    setOpenDeleteModal(true);
-  };
-
   const handleCloseModals = () => {
     setOpenEditModal(false);
-    setOpenDeleteModal(false);
     setSelectedRow(null);
   };
-  const filteredData = useMemo(
-    () =>
-      data.filter((row) =>
-        columns
-          .filter((col) => !col.hidden)
-          .some((col) => {
-            const value = col.field
-              .split(".")
-              .reduce((acc, key) => acc?.[key], row);
-            return String(value || "")
-              .toLowerCase()
-              .includes(searchTerm.toLowerCase());
-          })
-      ),
-    [data, searchTerm, columns]
-  );
 
   const handleSaveEdit = async (updatedData) => {
     try {
       await api.put(`${endpoint}/${updatedData[keyField]}`, updatedData);
-      setData(
-        (prevData) =>
-          prevData.map((row) =>
-            row[keyField] === updatedData[keyField] ? updatedData : row
-          ),
-        console.log("Datos enviados para actualizar:", updatedData),
-        console.log("ID extraído:", updatedData[keyField]),
-        console.log(`URL de la petición: ${endpoint}/${updatedData[keyField]}`)
+      setData((prevData) =>
+        prevData.map((row) =>
+          row[keyField] === updatedData[keyField] ? updatedData : row
+        )
       );
       setSnackbar({
         open: true,
@@ -145,6 +113,23 @@ const TableComponent = ({
       handleCloseModals();
     }
   };
+
+  const filteredData = useMemo(
+    () =>
+      data.filter((row) =>
+        columns
+          .filter((col) => !col.hidden)
+          .some((col) => {
+            const value = col.field
+              .split(".")
+              .reduce((acc, key) => acc?.[key], row);
+            return String(value || "")
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase());
+          })
+      ),
+    [data, searchTerm, columns]
+  );
 
   return (
     <Box sx={{ mt: 1 }}>
@@ -236,7 +221,7 @@ const TableComponent = ({
                         fontWeight: "bold",
                       }}
                     >
-                      Funciones
+                      Acciones
                     </TableCell>
                   </TableRow>
                 </TableHead>
@@ -250,7 +235,7 @@ const TableComponent = ({
                           .map((col) => (
                             <TableCell key={col.field} align={col.align}>
                               {col.renderCell
-                                ? col.renderCell(row) // Renderiza el componente personalizado si existe
+                                ? col.renderCell(row)
                                 : col.field
                                     .split(".")
                                     .reduce((acc, key) => acc?.[key], row) ??
@@ -263,13 +248,6 @@ const TableComponent = ({
                             onClick={() => handleOpenEditModal(row)}
                           >
                             <EditIcon />
-                          </Button>
-                          <Button
-                            size="small"
-                            color="error"
-                            onClick={() => handleOpenDeleteModal(row)}
-                          >
-                            <DeleteIcon />
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -297,18 +275,6 @@ const TableComponent = ({
         data={selectedRow}
         onSave={handleSaveEdit}
         hiddenFields={hiddenFields}
-      />
-      <ModalDeleteComponent
-        open={openDeleteModal}
-        onClose={handleCloseModals}
-        item={selectedRow}
-        endpoint={endpoint}
-        keyField={keyField}
-        deleteMessage={deleteMessage}
-        nameDelete={nameDelete}
-        onSuccess={() =>
-          setData(data.filter((d) => d[keyField] !== selectedRow[keyField]))
-        }
       />
 
       <Snackbar

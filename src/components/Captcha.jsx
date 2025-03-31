@@ -1,31 +1,57 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import { Box, Typography, IconButton } from "@mui/material";
-import { 
-  Notifications, Home, Star, DirectionsCar, Flight, 
-  Favorite, Work, Pets, SportsSoccer, 
-  Computer, ShoppingCart, MusicNote, LocalCafe, CameraAlt, 
-  School
+import {
+  Home,
+  Star,
+  Favorite,
+  Pets,
+  DirectionsCar,
+  Flight,
+  LocalCafe,
+  ShoppingCart,
+  SportsSoccer,
+  DirectionsBike,
+  MusicNote,
+  Computer,
+  Smartphone,
+  CameraAlt,
+  Restaurant,
+  Park,
+  School,
+  Train,
+  DirectionsBoat,
+  FitnessCenter,
+  LocalHospital,
+  EmojiNature,
+  Nightlight,
 } from "@mui/icons-material";
 
 const allIcons = [
-  { name: "Campana", icon: <Notifications /> },
   { name: "Casa", icon: <Home /> },
   { name: "Estrella", icon: <Star /> },
-  { name: "Coche", icon: <DirectionsCar /> },
-  { name: "Avión", icon: <Flight /> },
   { name: "Corazón", icon: <Favorite /> },
-  { name: "Portafolio", icon: <Work /> },
   { name: "Huella", icon: <Pets /> },
-  { name: "Escuela", icon: <School /> },
-  { name: "Balón", icon: <SportsSoccer /> },
-  { name: "Computadora", icon: <Computer /> },
-  { name: "Carrito", icon: <ShoppingCart /> },
-  { name: "Música", icon: <MusicNote /> },
+  { name: "Carro", icon: <DirectionsCar /> },
+  { name: "Avión", icon: <Flight /> },
   { name: "Café", icon: <LocalCafe /> },
+  { name: "Carrito de compras", icon: <ShoppingCart /> },
+  { name: "Balón", icon: <SportsSoccer /> },
+  { name: "Bicicleta", icon: <DirectionsBike /> },
+  { name: "Nota musical", icon: <MusicNote /> },
+  { name: "Computador", icon: <Computer /> },
+  { name: "Celular", icon: <Smartphone /> },
   { name: "Cámara", icon: <CameraAlt /> },
+  { name: "Cubiertos", icon: <Restaurant /> },
+  { name: "Pino", icon: <Park /> },
+  { name: "Graduación", icon: <School /> },
+  { name: "Tren", icon: <Train /> },
+  { name: "Barco", icon: <DirectionsBoat /> },
+  { name: "Mancuerna", icon: <FitnessCenter /> },
+  { name: "Cruz", icon: <LocalHospital /> },
+  { name: "Abeja", icon: <EmojiNature /> },
+  { name: "Luna", icon: <Nightlight /> },
 ];
-
 const getRandomIcons = () => {
   const shuffled = allIcons.sort(() => 0.5 - Math.random());
   return shuffled.slice(0, 5);
@@ -39,7 +65,9 @@ const Captcha = ({ onSelect }) => {
   useEffect(() => {
     const randomIcons = getRandomIcons();
     setIcons(randomIcons);
-    setTargetIcon(randomIcons[Math.floor(Math.random() * randomIcons.length)].name);
+    setTargetIcon(
+      randomIcons[Math.floor(Math.random() * randomIcons.length)].name
+    );
   }, []);
 
   const handleSelect = (name) => {
