@@ -5,27 +5,27 @@ import api from "../api/axios";
 import dayjs from "dayjs";
 
 const columns = [
-  { field: "usuario.nombre", headerName: "Nombre usuario", align: "center" },
-  
-  { field: "usuario.celular", headerName: "Celular usuario", align: "center" },
+  { field: "usuario.nombre", headerName: "Nombre", align: "center" },
+  { field: "usuario.apellido", headerName: "Apellido", align: "center" },
   {
     field: "usuario.identificacion",
-    headerName: "Identificacion usuario",
+    headerName: "Identificacion",
     align: "center",
   },
+  { field: "usuario.celular", headerName: "Celular", align: "center" },
   {
     field: "prestamo.codigo_herramienta",
-    headerName: "Código herramienta",
+    headerName: "Herramienta",
     align: "center",
   },
-  { field: "prestamo.cantidad", headerName: "Cantidad", align: "center" },
+  { field: "prestamo.cantidad", headerName: "Total", align: "center" },
   {
     field: "created_at",
     headerName: "Fecha del préstamo",
     align: "center",
     format: (value) => dayjs(value).format("DD/MM/YYYY HH:mm"),
   },
-  { field: "estado", headerName: "Estado", align: "center" },
+  { field: "estado", headerName: "Estado", align: "center",  },
 ];
 
 const fetchHistorial = async () => {

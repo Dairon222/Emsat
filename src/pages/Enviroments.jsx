@@ -15,8 +15,8 @@ import ModalDeleteComponent from "../components/ModalDeleteComponent";
 import api from "../api/axios";
 
 const columns = [
-  { field: "nombre_ambiente", headerName: "Nombre", align: "center" },
-  { field: "codigo", headerName: "Codigo", align: "center" },
+  { field: "nombre_ambiente", headerName: "Nombre del ambiente", align: "center" },
+  { field: "codigo", headerName: "Codigo del ambiente", align: "center" },
   { field: "disponible", headerName: "Disponibilidad", align: "center", hidden:true },
 ];
 

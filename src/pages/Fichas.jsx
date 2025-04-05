@@ -16,8 +16,8 @@ import api from "../api/axios";
 
 const columns = [
   { field: "id", headerName: "Id ficha", align: "center", hidden: true },
-  { field: "nombre_ficha", headerName: "Ficha", align: "center" },
-  { field: "numero_ficha", headerName: "Número", align: "center" },
+  { field: "nombre_ficha", headerName: "Programa de formación", align: "center" },
+  { field: "numero_ficha", headerName: "Número de la ficha", align: "center" },
 ];
 
 const Fichas = () => {

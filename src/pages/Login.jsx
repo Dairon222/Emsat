@@ -16,6 +16,8 @@ import {
   Visibility,
   VisibilityOff,
 } from "@mui/icons-material";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import Tooltip from "@mui/material/Tooltip";
 import { useNavigate } from "react-router-dom";
 import senaLogo from "../assets/logo_sena.png";
 import { useSede } from "../context/SedeContext";
@@ -122,8 +124,37 @@ const Login = () => {
           textAlign: "center",
           maxWidth: 420,
           width: "100%",
+          position: "relative",
         }}
       >
+        <Box
+          sx={{
+            position: "absolute",
+            top: 20,
+            right: 20,
+            zIndex: 10,
+          }}
+        >
+          <Tooltip title="¿No tienes un usuario?">
+            <IconButton
+              onClick={() => navigate("/user")} 
+              sx={{
+                backgroundColor: "#168b0b",
+                color: "white",
+                borderRadius: "8px",
+                width: "25px",
+                height: "25px",
+                padding: 2,
+                "&:hover": {
+                  backgroundColor: "#0e5f06",
+                },
+              }}
+            >
+              <HelpOutlineIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
+
         <Box mb={3}>
           <img src={senaLogo} alt="Logo SENA" style={{ width: 80 }} />
           <Typography variant="h4" fontWeight="bold" gutterBottom>

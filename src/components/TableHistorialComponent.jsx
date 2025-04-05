@@ -15,7 +15,7 @@ import {
   MenuItem,
   Box,
   TablePagination,
-  CircularProgress
+  CircularProgress,
 } from "@mui/material";
 import ButtonsExportComponent from "./ButtonsExportComponent";
 import { useTheme } from "@mui/material/styles";
@@ -28,7 +28,7 @@ const STATUS_LABELS = {
 
 const STATUS_STYLES = {
   "en mora": { backgroundColor: "red" },
-  devuelto: { backgroundColor: "green"},
+  devuelto: { backgroundColor: "green" },
   activo: { backgroundColor: "#f07520" },
 };
 
@@ -73,7 +73,7 @@ const TableHistorialComponent = ({
     () =>
       data.filter((row) =>
         columns.some((col) =>
-          String(row[col.field] || "")
+          String(getNestedValue(row, col.field) || "")
             .toLowerCase()
             .includes(searchTerm.toLowerCase())
         )
@@ -145,9 +145,9 @@ const TableHistorialComponent = ({
                         align={col.align}
                         sx={{
                           backgroundColor:
-                          theme.palette.mode === "dark"
-                            ? theme.palette.grey[900]
-                            : "#f5f5f5",
+                            theme.palette.mode === "dark"
+                              ? theme.palette.grey[900]
+                              : "#f5f5f5",
                           fontWeight: "bold",
                           color: theme.palette.text.primary,
                         }}
@@ -158,48 +158,51 @@ const TableHistorialComponent = ({
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredData.map((row, rowIndex) => (
-                    <TableRow key={rowIndex}>
-                      {columns.map((col) => (
-                        <TableCell key={col.field} align={col.align}>
-                          {col.field === "estado" ? (
-                            <Box
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 1,
-                              }}
-                            >
+                  {filteredData
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row, rowIndex) => (
+                      <TableRow key={rowIndex}>
+                        {columns.map((col) => (
+                          <TableCell key={col.field} align={col.align}>
+                            {col.field === "estado" ? (
                               <Box
                                 sx={{
-                                  width: 10,
-                                  height: 10,
-                                  borderRadius: "50%",
-                                  backgroundColor:
-                                    STATUS_STYLES[row[col.field]]
-                                      ?.backgroundColor || "grey",
-                                }}
-                              />
-                              <Typography
-                                sx={{
-                                  color:
-                                    STATUS_STYLES[row[col.field]]?.color ||
-                                    "inherit",
-                                  fontWeight: "bold",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 1,
                                 }}
                               >
-                                {STATUS_LABELS[row[col.field]] || "Desconocido"}
-                              </Typography>
-                            </Box>
+                                <Box
+                                  sx={{
+                                    width: 10,
+                                    height: 10,
+                                    borderRadius: "50%",
+                                    backgroundColor:
+                                      STATUS_STYLES[row[col.field]]
+                                        ?.backgroundColor || "grey",
+                                  }}
+                                />
+                                <Typography
+                                  sx={{
+                                    color:
+                                      STATUS_STYLES[row[col.field]]?.color ||
+                                      "inherit",
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  {STATUS_LABELS[row[col.field]] ||
+                                    "Desconocido"}
+                                </Typography>
+                              </Box>
                             ) : col.format ? (
                               col.format(getNestedValue(row, col.field))
                             ) : (
                               getNestedValue(row, col.field)
                             )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
             )}
@@ -215,6 +218,10 @@ const TableHistorialComponent = ({
               setRowsPerPage(parseInt(e.target.value, 10));
               setPage(0);
             }}
+            labelRowsPerPage="Filas por página"
+            labelDisplayedRows={({ from, to, count }) =>
+              `${from}–${to} de ${count !== -1 ? count : `más de ${to}`}`
+            }
           />
         </>
       )}

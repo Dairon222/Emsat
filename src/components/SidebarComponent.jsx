@@ -110,14 +110,15 @@ const SidebarComponent = ({ drawerWidth, title, isAdmin }) => {
               sx={{
                 textTransform: "none",
                 fontWeight: "bold",
-                transition: "all 0.3s",
+                borderRadius: 1,
                 textDecoration: "none",
                 listStyle: "none",
                 color: theme.palette.text.primary,
                 "&:hover": {
                   borderRadius: 1,
-                  transform: "scale(1.1)",
-                  ".MuiListItemIcon-root": { color: "primary.main" },
+                  backgroundColor: theme.palette.action.hover,
+                  "& .MuiListItemIcon-root": { color: theme.palette.primary.main },
+                  "& .MuiListItemText-primary": { color: theme.palette.primary.main },
                 },
               }}
             >

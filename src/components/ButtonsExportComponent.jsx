@@ -63,12 +63,12 @@ const ButtonsExportComponent = ({
       severity: "success",
     });
   };
-
   const handleExportPDF = () => {
     const doc = new jsPDF();
     const img = new Image();
     img.src = "/logo_sena.png";
-    const date = new Date().toLocaleDateString();
+    const date = new Date().toLocaleDateString("es-CO");
+
     img.onload = () => {
       doc.addImage(img, "PNG", 160, 10, 30, 30);
       doc.setFontSize(12);
@@ -78,21 +78,35 @@ const ButtonsExportComponent = ({
       doc.text(`Usuario: ${userName || "Desconocido"}`, 14, 36);
 
       const tableColumnHeaders = visibleColumns.map((col) => col.headerName);
+
       const tableRows = data.map((row) =>
-        visibleColumns.map((col) =>
-          col.field.includes(".")
-            ? col.field.split(".").reduce((acc, key) => acc?.[key], row) ||
-              "No disponible"
-            : row[col.field] || "No disponible"
-        )
+        visibleColumns.map((col) => {
+          let value = col.field.includes(".")
+            ? col.field.split(".").reduce((acc, key) => acc?.[key], row)
+            : row[col.field];
+
+          if (!value) return "No disponible";
+
+          // Detectar si es una fecha ISO y formatearla
+          const isoDateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
+          if (typeof value === "string" && isoDateRegex.test(value)) {
+            const dateObj = new Date(value);
+            return dateObj.toLocaleDateString("es-CO");
+          }
+
+          return value;
+        })
       );
+
       doc.autoTable({
         head: [tableColumnHeaders],
         body: tableRows,
         startY: 40,
       });
+
       doc.save(`${title || "data"}.pdf`);
     };
+
     setSnackbar({
       open: true,
       message: "Datos exportados a PDF exitosamente.",
@@ -139,7 +153,11 @@ const ButtonsExportComponent = ({
       </Tooltip>
 
       <Tooltip title="Copiar al Portapapeles">
-        <Button variant="contained" color="info" onClick={handleCopyToClipboard}>
+        <Button
+          variant="contained"
+          color="info"
+          onClick={handleCopyToClipboard}
+        >
           <FileCopy />
         </Button>
       </Tooltip>

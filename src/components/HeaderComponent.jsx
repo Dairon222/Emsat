@@ -2,6 +2,7 @@
 import { AppBar, Toolbar, Typography, Box, Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import LogoutIcon from "@mui/icons-material/Logout";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useSede } from "../context/SedeContext";
 import { useNavigate } from "react-router-dom";
 
@@ -37,12 +38,16 @@ const HeaderComponent = ({ title }) => {
         </Box>
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 2, mr: 5 }}>
-          <Typography variant="h6" sx={{ fontWeight: "bold", pr: 2 }}>
-            {sede ? sede : "Selecciona una sede"}
-          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <LocationOnIcon sx={{ mr: 0.5 }} />{" "}
+            {/* Icono justo antes de la sede */}
+            <Typography variant="h6" sx={{ fontWeight: "bold", pr: 2 }}>
+              {sede ? sede : "Selecciona una sede"}
+            </Typography>
+          </Box>
 
           <Button
-            onClick={handleLogout} // botón de "Salir" cierra sesión
+            onClick={handleLogout}
             color="inherit"
             startIcon={<LogoutIcon />}
             sx={{

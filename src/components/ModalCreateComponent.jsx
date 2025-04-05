@@ -30,6 +30,7 @@ const CreateElementsComponent = ({
 
   const [roles, setRoles] = useState([]);
   const [fichas, setFichas] = useState([]);
+  const [herramientas, setHerramientas] = useState([]);
   const [loading, setLoading] = useState(false);
   const [fetchingData, setFetchingData] = useState(true);
   const [snackbar, setSnackbar] = useState({
@@ -42,13 +43,15 @@ const CreateElementsComponent = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [rolesRes, fichasRes] = await Promise.all([
+        const [rolesRes, fichasRes, herramientasRes] = await Promise.all([
           api.get("/rol"),
           api.get("/ficha"),
+          api.get("/herramienta"),
         ]);
 
         setRoles(rolesRes.data);
         setFichas(fichasRes.data);
+        setHerramientas(herramientasRes.data);
       } catch (error) {
         console.error("Error al cargar roles o fichas:", error);
       } finally {
@@ -58,6 +61,15 @@ const CreateElementsComponent = ({
 
     fetchData();
   }, []);
+
+  const handleInputChangeState = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: ["estado_herramienta"].includes(name) ? String(value) : value, //
+    }));
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -75,12 +87,8 @@ const CreateElementsComponent = ({
   const handleSubmit = async () => {
     setLoading(true);
     setSnackbar({ open: false, message: "", severity: "" });
-
-    console.log("Datos enviados:", formData);
-
     try {
       const response = await api.post(endpoint, formData);
-      console.log("Respuesta de la API:", response.data);
       if (onSuccess) onSuccess(response.data);
       setFormData({});
       onClose();
@@ -170,6 +178,89 @@ const CreateElementsComponent = ({
                         </MenuItem>
                       ))}
                     </Select>
+                  );
+                }
+
+                if (column.field === "herramienta_id") {
+                  return (
+                    <Select
+                      name="herramienta_id"
+                      key="herramienta_id"
+                      value={formData.herramienta_id || ""}
+                      onChange={(e) => {
+                        const selectedId = e.target.value;
+                        const selectedTool = herramientas.find(
+                          (h) => h.id === selectedId
+                        );
+
+                        setFormData((prev) => ({
+                          ...prev,
+                          herramienta_id: selectedId,
+                          codigo_herramienta: selectedTool?.codigo || "",
+                        }));
+                      }}
+                      displayEmpty
+                      fullWidth
+                      size="small"
+                    >
+                      <MenuItem value="" disabled>
+                        Seleccione una herramienta
+                      </MenuItem>
+                      {herramientas.map((herramienta) => (
+                        <MenuItem key={herramienta.id} value={herramienta.id}>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              width: "75%",
+                            }}
+                          >
+                            <span>{herramienta.nombre_herramienta}</span>
+                            <strong>{herramienta.codigo}</strong>
+                          </Box>
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  );
+                }
+
+                if (column.field === "estado_herramienta") {
+                  return (
+                    <Select
+                      name="estado_herramienta"
+                      key="estado_herramienta"
+                      value={formData.estado_herramienta || ""}
+                      onChange={handleInputChangeState}
+                      displayEmpty
+                      fullWidth
+                      size="small"
+                    >
+                      <MenuItem value="" disabled>
+                        Seleccione un estado
+                      </MenuItem>
+                      {column.valueOptions.map((estado) => (
+                        <MenuItem key={estado} value={estado}>
+                          {estado}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  );
+                }
+
+                if (column.field === "detalle_herramienta") {
+                  return (
+                    <TextField
+                      key={column.field}
+                      label={column.headerName}
+                      name={column.field}
+                      variant="outlined"
+                      size="small"
+                      fullWidth
+                      onChange={handleInputChange}
+                      value={formData[column.field] || ""}
+                      multiline
+                      rows={3}
+                    />
                   );
                 }
 

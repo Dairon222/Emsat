@@ -4,7 +4,12 @@ import { useNavigate } from "react-router-dom";
 const columns = [
   { field: "id", headerName: "Id sede", align: "center", hidden: true },
   { field: "nombre_sede", headerName: "Nombre sede", align: "center" },
-  { field: "numero_sede", headerName: "Número de la sede", align: "center" },
+  {
+    field: "numero_sede",
+    headerName: "Número de la sede",
+    align: "center",
+    inputType: "number",
+  },
 ];
 
 const RegisterSede = () => {

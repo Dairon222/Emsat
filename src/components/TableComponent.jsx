@@ -120,14 +120,10 @@ const TableComponent = ({
   const handleSaveEdit = async (updatedData) => {
     try {
       await api.put(`${endpoint}/${updatedData[keyField]}`, updatedData);
-      setData(
-        (prevData) =>
-          prevData.map((row) =>
-            row[keyField] === updatedData[keyField] ? updatedData : row
-          ),
-        console.log("Datos enviados para actualizar:", updatedData),
-        console.log("ID extraído:", updatedData[keyField]),
-        console.log(`URL de la petición: ${endpoint}/${updatedData[keyField]}`)
+      setData((prevData) =>
+        prevData.map((row) =>
+          row[keyField] === updatedData[keyField] ? updatedData : row
+        )
       );
       setSnackbar({
         open: true,
@@ -287,6 +283,10 @@ const TableComponent = ({
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
+            labelRowsPerPage="Filas por página"
+            labelDisplayedRows={({ from, to, count }) =>
+              `${from}–${to} de ${count !== -1 ? count : `más de ${to}`}`
+            }
           />
         </>
       )}

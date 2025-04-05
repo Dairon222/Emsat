@@ -26,10 +26,46 @@ import AssignmentIcon from "@mui/icons-material/Assignment";
 
 // Configuración de entidades y sus columnas
 const entityConfig = {
+  herramienta: {
+    title: "Herramienta",
+    endpoint: "herramienta",
+    description: "Nueva herramienta",
+    icon: <BuildIcon />,
+    columns: [
+      {
+        field: "id",
+        headerName: "Id herramienta",
+        align: "center",
+        hidden: true,
+      },
+      {
+        field: "nombre_herramienta",
+        headerName: "Herramienta",
+        align: "center",
+      },
+      { field: "codigo", headerName: "Código", align: "center" },
+      { field: "ubicacion", headerName: "Ubicación", align: "center" },
+      {
+        field: "estado_herramienta",
+        headerName: "Estado de la herramienta",
+        align: "center",
+        type: "select",
+        valueOptions: ["Bueno", "Regular", "Malo"],
+      },
+      {
+        field: "detalle_herramienta",
+        headerName: "Detalle de la herramienta",
+        align: "center",
+        type: "text",
+      },
+
+      { field: "stock", headerName: "Total", align: "center" },
+    ],
+  },
   usuario: {
     title: "Usuario",
     endpoint: "usuario",
-    description: "Crea un nuevo usuario",
+    description: "Nuevo usuario",
     icon: <PeopleIcon />,
     columns: [
       { field: "id", headerName: "Id user", align: "center", hidden: true },
@@ -55,59 +91,10 @@ const entityConfig = {
       },
     ],
   },
-  ficha: {
-    title: "Ficha",
-    endpoint: "ficha",
-    description: "Crea una nueva ficha",
-    icon: <SchoolIcon />,
-    columns: [
-      { field: "nombre_ficha", headerName: "Nombre ficha", align: "center" },
-      { field: "numero_ficha", headerName: "Número de ficha", align: "center" },
-    ],
-  },
-  rol: {
-    title: "Rol",
-    endpoint: "rol",
-    description: "Crea un nuevo rol",
-    icon: <ManIcon />,
-    columns: [{ field: "tipo", headerName: "Tipo de rol", align: "center" }],
-  },
-  herramienta: {
-    title: "Herramienta",
-    endpoint: "herramienta",
-    description: "Crea una nueva herramienta",
-    icon: <BuildIcon />,
-    columns: [
-      {
-        field: "id",
-        headerName: "Id herramienta",
-        align: "center",
-        hidden: true,
-      },
-      {
-        field: "nombre_herramienta",
-        headerName: "Herramienta",
-        align: "center",
-      },
-      { field: "codigo", headerName: "Código", align: "center" },
-      { field: "stock", headerName: "Total", align: "center" },
-      { field: "ubicacion", headerName: "Ubicación", align: "center" },
-    ],
-  },
-  ambiente: {
-    title: "Ambiente",
-    endpoint: "ambiente",
-    description: "Crea un nuevo ambiente",
-    icon: <MeetingRoomIcon />,
-    columns: [
-      { field: "nombre_ambiente", headerName: "Nombre", align: "center" },
-      { field: "codigo", headerName: "Código ambiente", align: "center" },
-    ],
-  },
   prestamo: {
     title: "Préstamo",
     endpoint: "prestamo",
-    description: "Crea un nuevo préstamo",
+    description: "Nuevo préstamo",
     icon: <AssignmentIcon />,
     columns: [
       {
@@ -115,16 +102,57 @@ const entityConfig = {
         headerName: "Identificación usuario",
         align: "center",
       },
-    
+
       {
-        field: "codigo_herramienta",
-        headerName: "Codigo herramienta",
+        field: "herramienta_id",
+        headerName: "Herramienta",
         align: "center",
       },
+
       { field: "cantidad", headerName: "Cantidad", align: "center" },
-    
+
       { field: "observaciones", headerName: "Observaciones", align: "center" },
     ],
+  },
+
+  ficha: {
+    title: "Ficha",
+    endpoint: "ficha",
+    description: "Nueva ficha",
+    icon: <SchoolIcon />,
+    columns: [
+      {
+        field: "nombre_ficha",
+        headerName: "Programa de formación",
+        align: "center",
+      },
+      {
+        field: "numero_ficha",
+        headerName: "Número de la ficha",
+        align: "center",
+      },
+    ],
+  },
+  ambiente: {
+    title: "Ambiente",
+    endpoint: "ambiente",
+    description: "Nuevo ambiente",
+    icon: <MeetingRoomIcon />,
+    columns: [
+      {
+        field: "nombre_ambiente",
+        headerName: "Nombre del ambiente",
+        align: "center",
+      },
+      { field: "codigo", headerName: "Codigo del ambiente", align: "center" },
+    ],
+  },
+  rol: {
+    title: "Rol",
+    endpoint: "rol",
+    description: "Nuevo rol",
+    icon: <ManIcon />,
+    columns: [{ field: "tipo", headerName: "Tipo de rol", align: "center" }],
   },
 };
 

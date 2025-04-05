@@ -16,7 +16,7 @@ import RegisterUserSede from "./pages/RegisterUserSede";
 import DashboardAdmin from "./admin/DashboardAdmin";
 import InfoSedesAdmin from "./admin/InfoSedesAdmin";
 import InfoUsersAdmin from "./admin/InfoUsersAdmin";
-import NotFound from "./pages/NotFound";
+import NotFound from "./pages/Notfound"
 import ProtectedRoute from "./ProtectedRoute";
 import { ThemeProviderComponent } from "./context/ThemeContext";
 

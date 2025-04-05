@@ -36,8 +36,8 @@ const entityConfig = {
       { field: "id", headerName: "Id sede", align: "center", hidden: true },
       { field: "username", headerName: "Nombre usuario", align: "center" },
       { field: "email", headerName: "Email", align: "center" },
-      { field: "password", headerName: "Contraseña", align: "center" },
       {field: "numero_sede" , headerName: "Numero de la sede", align: "center"},
+      { field: "password", headerName: "Contraseña", align: "center" },
     ],
   },
 };

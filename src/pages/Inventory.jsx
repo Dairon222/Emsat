@@ -18,12 +18,14 @@ const columns = [
   { field: "id", headerName: "Id herramienta", align: "center", hidden: true },
   { field: "nombre_herramienta", headerName: "Herramienta", align: "center" },
   { field: "codigo", headerName: "Código", align: "center" },
-  { field: "stock", headerName: "Total", align: "center" },
   { field: "ubicacion", headerName: "Ubicación", align: "center" },
   {
     field: "estado_herramienta",
     headerName: "Estado de la herramienta",
     align: "center",
+    type: "select",
+    valueOptions: ["Bueno", "Regular", "Malo"],
+
     renderCell: (row) => (
       <Box
         sx={{
@@ -55,6 +57,7 @@ const columns = [
     field: "detalle_herramienta",
     headerName: "Detalle de la herramienta",
     align: "center",
+    type: "text",
     renderCell: (row) => (
       <Box
         sx={{
@@ -62,13 +65,26 @@ const columns = [
           alignItems: "center",
           gap: 1,
           justifyContent: "center",
-          wordBreak: "break-word",
         }}
       >
-        {row.detalle_herramienta || "En buen estado"}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            width: "100%",
+            maxWidth: "200px",
+            justifyContent: "center",
+          }}
+        >
+          {row.detalle_herramienta || "En buen estado"}
+        </Box>
       </Box>
     ),
   },
+
+  { field: "stock", headerName: "Total", align: "center" },
 ];
 
 const Inventory = () => {

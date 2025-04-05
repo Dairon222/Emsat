@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -8,9 +8,16 @@ import {
   Button,
   Snackbar,
   Alert,
+  InputAdornment,
+  IconButton,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
 } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import api from "../api/axios";
-import senaLogo from "../assets/logo_sena.png"; 
+import senaLogo from "../assets/logo_sena.png";
 
 const CreateFormsComponent = ({
   title,
@@ -26,6 +33,8 @@ const CreateFormsComponent = ({
     message: "",
     severity: "",
   });
+  const [sedes, setSedes] = useState([]);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -62,6 +71,19 @@ const CreateFormsComponent = ({
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const fetchSedes = async () => {
+      try {
+        const res = await api.get("/sede");
+        setSedes(res.data);
+      } catch (err) {
+        console.error("Error cargando sedes", err);
+      }
+    };
+
+    fetchSedes();
+  }, []);
 
   return (
     <Box
@@ -109,22 +131,95 @@ const CreateFormsComponent = ({
         >
           {columns
             .filter((column) => !column.hidden)
-            .map((column) => (
-              <TextField
-                key={column.field}
-                label={column.headerName}
-                name={column.field}
-                variant="outlined"
-                size="small"
-                fullWidth
-                onChange={handleInputChange}
-                sx={{
-                  borderRadius: "5px",
-                  boxShadow: "0 0 4px rgba(20, 159, 34, 0.5)",
-                  gap: "0.3rem",
-                }}
-              />
-            ))}
+            .map((column) => {
+              if (column.type === "select") {
+                return (
+                  <FormControl
+                    key={column.field}
+                    fullWidth
+                    size="small"
+                    sx={{
+                      display: "flex",
+                      width: "100%",
+                      borderRadius: "5px",
+                      boxShadow: "0 0 4px rgba(20, 159, 34, 0.5)",
+                      gap: "0.3rem",
+                    }}
+                  >
+                    <InputLabel>{column.headerName}</InputLabel>
+                    <Select
+                      label={column.headerName}
+                      name={column.field}
+                      value={formData[column.field] || ""}
+                      onChange={handleInputChange}
+                      sx={{ textAlign: "left" }} // Alineación a la izquierda
+                    >
+                      {sedes.map((sede) => (
+                        <MenuItem
+                          key={sede.id}
+                          value={sede.numero_sede}
+                          sx={{ textAlign: "left" }} // También en los ítems
+                        >
+                          {sede.nombre_sede}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                );
+              }
+
+              if (column.field === "password") {
+                return (
+                  <TextField
+                    key={column.field}
+                    label={column.headerName}
+                    name={column.field}
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    type={showPassword ? "text" : "password"}
+                    value={formData[column.field] || ""}
+                    onChange={handleInputChange}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={() => setShowPassword((prev) => !prev)}
+                            edge="end"
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{
+                      borderRadius: "5px",
+                      boxShadow: "0 0 4px rgba(20, 159, 34, 0.5)",
+                      gap: "0.3rem",
+                    }}
+                  />
+                );
+              }
+
+              return (
+                <TextField
+                  key={column.field}
+                  label={column.headerName}
+                  name={column.field}
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  type={column.inputType || "text"} // Usa 'number' si se define
+                  onChange={handleInputChange}
+                  sx={{
+                    borderRadius: "5px",
+                    boxShadow: "0 0 4px rgba(20, 159, 34, 0.5)",
+                    gap: "0.3rem",
+                  }}
+                />
+              );
+            })}
+
           <Button
             variant="contained"
             fullWidth

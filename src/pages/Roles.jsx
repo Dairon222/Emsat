@@ -16,7 +16,7 @@ import api from "../api/axios";
 
 const columns = [
   { field: "id", headerName: "Id rol", align: "center", hidden: true },
-  { field: "tipo", headerName: "Tipo", align: "center" },
+  { field: "tipo", headerName: "Tipo de rol", align: "center" },
 ];
 
 const Roles = () => {

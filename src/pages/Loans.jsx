@@ -16,17 +16,18 @@ import api from "../api/axios";
 
 const columns = [
   { field: "usuario.nombre", headerName: "Nombre usuario", align: "center" },
+  
+  { field: "usuario.apellido", headerName: "Apellido usuario", align: "center" },
   {
     field: "identificacion",
     headerName: "Identificación usuario",
     align: "center",
   },
-  
-  { field: "usuario.celular", headerName: "Celular usuario", align: "center" },
 
+  { field: "usuario.celular", headerName: "Celular usuario", align: "center" },
   {
     field: "codigo_herramienta",
-    headerName: "Codigo herramienta",
+    headerName: "Código herramienta",
     align: "center",
   },
   { field: "cantidad", headerName: "Cantidad", align: "center" },
@@ -42,10 +43,11 @@ const columnsModal = [
   },
 
   {
-    field: "codigo_herramienta",
-    headerName: "Codigo herramienta",
+    field: "herramienta_id",
+    headerName: "Herramienta",
     align: "center",
   },
+
   { field: "cantidad", headerName: "Cantidad", align: "center" },
 
   { field: "observaciones", headerName: "Observaciones", align: "center" },

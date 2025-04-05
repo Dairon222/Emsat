@@ -33,12 +33,7 @@ const columnsModal = [
   { field: "identificacion", headerName: "Identificación", align: "center" },
   { field: "celular", headerName: "Celular", align: "center" },
   { field: "rol_id", headerName: "Id rol", align: "center", type: "select"},
-  {
-    field: "ficha_id",
-    headerName: "Id ficha",
-    align: "center",
-    type: "select",
-  },
+  {field: "ficha_id", headerName: "Id ficha", align: "center", type: "select"},
 ];
 
 const Users = () => {
