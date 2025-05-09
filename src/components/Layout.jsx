@@ -15,7 +15,7 @@ const Layout = ({ children, isAdmin = false }) => {
       <CssBaseline />
       <SidebarComponent
         drawerWidth={drawerWidth}
-        title="Emsat"
+        title="SGAH"
         isAdmin={isAdmin}
       />
 

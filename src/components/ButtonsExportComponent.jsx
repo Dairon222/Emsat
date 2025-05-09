@@ -87,7 +87,6 @@ const ButtonsExportComponent = ({
 
           if (!value) return "No disponible";
 
-          // Detectar si es una fecha ISO y formatearla
           const isoDateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
           if (typeof value === "string" && isoDateRegex.test(value)) {
             const dateObj = new Date(value);
@@ -155,8 +154,8 @@ const ButtonsExportComponent = ({
       <Tooltip title="Copiar al Portapapeles">
         <Button
           variant="contained"
-          color="info"
           onClick={handleCopyToClipboard}
+          sx={{ backgroundColor: "grey",}}
         >
           <FileCopy />
         </Button>
